@@ -7,4 +7,4 @@
 
 ###Run Application
 1. npm run build
-2. npm start
+2. npm start (set to automatically recompile when changes are made, so don't worry about restarting the server)
