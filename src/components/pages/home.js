@@ -9,7 +9,7 @@ export default class extends Component {
     render() {
         return (
             <div className="children">
-                <h1>Home</h1>
+                <h1>Homepage</h1>
             </div>
         );
     }
