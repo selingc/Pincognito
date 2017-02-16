@@ -27719,6 +27719,12 @@
 
 	var _reactRouter = __webpack_require__(183);
 
+	var _firebase = __webpack_require__(239);
+
+	var firebase = _interopRequireWildcard(_firebase);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27730,15 +27736,89 @@
 	var Layout = function (_Component) {
 		_inherits(Layout, _Component);
 
-		function Layout() {
+		function Layout(props) {
 			_classCallCheck(this, Layout);
 
-			return _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).apply(this, arguments));
+			var _this = _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).call(this, props));
+
+			_this.state = { uid: null, isLoggedIn: false };
+
+			//must be done for added functions other than the normal React.JS functions
+			_this.handleLogOut = _this.handleLogOut.bind(_this);
+			return _this;
 		}
 
 		_createClass(Layout, [{
+			key: 'componentWillMount',
+			value: function componentWillMount() {
+				var that = this;
+
+				//checks to see if user is logged in or not
+				this.unsubscribe = firebase.auth().onAuthStateChanged(function (user) {
+					that.setState({ isLoggedIn: user !== null }); //if user is null, user isn't logged in, else user is logged in
+					that.setState({ uid: user ? user.uid : null }); //set uid if user is logged in
+				});
+			}
+		}, {
+			key: 'componentWillUnmount',
+			value: function componentWillUnmount() {
+				//unsubscribes from the auth listener in componentWillMount
+				this.unsubscribe();
+			}
+
+			//handles what to do when "Logout" is clicked
+
+		}, {
+			key: 'handleLogOut',
+			value: function handleLogOut() {
+				firebase.auth().signOut();
+			}
+		}, {
 			key: 'render',
 			value: function render() {
+				var that = this;
+
+				function getLinks() {
+					if (that.state.isLoggedIn) {
+						return _react2.default.createElement(
+							'ul',
+							null,
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									_reactRouter.Link,
+									{ to: '/', onClick: that.handleLogOut },
+									'Logout'
+								)
+							)
+						);
+					} else {
+						return _react2.default.createElement(
+							'ul',
+							null,
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									_reactRouter.Link,
+									{ to: '/login' },
+									'Login'
+								)
+							),
+							_react2.default.createElement(
+								'li',
+								null,
+								_react2.default.createElement(
+									_reactRouter.Link,
+									{ to: '/signup' },
+									'Signup'
+								)
+							)
+						);
+					}
+				}
+
 				return _react2.default.createElement(
 					'div',
 					null,
@@ -27760,28 +27840,7 @@
 							_react2.default.createElement(
 								'nav',
 								{ className: 'nav-right' },
-								_react2.default.createElement(
-									'ul',
-									null,
-									_react2.default.createElement(
-										'li',
-										null,
-										_react2.default.createElement(
-											_reactRouter.Link,
-											{ to: '/login' },
-											'Login'
-										)
-									),
-									_react2.default.createElement(
-										'li',
-										null,
-										_react2.default.createElement(
-											_reactRouter.Link,
-											{ to: '/signup' },
-											'Signup'
-										)
-									)
-								)
+								getLinks()
 							)
 						)
 					),
