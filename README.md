@@ -9,6 +9,12 @@
 1. npm run build
 2. npm start (set to automatically recompile when changes are made, so don't worry about restarting the server)
 
+###Deploy Application
+1. npm run build
+2. npm install -g firebase-tools (only needs to be done once)
+3. firebase deploy
+4. Visit https://ideaboard-f10ef.firebaseapp.com/ to see the deployed application!
+
 ###Folder Structure
 Everything you need is inside the "src" folder
 * index.js - contains firebase api keys and routes
