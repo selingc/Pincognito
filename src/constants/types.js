@@ -1,0 +1,8 @@
+const types = {
+	CREATE_BOARD: 'CREATE_BOARD',
+	FETCH_BOARDS: 'FETCH_BOARDS',
+	DELETE_BOARD: 'DELETE_BOARD',
+	STOP_BOARD_FETCH: 'STOP_BOARD_FETCH'
+};
+
+export default types;
