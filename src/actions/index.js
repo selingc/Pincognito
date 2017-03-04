@@ -48,3 +48,25 @@ export function stopFetchingBoards(){
 		});
 	}
 }
+
+export function getCurrentUser(){
+	return dispatch => {
+		dispatch({
+			type: ActionTypes.GET_CURRENT_USER
+		});
+	}
+}
+
+export function createUser(data){
+	return dispatch => {
+		firebase.auth().createUserWithEmailAndPassword(data.email, data.password).then(function(user) {
+    		var user = firebase.auth().currentUser;
+    		dispatch({
+				type: ActionTypes.CREATE_USER,
+				payload: user
+			})
+		}, function(error) {
+    	// Handle Errors here.
+		});
+	}
+}

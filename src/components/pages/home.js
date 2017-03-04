@@ -10,7 +10,7 @@ class Home extends Component {
     }
 
     componentWillMount(){
-        this.props.fetchBoards();
+        //this.props.fetchBoards();
     }
 
     createBoard(e){
@@ -24,7 +24,7 @@ class Home extends Component {
     }
 
     componentWillUnmount(){
-        this.props.stopFetchingBoards();
+        //this.props.stopFetchingBoards();
     }
 
     renderBoards(){

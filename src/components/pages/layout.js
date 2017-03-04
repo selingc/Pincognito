@@ -5,30 +5,16 @@ import * as firebase from 'firebase';
 class Layout extends Component{
 	constructor(props){
 		super(props);
-		this.state = {uid: null, isLoggedIn: false};
+        this.state = {};
 
 		//must be done for added functions other than the normal React.JS functions
 		this.handleLogOut = this.handleLogOut.bind(this);
 	}
 
-	componentWillMount(){
-		var that = this;
-
-		//checks to see if user is logged in or not
-		this.unsubscribe = firebase.auth().onAuthStateChanged(function(user){
-			that.setState({isLoggedIn: user !== null}); //if user is null, user isn't logged in, else user is logged in
-			that.setState({uid: user ? user.uid : null}); //set uid if user is logged in
-		});
-	}
-
-	componentWillUnmount(){
-		//unsubscribes from the auth listener in componentWillMount
-		this.unsubscribe();
-	}
-
 	//handles what to do when "Logout" is clicked
 	handleLogOut(){
-		firebase.auth().signOut();
+		//firebase.auth().signOut();
+		//dispatch logout req here
 	}
 
   	render() {
