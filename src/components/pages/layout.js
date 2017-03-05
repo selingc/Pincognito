@@ -1,30 +1,42 @@
-import React, { Component } from 'react';
-import {Link} from 'react-router';
-import * as firebase from 'firebase';
+import React, { Component } from 'react'
+import {Link} from 'react-router'
+import * as firebase from 'firebase'
+import {connect} from 'react-redux'
+import { logOff } from '../../actions/index'
+import { bindActionCreators } from 'redux'
+
 
 class Layout extends Component{
 	constructor(props){
 		super(props);
-        this.state = {};
-
-		//must be done for added functions other than the normal React.JS functions
 		this.handleLogOut = this.handleLogOut.bind(this);
 	}
 
 	//handles what to do when "Logout" is clicked
 	handleLogOut(){
-		//firebase.auth().signOut();
-		//dispatch logout req here
+		this.props.logOff();
 	}
 
-  	render() {
-  		var that = this;
+	componentDidMount(){
+		const { store } = this.context;
+		this.unsubscribe = store.subscribe(() =>
+			this.forceUpdate()
+		);
+	}
 
-  		function getLinks(){
-  			if(that.state.isLoggedIn){
+    componentWillUnmount(){
+    	this.unsubscribe();
+    }
+
+    getLinks(){
+  		const props = this.props;
+  		const { store } = this.context;
+  		const state = store.getState();
+
+    	if(state.displayName){
   				return (
   					<ul>
-						<li><Link to="/" onClick={that.handleLogOut}>Logout</Link></li>
+						<li><Link to="/" onClick={this.handleLogOut}>Logout</Link></li>
 					</ul>
   				);
   			}else{
@@ -32,10 +44,13 @@ class Layout extends Component{
   					<ul>
 						<li><Link to="/login">Login</Link></li>
 						<li><Link to="/signup">Signup</Link></li>
+						<li><Link to="/" onClick={this.handleLogOut}>Logout</Link></li>
 					</ul>
   				);
   			}
-  		}
+    }
+
+  	render() {
 
 	    return (
 	      	<div>
@@ -46,7 +61,7 @@ class Layout extends Component{
 							<Link to="/"><img width="55px" height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo.png?alt=media&token=18df34d5-0742-4464-98c5-76539c048e45"/></Link>
 						</div>
 						<nav className="nav-right">
-							{getLinks()}
+							{this.getLinks()}
 						</nav>
 					</div>
 				</header>
@@ -59,5 +74,21 @@ class Layout extends Component{
 	    )
   	}
 }
+Layout.contextTypes = {
+	store: React.PropTypes.object
+}
 
-export default Layout;
+
+function mapStateToProps(state){
+    return {
+        displayName: state.displayName,
+        photoURL: state.photoURL
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ logOff }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);
+//export default Layout;

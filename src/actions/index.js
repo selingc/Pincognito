@@ -1,5 +1,5 @@
 import * as firebase from 'firebase';
-import ActionTypes from '../constants/types.js';
+import actionTypes from './types.js';
 import config from '../constants/firebase_config.js';
 
 firebase.initializeApp(config);
@@ -11,7 +11,7 @@ export function createBoard(board){
 		const key = boardsRef.push().key;
 		boardsRef.child(key).set(board);
 		dispatch({
-			type: ActionTypes.CREATE_BOARD
+			type: actionTypes.CREATE_BOARD
 		});
 	}
 }
@@ -22,7 +22,7 @@ export function fetchBoards(){
 			const data = snap.val();
 			data.id = snap.ref.key;
 			dispatch({
-				type: ActionTypes.FETCH_BOARDS,
+				type: actionTypes.FETCH_BOARDS,
 				payload: data
 			});
 		});
@@ -33,18 +33,19 @@ export function deleteBoard(id){
 	return dispatch =>{
 		boardsRef.child(id).remove();
 		dispatch({
-			type: ActionTypes.DELETE_BOARD,
+			type: actionTypes.DELETE_BOARD,
 			payload: id
 		});
 	}
 }
 
+
 export function stopFetchingBoards(){
 	return dispatch =>{
 		boardsRef.off();
 		dispatch({
-			type: ActionTypes.STOP_BOARD_FETCH,
-			payload: []
+			type: actionTypes.STOP_BOARD_FETCH,
+			payload: [] //no need for empty payload, should clear array in the reducer.
 		});
 	}
 }
@@ -52,7 +53,22 @@ export function stopFetchingBoards(){
 export function getCurrentUser(){
 	return dispatch => {
 		dispatch({
-			type: ActionTypes.GET_CURRENT_USER
+			type: actionTypes.GET_CURRENT_USER
+		});
+	}
+}
+
+export function updateUserDisplayName(name){
+	return dispatch => {
+		firebase.auth().currentUser.updateProfile({
+			displayName: name
+		}).then(function() {
+			dispatch({
+				type: actionTypes.UPDATE_USER_DISPLAY_NAME,
+				payload: name
+		})
+		}, function(error) {
+			console.log(error);
 		});
 	}
 }
@@ -60,13 +76,21 @@ export function getCurrentUser(){
 export function createUser(data){
 	return dispatch => {
 		firebase.auth().createUserWithEmailAndPassword(data.email, data.password).then(function(user) {
-    		var user = firebase.auth().currentUser;
-    		dispatch({
-				type: ActionTypes.CREATE_USER,
-				payload: user
-			})
+    		dispatch({type: actionTypes.CREATE_USER});
+    		dispatch(updateUserDisplayName(data.displayName));
 		}, function(error) {
-    	// Handle Errors here.
+    		console.log(error);
+		});
+	}
+}
+
+export function logOff(){
+	return dispatch => {
+		firebase.auth().signOut().then(function() {
+    		dispatch({type: actionTypes.LOGOFF_USER});
+    		console.log("loggedOff");
+		}, function(error) {
+    		console.log(error);
 		});
 	}
 }

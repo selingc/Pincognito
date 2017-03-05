@@ -1,19 +1,24 @@
-import ActionTypes from '../constants/types.js';
+import actionTypes from '../actions/types.js';
 
 const initialState = {
-   email: null
+   displayName: null,
+   photoURL: "http://"
 }
 
 export default function(state=initialState, action){
 	switch(action.type){
-		case ActionTypes.CREATE_USER:
-			return Object.assign({}, state, {email: action.payload.email});
-		case ActionTypes.GET_CURRENT_USER:
+		case actionTypes.CREATE_USER:
 			return state;
-		case ActionTypes.LOGIN_USER:
+		case actionTypes.UPDATE_USER_DISPLAY_NAME:
+			return Object.assign({}, state, {displayName: action.payload});
+		case actionTypes.UPDATE_USER_PHOTOURL:
+			return Object.assign({}, state, {photoURL: action.payload});
+		case actionTypes.GET_CURRENT_USER:
 			return state;
-		case ActionTypes.lOGOFF_USER:
+		case actionTypes.LOGIN_USER:
 			return state;
+		case actionTypes.lOGOFF_USER:
+			return Object.assign({}, state, {displayName: null, photoURL: "asd"});
 	}
 	return state;
 }

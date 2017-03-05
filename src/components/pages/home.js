@@ -15,12 +15,12 @@ class Home extends Component {
 
     createBoard(e){
         e.preventDefault();
-        this.props.createBoard({name: this.refs.name.value});
-        this.refs.name.value = "";
+        //this.props.createBoard({name: this.refs.name.value});
+        //this.refs.name.value = "";
     }
 
     deleteBoard(id){
-        this.props.deleteBoard(id);
+        //this.props.deleteBoard(id);
     }
 
     componentWillUnmount(){
@@ -50,6 +50,8 @@ class Home extends Component {
         );
     }
 }
+
+
 
 function mapStateToProps(state){
     return {
