@@ -1,16 +1,43 @@
 import { bindActionCreators } from 'redux'
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
-//import * as actions from '../../actions/index.js';
 import { createUser } from '../../actions/index'
+import { Field, reduxForm } from 'redux-form'
+import SimpleForm from '../forms/simpleform'
 
 class Signup extends Component {
-    constructor(props) {
-        super(props);
-        this.handleSighup = this.handleSighup.bind(this);
-    }
 
-    handleSighup(e){
+    handleSubmit = (values) => {
+    console.log(values);
+    var data = {
+        displayName: values.username,
+        email: values.email,
+        password: values.password,
+        photoURL: "http://"
+    }
+    this.props.createUser(data);
+  }
+  render() {
+    return (
+      <SimpleForm onSubmit={this.handleSubmit} />
+    );
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ createUser }, dispatch)
+}
+
+export default connect(null, mapDispatchToProps)(Signup);
+
+/*
+let Signup = React.createClass({ dispatch }) => {
+    let input;
+    let username;
+    let email;
+    let password;
+
+    function handleSignUp(e){
         e.preventDefault();
         var data = {
             displayName: this.refs.username.value,
@@ -19,45 +46,35 @@ class Signup extends Component {
             photoURL: "http://"
         }
         console.log(data);
-        this.props.createUser(data);
+        dispatch(createUser(data));
     }
 
-    render() {
-        return (
-            <div className="children">
+    function handleInputChange(event) {
+        const target = event.target;
+    }
+
+    return (
+        <div className="children">
                 <div className="signUpForm col-md-4">
                     <h1>Sign Up</h1>
                     <hr />
-                    <form onSubmit={this.handleSighup}>
+                    <form onSubmit={handleSignUp}>
                         <div className="form-group">
-                            <input type="username" placeholder="Username" id="username" ref="username" className="form-control" /><br />
-                            <input type="email" placeholder="Email Address" id="email" ref="email" className="form-control" /><br />
-                            <input type="password" placeholder="Password" ref="password" id="password" className="form-control" /><br />
+                            <input onChange={this.handleInputChange} type="username" placeholder="Username" name="username" className="form-control" /><br />
+                            <input onChange={this.handleInputChange} type="email" placeholder="Email Address" name="email" className="form-control" /><br />
+                            <input onChange={this.handleInputChange} type="password" placeholder="Password" name="password" className="form-control" /><br />
                         <button className="btn btn-primary">Sign Up</button>
                         </div>
                     </form>
                 </div>
             </div>
-        );
-    }
+    );
 }
 
-/*function mapStateToProps(state){
-    return {
-        displayName: state.displayName,
-        photoURL: state.photoURL
-    };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ createUser }, dispatch)
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Signup);*/
-//export default Signup;
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ createUser }, dispatch)
 }
 
 export default connect(null, mapDispatchToProps)(Signup);
+*/

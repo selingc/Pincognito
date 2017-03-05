@@ -17,8 +17,8 @@ export default function(state=initialState, action){
 			return state;
 		case actionTypes.LOGIN_USER:
 			return state;
-		case actionTypes.lOGOFF_USER:
-			return Object.assign({}, state, {displayName: null, photoURL: "asd"});
+		case actionTypes.LOGOFF_USER:
+			return Object.assign({}, state, initialState);
 	}
 	return state;
 }

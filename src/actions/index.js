@@ -88,7 +88,7 @@ export function logOff(){
 	return dispatch => {
 		firebase.auth().signOut().then(function() {
     		dispatch({type: actionTypes.LOGOFF_USER});
-    		console.log("loggedOff");
+    		console.log("export function logOff was run");
 		}, function(error) {
     		console.log(error);
 		});
