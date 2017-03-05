@@ -10,14 +10,16 @@ import Home from './components/pages/home.js';
 import Layout from './components/pages/layout.js';
 import Login from './components/registration/login.js';
 import Signup from './components/registration/signup.js';
+import Test from './components/pages/test.js';
 
 ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
           	<Route path="/" component={Layout}>
             	<IndexRoute component={Home}/>
-                <Route path="/login" component={Login}/>
-                <Route path="/signup" component={Signup}/>
+                <Route path="test" component={Test}/>
+                <Route path="login" component={Login}/>
+                <Route path="signup" component={Signup}/>
           	</Route>
         </Router>
     </Provider>,
