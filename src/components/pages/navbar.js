@@ -5,20 +5,26 @@ import { logOff } from '../../actions/index'
 import { bindActionCreators } from 'redux'
 import React from 'react'
 
-const NavBar = ({state, actions}) => (
-		<ul>
-			<li><Link to="/login">Login</Link></li>
+const NavBar = ({user, actions}) => (
+		<div>
+		{user.displayName == null ? 
+			(<ul>
 			<li><Link to="/signup">Signup</Link></li>
-			<li><Link to="/" onClick={actions.logOff}>Logout</Link></li>
-		</ul>
+			<li><Link to="/login">Login</Link></li>
+			</ul>)
+			:
+			(<ul><li><Link to="/" onClick={actions.logOff}>Logout</Link></li></ul>)
+		}
+		</div>
 	);
 
 
 function mapStateToProps(state){
+	//console.log(state.user.photoURL);
     return {
-    	state: {
-    		displayName: state.displayName,
-        	photoURL: state.photoURL
+    	user: {
+    		displayName: state.user.displayName,
+        	photoURL: state.user.photoURL
         }
     };
 }
