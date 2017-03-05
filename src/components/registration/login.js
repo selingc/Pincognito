@@ -5,24 +5,23 @@ import {browserHistory} from 'react-router';
 export default class extends Component {
     constructor(props) {
         super(props);
-        this.handleLogIn = this.handleLogIn.bind(this);
+        this.state = {error: null};
     }
 
     componentWillMount(){
         var that = this;
         this.unsubscribe = firebase.auth().onAuthStateChanged(function(user){
             if(user){
-                console.log("User successfully logged in");
                 browserHistory.push('/');
             }
         });
     }
 
     handleLogIn(e){
+        const that = this;
         e.preventDefault();
         firebase.auth().signInWithEmailAndPassword(this.refs.email.value, this.refs.password.value).catch(function(error){
-            console.log(error.code);
-            console.log(error.message);
+            that.setState({error: error.message});
         });
 
     }
@@ -32,19 +31,30 @@ export default class extends Component {
     }
 
     render() {
+        const that = this;
+
+        function getErrors(){
+            if(that.state.error){
+                return <div className="alert alert-danger"><strong>Error! </strong>{that.state.error}</div>;
+            }
+        }
+
         return (
             <div className="children">
-                <div className="signUpForm col-md-4">
+                {getErrors()}
+                <div className="col-lg-3 col-md-3"></div>
+                <div className="signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12">
                     <h1>Log In</h1>
                     <hr />
-                    <form onSubmit={this.handleLogIn}>
+                    <form onSubmit={this.handleLogIn.bind(this)}>
                         <div className="form-group">
                             <input type="email" placeholder="Email Address" id="email" ref="email" className="form-control" /><br />
                             <input type="password" placeholder="Password" ref="password" id="passowrd" className="form-control" /><br />
-                        <button className="btn btn-primary">Login</button>
+                        <center><button className="btn btn-primary">Login</button></center>
                         </div>
                     </form>
                 </div>
+                <div className="col-lg-3 col-md-3"></div>
             </div>
         );
     }
