@@ -94,3 +94,16 @@ export function logOff(){
 		});
 	}
 }
+
+export function logIn(data){
+	return dispatch => {
+		firebase.auth().signInWithEmailAndPassword(data.email, data.password).then(function() {
+    		dispatch({type: actionTypes.LOGIN_USER});
+    		console.log("export function login was run");
+    		var user = firebase.auth().currentUser;
+    		dispatch(updateUserDisplayName(user.displayName));
+		}, function(error) {
+    		console.log(error);
+		});
+	}
+}

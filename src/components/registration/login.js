@@ -1,15 +1,26 @@
-import React, { Component } from 'react';
+import { bindActionCreators } from 'redux'
+import React from 'react'
+import {connect} from 'react-redux'
+import { logIn } from '../../actions/index'
+import LoginForm from '../forms/login'
 
-export default class extends Component {
-    constructor(props) {
-        super(props);
-    }
+const Login = ({actions}) => {
 
-    render() {
-        return (
-            <div className="children">
-                <h1>Login</h1>
-            </div>
-        );
+    const handleSubmit = (values) => {
+        console.log(values);
+        var data = {
+            email: values.email,
+            password: values.password
+        }
+        actions.logIn(data);
     }
+    return (
+        <LoginForm onSubmit={handleSubmit} />
+    )
 }
+
+function mapDispatchToProps(dispatch) {
+  return {actions: bindActionCreators({ logIn }, dispatch)}
+}
+
+export default connect(null, mapDispatchToProps)(Login);
