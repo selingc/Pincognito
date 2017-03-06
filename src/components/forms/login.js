@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 
+//  same as the signup form - more comments there
+
 const LoginForm = (props) => {
   const { handleSubmit, pristine, reset, submitting } = props
   return (

@@ -1,3 +1,6 @@
+/*	actions are named here, might need to branch into a
+ *	new file when it gets full.
+ */
 const types = {
 	CREATE_BOARD: 'CREATE_BOARD',
 	FETCH_BOARDS: 'FETCH_BOARDS',

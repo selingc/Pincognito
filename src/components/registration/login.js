@@ -1,8 +1,10 @@
 import { bindActionCreators } from 'redux'
 import React from 'react'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import { logIn } from '../../actions/index'
 import LoginForm from '../forms/login'
+
+// basically the same as signup.js - more comments are in that file
 
 const Login = ({actions}) => {
 

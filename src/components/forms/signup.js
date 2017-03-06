@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 
+/*
+ *  reduxForm middleware. looks easy to use and handles state change automatically
+ *  should be very usefull when doing search since you can get each character
+ *  input individually from the store.
+ *  Haven't tried but I'm assuming you can add css styles to <Field>?
+ *  Prop consts are used for debugging if you take a look in the redux chrome addon.
+ *  Handling our dispatches to the store in a similiar fashion might be a good idea.
+ */
+
 const SignupForm = (props) => {
   const { handleSubmit, pristine, reset, submitting } = props
   return (

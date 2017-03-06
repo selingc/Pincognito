@@ -4,6 +4,14 @@ import config from '../constants/firebase_config'
 import router from 'react-router'
 import { browserHistory } from 'react-router'
 
+/*
+ *	This is the heart of (react redux thunk).
+ *	Board functions need to be rewritten with
+ *	immutability in mind. We'll hash this out
+ *	after we finalize the DB schema.
+ *
+ *	Will add more comments later.
+ */
 
 firebase.initializeApp(config);
 

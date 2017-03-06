@@ -4,6 +4,12 @@ import { logOff } from '../../actions/index'
 import { bindActionCreators } from 'redux'
 import React from 'react'
 
+/*
+ *	Navbar is bound to user state from the store, and dispatched actions.
+ *	if a user is logged in, he/she will have a username. This state check determins
+ *	which buttons to show in the header. (signup/login or logoff)
+ */
+
 const NavBar = ({user, actions}) => (
 	<div className="container">
 		<div className="nav-left">

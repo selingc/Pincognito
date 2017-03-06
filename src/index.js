@@ -1,16 +1,22 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory, IndexRoute } from 'react-router';
-import * as firebase from 'firebase';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { Router, Route, browserHistory, IndexRoute } from 'react-router'
+import { Provider } from 'react-redux'
+import store from './store/index'
+import Home from './components/pages/home'
+import Layout from './components/pages/layout'
+import Login from './components/registration/login'
+import Signup from './components/registration/signup'
+import Test from './components/pages/test'
 
-import {Provider} from 'react-redux';
-import store from './store/index.js';
-
-import Home from './components/pages/home.js';
-import Layout from './components/pages/layout.js';
-import Login from './components/registration/login.js';
-import Signup from './components/registration/signup.js';
-import Test from './components/pages/test.js';
+/*
+ *  index.js is the launchpad of our app, it looks for 'root' in the .html file and injects
+ *  itself into the browser through javascript.
+ *  Ideally this is the only place where we should explicitly call react's render function
+ *  The provider store gives access to all children  through the connect function.
+ *  Router history keeps track of history, and will also allows us to push to other pages
+ *  Router history will take some more work
+ */
 
 ReactDOM.render(
     <Provider store={store}>
