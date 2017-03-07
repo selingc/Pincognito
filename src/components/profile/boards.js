@@ -16,10 +16,21 @@ export default class extends Component {
         });
     }
 
+    createBoard(e){
+        e.preventDefault();
+
+        
+        firebase.database().ref("user-boards").child(this.props.username).set();
+    }
+
     render() {
         return (
             <div>
-                Show my boards
+                <form onSubmit={this.createBoard.bind(this)}>
+                    <input type="text" className="form-control" ref="name" placeholder="Board name"/>
+                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas"/>
+                    <button type="submit" className="btn btn-primary">Create board</button>
+                </form>
             </div>
         );
     }

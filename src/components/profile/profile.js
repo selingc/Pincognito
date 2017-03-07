@@ -25,7 +25,7 @@ export default class extends Component {
                 <h3>Your Boards</h3>
                 <Boards username={this.props.params.username}/>
                 <h3>Your Pins</h3>
-                <Boards username={this.props.params.username}/>
+                <Pins username={this.props.params.username}/>
             </div>
         );
     }
