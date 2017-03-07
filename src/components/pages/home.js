@@ -41,6 +41,7 @@ class Home extends Component {
     render() {
         return (
             <div className="children">
+<<<<<<< HEAD
                 <h1>Homepage</h1>
                 <form onSubmit={this.createBoard.bind(this)}>
                     <input type="text" className="form-control" ref="name" placeholder="Board Name"/>
@@ -49,6 +50,9 @@ class Home extends Component {
                 <ul>
                     {this.renderBoards()}
                 </ul>
+=======
+                <h1>Pinfeed</h1>
+>>>>>>> master
             </div>
         );
     }

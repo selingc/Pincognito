@@ -89,7 +89,7 @@ export function createUser(data){
 		firebase.auth().createUserWithEmailAndPassword(data.email, data.password).then(function(user) {
     		dispatch({type: actionTypes.CREATE_USER});
     		dispatch(updateUserDisplayName(data.displayName));
-    		browserHistory.push('/test');
+    		browserHistory.push('/');
 		}, function(error) {
     		console.log(error);
 		});
@@ -114,7 +114,7 @@ export function logIn(data){
     		console.log("export function login was run");
     		var user = firebase.auth().currentUser;
     		dispatch(updateUserDisplayName(user.displayName));
-    		browserHistory.push('/test');
+    		browserHistory.push('/');
 		}, function(error) {
     		console.log(error);
 		});

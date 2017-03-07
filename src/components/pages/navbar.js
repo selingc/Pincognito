@@ -13,7 +13,7 @@ import React from 'react'
 const NavBar = ({user, actions}) => (
 	<div className="container">
 		<div className="nav-left">
-			<Link to="/"><img width="55px" height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo.png?alt=media&token=18df34d5-0742-4464-98c5-76539c048e45"/></Link>
+			<Link to="/"><img height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo_full.png?alt=media&token=0073dc3b-6b95-42e4-906b-4daef8894419"/></Link>
 		</div>
 			<nav className="nav-right">
 				{user.displayName == null ? 
@@ -23,6 +23,7 @@ const NavBar = ({user, actions}) => (
 					</ul>)
 					:
 					(<ul>
+						<li><Link to={"/" + user.displayName}>Profile</Link></li>
 						<li><Link to="/" onClick={actions.logOff}>Logout</Link></li>
 					</ul>)
 				}
@@ -42,7 +43,7 @@ function mapStateToProps(state){
 }
 
 function mapDispatchToProps(dispatch) {
-  return {actions: bindActionCreators({logOff}, dispatch) }
+  	return {actions: bindActionCreators({logOff}, dispatch) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

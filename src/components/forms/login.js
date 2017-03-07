@@ -14,7 +14,7 @@ const LoginForm = (props) => {
                         <div className="form-group">
                             <Field name="email" component="input" type="email" placeholder="Email" className="form-control" /><br />
                             <Field name="password" component="input" type="password" placeholder="Password" className="form-control" /><br />
-                        <button className="btn btn-primary">Sign Up</button>
+                            <button className="btn btn-primary">Sign Up</button>
                         </div>
                     </form>
                 </div>

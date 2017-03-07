@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom'
 import { Router, Route, browserHistory, IndexRoute } from 'react-router'
 import { Provider } from 'react-redux'
 import store from './store/index'
-import Home from './components/pages/home'
-import Layout from './components/pages/layout'
-import Login from './components/registration/login'
-import Signup from './components/registration/signup'
-import Test from './components/pages/test'
+import Home from './components/pages/home.js';
+import Layout from './components/pages/layout.js';
+import Login from './components/registration/login.js';
+import Signup from './components/registration/signup.js';
+import Profile from './components/profile/profile.js';
 
+<<<<<<< HEAD
 /*
  *  index.js is the launchpad of our app, it looks for 'root' in the .html file and injects
  *  itself into the browser through javascript.
@@ -22,11 +23,11 @@ ReactDOM.render(
     <Provider store={store}>
         <Router history={browserHistory}>
           	<Route path="/" component={Layout}>
-            	<IndexRoute component={Home}/>
-                <Route path="test" component={Test}/>
-                <Route path="login" component={Login}/>
-                <Route path="signup" component={Signup}/>
-          	</Route>
+                <IndexRoute component={Home}/>
+                <Route path="/login" component={Login}/>
+                <Route path="/signup" component={Signup}/>
+                <Route path="/:username" component={Profile}/>
+            </Route>
         </Router>
     </Provider>,
     document.getElementById('root')

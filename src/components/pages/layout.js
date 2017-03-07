@@ -1,5 +1,5 @@
-import React, { PropTypes } from 'react'
-import NavBar from './navbar'
+import React, { PropTypes } from 'react';
+import NavBar from './navbar';
 
 /*	this file is usually named App in other projects. 
  *	Serves as the "entrypoint" to the actual application.
@@ -28,6 +28,7 @@ const Layout = ({children}) => {
 	      	</div>
 	    )
 }
+
 Layout.propTypes = {
   children: PropTypes.node.isRequired
 }
