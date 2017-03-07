@@ -7,6 +7,7 @@ import Home from './components/pages/home.js';
 import Layout from './components/pages/layout.js';
 import Login from './components/registration/login.js';
 import Signup from './components/registration/signup.js';
+import Profile from './components/profile/profile.js';
 
 var config = {
     apiKey: "AIzaSyDRtAfAp5xUug2tTBZTDwtSLnPzE3Oujn4",
@@ -24,6 +25,7 @@ ReactDOM.render(
         	<IndexRoute component={Home}/>
             <Route path="/login" component={Login}/>
             <Route path="/signup" component={Signup}/>
+            <Route path="/:username" component={Profile}/>
       	</Route>
     </Router>,
     document.getElementById('root')

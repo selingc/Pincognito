@@ -11,15 +11,7 @@ export default class extends Component {
     componentWillMount(){
         const that = this;
         this.unsubscribe = firebase.auth().onAuthStateChanged(function(user){
-            if(user){
-                firebase.database().ref("users").child(that.refs.username.value).set({
-                    email: that.refs.email.value,
-                    uid: user.uid,
-                    firstName: that.refs.firstName.value,
-                    lastName: that.refs.lastName.value,
-                    birthdate: that.refs.birthdate.value
-                });
-
+            if(user){ //if user is not null, it means we have successfully created the user
                 browserHistory.push('/');
             }
         });
@@ -29,11 +21,24 @@ export default class extends Component {
         e.preventDefault();
         const that = this;
         if(/^\w+$/.test(this.refs.username.value)){
-            firebase.database().ref("users").child(this.refs.username.value).once("value", function(snap){
+            firebase.database().ref("users").child(this.refs.username.value.toLowerCase()).once("value", function(snap){
                 if(snap.exists()){
                     that.setState({error: "The username is already taken."});
                 }else{
-                    firebase.auth().createUserWithEmailAndPassword(that.refs.email.value, that.refs.password.value).catch(function(error){
+                    firebase.auth().createUserWithEmailAndPassword(that.refs.email.value, that.refs.password.value).then(function(user){
+                        firebase.database().ref("users").child(that.refs.username.value.toLowerCase()).set({
+                            email: that.refs.email.value.toLowerCase(),
+                            uid: user.uid,
+                            firstName: that.refs.firstName.value,
+                            lastName: that.refs.lastName.value,
+                            birthdate: that.refs.birthdate.value
+                        });
+
+                        user.updateProfile({
+                            displayName: that.refs.username.value.toLowerCase()
+                        });
+
+                    }).catch(function(error){
                         that.setState({error: error.message});
                     });
                 }

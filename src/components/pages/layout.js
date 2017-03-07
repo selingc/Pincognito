@@ -17,7 +17,7 @@ class Layout extends Component{
 		//checks to see if user is logged in or not
 		this.unsubscribe = firebase.auth().onAuthStateChanged(function(user){
 			that.setState({isLoggedIn: user !== null}); //if user is null, user isn't logged in, else user is logged in
-			that.setState({uid: user ? user.uid : null}); //set uid if user is logged in
+			that.setState({username: user ? user.displayName : null}); //set username if user is logged in
 		});
 	}
 
@@ -38,6 +38,7 @@ class Layout extends Component{
   			if(that.state.isLoggedIn){
   				return (
   					<ul>
+  						<li><Link to={"/" + that.state.username}>Profile</Link></li>
 						<li><Link to="/" onClick={that.handleLogOut}>Logout</Link></li>
 					</ul>
   				);
@@ -57,7 +58,7 @@ class Layout extends Component{
 				<header>
 					<div className="container">
 						<div className="nav-left">
-							<Link to="/"><img width="55px" height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo.png?alt=media&token=18df34d5-0742-4464-98c5-76539c048e45"/></Link>
+							<Link to="/"><img height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo_full.png?alt=media&token=0073dc3b-6b95-42e4-906b-4daef8894419"/></Link>
 						</div>
 						<nav className="nav-right">
 							{getLinks()}
