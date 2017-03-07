@@ -27819,15 +27819,6 @@
 									{ to: '/login' },
 									'Login'
 								)
-							),
-							_react2.default.createElement(
-								'li',
-								null,
-								_react2.default.createElement(
-									_reactRouter.Link,
-									{ to: '/signup' },
-									'Signup'
-								)
 							)
 						);
 					}
@@ -27931,9 +27922,21 @@
 	        value: function handleLogIn(e) {
 	            var that = this;
 	            e.preventDefault();
-	            firebase.auth().signInWithEmailAndPassword(this.refs.email.value, this.refs.password.value).catch(function (error) {
-	                that.setState({ error: error.message });
-	            });
+	            if (this.refs.email.value.includes("@")) {
+	                firebase.auth().signInWithEmailAndPassword(this.refs.email.value, this.refs.password.value).catch(function (error) {
+	                    that.setState({ error: error.message });
+	                });
+	            } else {
+	                firebase.database().ref("users").child(this.refs.email.value.toLowerCase()).once("value", function (snap) {
+	                    if (snap.exists()) {
+	                        firebase.auth().signInWithEmailAndPassword(snap.val().email, that.refs.password.value).catch(function (error) {
+	                            that.setState({ error: error.message });
+	                        });
+	                    } else {
+	                        that.setState({ error: "Username does not exist." });
+	                    }
+	                });
+	            }
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -27980,7 +27983,7 @@
 	                        _react2.default.createElement(
 	                            'div',
 	                            { className: 'form-group' },
-	                            _react2.default.createElement('input', { type: 'email', placeholder: 'Email Address', id: 'email', ref: 'email', className: 'form-control' }),
+	                            _react2.default.createElement('input', { type: 'text', placeholder: 'Username or Email Address', id: 'email', ref: 'email', className: 'form-control' }),
 	                            _react2.default.createElement('br', null),
 	                            _react2.default.createElement('input', { type: 'password', placeholder: 'Password', ref: 'password', id: 'passowrd', className: 'form-control' }),
 	                            _react2.default.createElement('br', null),
@@ -27991,6 +27994,13 @@
 	                                    'button',
 	                                    { className: 'btn btn-primary' },
 	                                    'Login'
+	                                ),
+	                                _react2.default.createElement('br', null),
+	                                'Don\'t have an account? ',
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: '/signup' },
+	                                    'Sign up!'
 	                                )
 	                            )
 	                        )
@@ -28180,6 +28190,13 @@
 	                                    'button',
 	                                    { className: 'btn btn-primary' },
 	                                    'Create Account'
+	                                ),
+	                                _react2.default.createElement('br', null),
+	                                'Have an account? ',
+	                                _react2.default.createElement(
+	                                    _reactRouter.Link,
+	                                    { to: '/signup' },
+	                                    'Log in!'
 	                                )
 	                            )
 	                        )

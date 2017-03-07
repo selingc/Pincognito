@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import {browserHistory} from 'react-router';
+import {browserHistory, Link} from 'react-router';
 
 export default class extends Component {
     constructor(props) {
@@ -20,9 +20,23 @@ export default class extends Component {
     handleLogIn(e){
         const that = this;
         e.preventDefault();
-        firebase.auth().signInWithEmailAndPassword(this.refs.email.value, this.refs.password.value).catch(function(error){
-            that.setState({error: error.message});
-        });
+        if(this.refs.email.value.includes("@")){
+            firebase.auth().signInWithEmailAndPassword(this.refs.email.value, this.refs.password.value).catch(function(error){
+                that.setState({error: error.message});
+            });
+        }else{
+            firebase.database().ref("users").child(this.refs.email.value.toLowerCase()).once("value", function(snap){
+                if(snap.exists()){
+                    firebase.auth().signInWithEmailAndPassword(snap.val().email, that.refs.password.value).catch(function(error){
+                        that.setState({error: error.message});
+                    });
+                }else{
+                    that.setState({error: "Username does not exist."});
+                }
+            });
+        }
+
+        
 
     }
 
@@ -48,9 +62,12 @@ export default class extends Component {
                     <hr />
                     <form onSubmit={this.handleLogIn.bind(this)}>
                         <div className="form-group">
-                            <input type="email" placeholder="Email Address" id="email" ref="email" className="form-control" /><br />
+                            <input type="text" placeholder="Username or Email Address" id="email" ref="email" className="form-control" /><br />
                             <input type="password" placeholder="Password" ref="password" id="passowrd" className="form-control" /><br />
-                        <center><button className="btn btn-primary">Login</button></center>
+                        <center>
+                            <button className="btn btn-primary">Login</button><br/>
+                            Don't have an account? <Link to="/signup">Sign up!</Link>
+                        </center>
                         </div>
                     </form>
                 </div>

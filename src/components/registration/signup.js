@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import * as firebase from 'firebase';
-import {browserHistory} from 'react-router';
+import {browserHistory, Link} from 'react-router';
 
 export default class extends Component {
     constructor(props){
@@ -86,7 +86,10 @@ export default class extends Component {
                         	<label id="birthDate">Date of Birth</label>
                             <input type="date" id="birthDate" ref="birthdate" className="form-control" /><br />
 
-        					<center><button className="btn btn-primary">Create Account</button></center>
+        					<center>
+                                <button className="btn btn-primary">Create Account</button><br/>
+                                Have an account? <Link to="/signup">Log in!</Link>
+                            </center>
     					</div>
   					</form>
   				</div>
