@@ -9,7 +9,6 @@ import Login from './components/registration/login.js';
 import Signup from './components/registration/signup.js';
 import Profile from './components/profile/profile.js';
 
-<<<<<<< HEAD
 /*
  *  index.js is the launchpad of our app, it looks for 'root' in the .html file and injects
  *  itself into the browser through javascript.

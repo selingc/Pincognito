@@ -10,24 +10,24 @@ import actionTypes from '../actions/types.js';
  */
 
 const initialState = {
-   displayName: null,
-   photoURL: "http://"
+   username: null,
+   error: ""
 }
 
 export default function(state=initialState, action){
 	switch(action.type){
 		case actionTypes.CREATE_USER:
-			return state;
-		case actionTypes.UPDATE_USER_DISPLAY_NAME:
-			return Object.assign({}, state, {displayName: action.payload});
+			return Object.assign({}, state, {error: ""});
+		case actionTypes.UPDATE_USER_STATE:
+			return Object.assign({}, state, (action.payload ? {username: action.payload.displayName} : initialState));
 		case actionTypes.UPDATE_USER_PHOTOURL:
 			return Object.assign({}, state, {photoURL: action.payload});
-		case actionTypes.GET_CURRENT_USER:
-			return state;
 		case actionTypes.LOGIN_USER:
-			return state;
+			return Object.assign({}, state, {error: ""});
 		case actionTypes.LOGOFF_USER:
-			return Object.assign({}, state, initialState);
+			return state;
+		case actionTypes.USER_ERROR:
+			return Object.assign({}, state, {error: action.payload});
 	}
 	return state;
 }

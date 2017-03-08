@@ -1,6 +1,6 @@
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
-import { logOff } from '../../actions/index'
+import { logOff, fetchUser } from '../../actions/index'
 import { bindActionCreators } from 'redux'
 import React from 'react'
 
@@ -10,40 +10,40 @@ import React from 'react'
  *	which buttons to show in the header. (signup/login or logoff)
  */
 
-const NavBar = ({user, actions}) => (
-	<div className="container">
+const NavBar = ({user, actions}) => {
+	return(
+		<div className="container">
 		<div className="nav-left">
-			<Link to="/"><img height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/logo_full.png?alt=media&token=0073dc3b-6b95-42e4-906b-4daef8894419"/></Link>
+			<Link to="/"><img height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_w.png?alt=media&token=9a73dc91-e40d-47c3-953b-c7c569c19918"/></Link>
 		</div>
 			<nav className="nav-right">
-				{user.displayName == null ? 
-					(<ul>
+				{user.username == null ? 
+					(<ul id="menu">
 						<li><Link to="/signup">Signup</Link></li>
 						<li><Link to="/login">Login</Link></li>
 					</ul>)
 					:
-					(<ul>
-						<li><Link to={"/" + user.displayName}>Profile</Link></li>
+					(<ul id="menu">
+						<li><Link to={"/" + user.username}>Profile</Link></li>
 						<li><Link to="/" onClick={actions.logOff}>Logout</Link></li>
 					</ul>)
 				}
 			</nav>
 		</div>
-	);
+	)
+}
 
 
 function mapStateToProps(state){
-	//console.log(state.user.photoURL);
     return {
     	user: {
-    		displayName: state.user.displayName,
-        	photoURL: state.user.photoURL
+    		username: state.user.username
         }
-    };
+    }
 }
 
 function mapDispatchToProps(dispatch) {
-  	return {actions: bindActionCreators({logOff}, dispatch) }
+  	return {actions: bindActionCreators({logOff, fetchUser}, dispatch) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);
