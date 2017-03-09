@@ -63,12 +63,12 @@ export function stopFetchingBoards(){
 
 export function fetchUser(){
 	return dispatch => {
-		firebase.auth().onAuthStateChanged(function(user){
-			dispatch({
-				type: actionTypes.UPDATE_USER_STATE,
-				payload: user
-			});
-		});
+		//firebase.auth().onAuthStateChanged(function(user){
+			//dispatch({
+			//	type: actionTypes.UPDATE_USER_STATE,
+			//	payload: user
+			//});
+		//});
 	}
 }
 
@@ -89,8 +89,10 @@ export function createUser(data){
                         });
 
                         firebase.auth().currentUser.updateProfile({
-							displayName: username
+							displayName: data.username
 						});
+
+dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: data.username});
 
 						dispatch({type: actionTypes.CREATE_USER});
                         browserHistory.push("/");
@@ -121,7 +123,10 @@ export function logIn(data){
 		if(data.email.includes("@")){
             firebase.auth().signInWithEmailAndPassword(data.email, data.password).then(function(){
             	dispatch({type: actionTypes.LOGIN_USER});
-            	browserHistory.push('/');
+            	var user = firebase.auth().currentUser;
+
+dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: user.displayName});
+            	browserHistory.push('/' + user.displayName);
             }).catch(function(error){
                 dispatch({type: actionTypes.USER_ERROR, payload: error.message});
             });

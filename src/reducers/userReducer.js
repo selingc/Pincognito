@@ -19,13 +19,15 @@ export default function(state=initialState, action){
 		case actionTypes.CREATE_USER:
 			return Object.assign({}, state, {error: ""});
 		case actionTypes.UPDATE_USER_STATE:
-			return Object.assign({}, state, (action.payload ? {username: action.payload.displayName} : initialState));
+			return Object.assign({}, state, (action.payload ? {username: action.payload} : initialState));
 		case actionTypes.UPDATE_USER_PHOTOURL:
 			return Object.assign({}, state, {photoURL: action.payload});
 		case actionTypes.LOGIN_USER:
 			return Object.assign({}, state, {error: ""});
 		case actionTypes.LOGOFF_USER:
-			return state;
+			return Object.assign({}, state, initialState);
+		case actionTypes.UPDATE_USER_DISPLAY_NAME:
+			return Object.assign({}, state, {username: action.payload});
 		case actionTypes.USER_ERROR:
 			return Object.assign({}, state, {error: action.payload});
 	}

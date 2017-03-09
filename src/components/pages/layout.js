@@ -5,11 +5,11 @@ import NavBar from './navbar';
 
 class Layout extends Component{
 	componentWillMount(){
-		this.props.fetchUser();
+		//this.props.fetchUser();
 	}
 
 	componentWillUnmount(){
-		this.props.stopFetchingUser();
+		//this.props.stopFetchingUser();
 	}
 
   	render(){
