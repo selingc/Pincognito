@@ -96,14 +96,13 @@ export function createUser(data){
                             birthdate: data.birthdate
                         });
 
-                        firebase.auth().currentUser.updateProfile({
-							displayName: data.username
-						});
+                        firebase.auth().currentUser.updateProfile({displayName: data.username}).then(function(){
+                        	browserHistory.push("/" + data.username);
+                        });
 
-dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: data.username});
+//dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: data.username});
 
-						dispatch({type: actionTypes.CREATE_USER});
-                        browserHistory.push("/");
+//						dispatch({type: actionTypes.CREATE_USER});
 
                     }).catch(function(error){
                     	dispatch({type: actionTypes.USER_ERROR, payload: error.message});
@@ -143,7 +142,7 @@ dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: user.displayName})
                 if(snap.exists()){
                     firebase.auth().signInWithEmailAndPassword(snap.val().email, data.password).then(function(){
                     	dispatch({type: actionTypes.LOGIN_USER});
-						browserHistory.push('/');
+						browserHistory.push('/' + user.displayName);
                     }).catch(function(error){
                         dispatch({type: actionTypes.USER_ERROR, payload: error.message});
                     });
