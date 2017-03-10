@@ -27,9 +27,10 @@ export default class extends Component {
         return (
             <div>
                 <form onSubmit={this.createBoard.bind(this)}>
-                    <input type="text" className="form-control" ref="name" placeholder="Board name"/>
-                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas"/>
-                    <button type="submit" className="btn btn-primary">Create board</button>
+                    <input type="text" className="form-control" ref="BoardName" placeholder="Board name"/> <br />
+                    <input type="text" className="form-control" ref="BoardDescription" placeholder="Description"/> <br />
+                    <input type="text" className="form-control" ref="BoardTags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
+                    <button type="submit" className="btn btn-danger">Create Board</button>
                 </form>
             </div>
         );

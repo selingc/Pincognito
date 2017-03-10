@@ -24,7 +24,16 @@ header a{
 	font-size: 16px;
 }
 
-header #menu a:hover {
+.activeNav:hover,
+.activeNav:focus,
+.active {
+	color: white;
+	text-decoration: none;
+    border-bottom: 3px solid white;
+    padding-bottom: 18px;
+}
+
+#logout:hover {
 	color: white;
 	text-decoration: none;
     border-bottom: 3px solid white;
@@ -62,4 +71,9 @@ hr {
 #spaceTdRight {
 	width: 50%;
 	padding-left: 10px;
+}
+
+/*PIN PAGE*/
+#dropdown {
+	width: 30%;
 }

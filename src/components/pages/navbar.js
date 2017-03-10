@@ -19,13 +19,13 @@ const NavBar = ({user, actions}) => {
 			<nav className="nav-right">
 				{user.username == null ? 
 					(<ul id="menu">
-						<li><Link to="/signup">Signup</Link></li>
-						<li><Link to="/login">Login</Link></li>
+						<li><Link to="/signup" activeClassName="active" className="activeNav">Signup</Link></li>
+						<li><Link to="/login" activeClassName="active" className="activeNav">Login</Link></li>
 					</ul>)
 					:
 					(<ul id="menu">
-						<li><Link to={"/" + user.username}>Profile</Link></li>
-						<li><Link to="/" onClick={actions.logOff}>Logout</Link></li>
+						<li><Link to={"/" + user.username} activeClassName="active" className="activeNav">Profile</Link></li>
+						<li><Link to="/" onClick={actions.logOff} id="lougout">Logout</Link></li>
 					</ul>)
 				}
 			</nav>

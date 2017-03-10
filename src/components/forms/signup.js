@@ -38,7 +38,7 @@ const SignupForm = (props) => {
                         <Field name="birthdate" component="input" type="date" className="form-control" /><br />
 
                         <center>
-                            <button type="submit" className="btn btn-primary">Create Account</button><br/>
+                            <button type="submit" className="btn btn-danger">Create Account</button><br/>
                             Have an account? <Link to="/login">Log in!</Link>
                         </center>
                     </div>

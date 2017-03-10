@@ -19,7 +19,15 @@ export default class extends Component {
     render() {
         return (
             <div>
-                Show my pins
+                <input type="file" className="form-control-file" id="image" /> <br />
+                <select className="form-control" id="dropdown">
+                    <option>Board 1</option>
+                    <option>Board 2</option>
+                </select> <br />
+                <input type="text" className="form-control" ref="PinName" placeholder="Pin name" /> <br />
+                <input type="text" className="form-control description" ref="PinDescription" placeholder="Description"/> <br />
+                <button type="submit" className="btn btn-danger">Create Pin</button>
+
             </div>
         );
     }

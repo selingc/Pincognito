@@ -18,7 +18,7 @@ const LoginForm = (props) => {
                         <Field name="email" component="input" type="text" placeholder="Username or Email Address" className="form-control" /><br />
                         <Field name="password" component="input" type="password" placeholder="Password" className="form-control" /><br />
                     <center>
-                        <button className="btn btn-primary">Login</button><br/>
+                        <button className="btn btn-danger">Login</button><br/>
                         Don't have an account? <Link to="/signup">Sign up!</Link>
                     </center>
                     </div>
