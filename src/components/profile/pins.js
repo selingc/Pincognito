@@ -27,7 +27,6 @@ export default class extends Component {
                 <input type="text" className="form-control" ref="PinName" placeholder="Pin name" /> <br />
                 <input type="text" className="form-control description" ref="PinDescription" placeholder="Description"/> <br />
                 <button type="submit" className="btn btn-danger">Create Pin</button>
-
             </div>
         );
     }
