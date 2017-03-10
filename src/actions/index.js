@@ -142,7 +142,7 @@ dispatch({type: actionTypes.UPDATE_USER_DISPLAY_NAME,payload: user.displayName})
                 if(snap.exists()){
                     firebase.auth().signInWithEmailAndPassword(snap.val().email, data.password).then(function(){
                     	dispatch({type: actionTypes.LOGIN_USER});
-						browserHistory.push('/' + user.displayName);
+						browserHistory.push('/' + data.email);
                     }).catch(function(error){
                         dispatch({type: actionTypes.USER_ERROR, payload: error.message});
                     });
