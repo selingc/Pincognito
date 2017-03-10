@@ -1,7 +1,9 @@
 import {compose, createStore, applyMiddleware} from 'redux';
 import reduxThunk from 'redux-thunk';
 import reducers from '../reducers/index.js';
-import {persistStore, autoRehydrate} from 'redux-persist'
+import config from '../constants/firebase_config'
+import {reduxReactFirebase } from 'redux-react-firebase'
+//import {persistStore, autoRehydrate} from 'redux-persist'
 
 /*	This is the store that is created by redux and passed through by the provider
  *	windowreduxdevltools is a chrome extension that allows you to view the store
@@ -12,15 +14,32 @@ import {persistStore, autoRehydrate} from 'redux-persist'
  *	the state back over to the app.
  */
 
+/*const createStoreWithFirebase = compose(
+    reduxReactFirebase(config),
+)(createStore)
+
+
+const store = createStoreWithFirebase(
+	reducers,
+	initialState,
+	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+	applyMiddleware(reduxThunk)
+);*/
+
+//import firebase from 'firebase'
+//firebase.initializeApp(config);
+
 const store = createStore(
 	reducers, 
 	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+	//applyMiddleware(reduxThunk)
 	compose(
     applyMiddleware(reduxThunk),
-    autoRehydrate()
+    reduxReactFirebase(config)
+    //autoRehydrate()
   )
 );
 
-persistStore(store)
+//persistStore(store)
 
 export default store;

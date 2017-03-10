@@ -1,6 +1,5 @@
 import * as firebase from 'firebase'
 import actionTypes from './types'
-import config from '../constants/firebase_config'
 import router from 'react-router'
 import { browserHistory } from 'react-router'
 
@@ -13,7 +12,6 @@ import { browserHistory } from 'react-router'
  *	Will add more comments later.
  */
 
- firebase.initializeApp(config);
 
 const boardsRef = firebase.database().ref('boards');
 
@@ -57,6 +55,16 @@ export function stopFetchingBoards(){
 		dispatch({
 			type: actionTypes.STOP_BOARD_FETCH,
 			payload: [] //no need for empty payload, should clear array in the reducer.
+		});
+	}
+}
+
+export function updateUserDisplayName(name){
+	return dispatch => {
+		console.log("123123213");
+		dispatch({
+			type: actionTypes.UPDATE_USER_DISPLAY_NAME,
+			payload: name
 		});
 	}
 }

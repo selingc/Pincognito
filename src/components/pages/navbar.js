@@ -37,7 +37,7 @@ const NavBar = ({user, actions}) => {
 function mapStateToProps(state){
     return {
     	user: {
-    		username: state.user.username
+    		username: (state.firebase.get('auth') == undefined ? undefined : state.firebase.get('auth').displayName)
         }
     }
 }
