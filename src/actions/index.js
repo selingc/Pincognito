@@ -15,8 +15,6 @@ import { browserHistory } from 'react-router'
 
 firebase.initializeApp(config);
 
-var firebaseUser = null;
-
 export function sayHello(){
 	return dispatch => {
 		dispatch({
@@ -26,56 +24,9 @@ export function sayHello(){
 	}
 }
 
-export function fetchUserBoards(){
-	return dispatch =>{
-		if(firebaseUser){
-			firebase.database().ref("users/" + firebaseUser.displayName + "/ownedBoards").orderByValue().equalTo(true).on("child_added", function(snap){
-				firebase.data().ref("boards").child(snap.ref.key).on("child_added", function(snap){
-					dispatch({
-						type: actionTypes.FETCH_USER_BOARDS,
-						payload: snap.val()
-					});
-				});
-			});
-		}
-	}
-}
-
-export function createUserBoard(data){
-	return dispatch =>{
-		var key = firebase.database().ref("boards").push().key;
-		firebase.database().ref("boards").child(key).set(data);
-		firebase.database().ref("users/" + firebaseUser.displayName + "/ownedBoards").child(key).set(true);
-
-		dispatch({
-			type: actionTypes.CREATE_USER_BOARD
-		})
-	}
-}
-
-export function stopFetchingUserBoards(){
-	return dispatch =>{
-		firebase.database().ref("user-boards").child(firebaseUser.uid).off();
-		dispatch({
-			type: actionTypes.STOP_FETCHING_USER_BOARDS
-		});
-	}
-}
-
-export function stopFetchingBoards(){
-	return dispatch =>{
-		firebase.database().ref("").off();
-		dispatch({
-			type: actionTypes.STOP_BOARD_FETCH,
-			payload: [] //no need for empty payload, should clear array in the reducer.
-		});
-	}
-}
-
 export function fetchUser(){
 	return dispatch => {
 		firebase.auth().onAuthStateChanged(function(user){
-			firebaseUser = user;
 			dispatch({
 				type: actionTypes.UPDATE_USER_STATE,
 				payload: user
@@ -152,5 +103,77 @@ export function logIn(data){
                 }
             });
         }
+	}
+}
+
+export function fetchUserBoards(username){
+	return dispatch =>{
+		firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function(snap){
+			firebase.database().ref("boards").child(snap.ref.key).once("value", function(snap){
+				var data = snap.val();
+				data.id = snap.ref.key;
+				dispatch({
+					type: actionTypes.FETCH_USER_BOARDS,
+					payload: data
+				});
+			});
+		});
+	}
+}
+
+export function createUserBoard(username, data){
+	return dispatch =>{
+		var key = firebase.database().ref("boards").push().key;
+		data.timestamp = firebase.database.ServerValue.TIMESTAMP;
+		firebase.database().ref("boards").child(key).set(data);
+		firebase.database().ref("users/" + username + "/boards").child(key).set(true);
+
+		dispatch({
+			type: actionTypes.CREATE_USER_BOARD
+		})
+	}
+}
+
+export function stopFetchingUserBoards(username){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").off();
+		dispatch({
+			type: actionTypes.STOP_FETCHING_USER_BOARDS
+		});
+	}
+}
+
+export function fetchBoardPins(boardID){
+	return dispatch =>{
+		firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+				dispatch({
+					type: actionTypes.FETCH_BOARD_PINS,
+					payload: snap.val()
+				});
+			});
+		});
+	}
+}
+
+export function createBoardPin(boardID, data){
+	return dispatch =>{
+		var key = firebase.database().ref("pins").push().key;
+		data.timestamp = firebase.database.ServerValue.TIMESTAMP;
+		firebase.database().ref("pins").child(key).set(data);
+		firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
+
+		dispatch({
+			type: actionTypes.CREATE_BOARD_PIN
+		})
+	}
+}
+
+export function stopFetchingBoardPins(boardID){
+	return dispatch =>{
+		firebase.database().ref("boards/" + boardID+ "/pins").off();
+		dispatch({
+			type: actionTypes.STOP_FETCHING_BOARD_PINS
+		});
 	}
 }

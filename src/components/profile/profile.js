@@ -1,27 +1,22 @@
 import React, { Component } from 'react';
-import * as firebase from 'firebase';
+import {connect} from 'react-redux';
+import * as actions from '../../actions/index';
 import Boards from "./boards.js";
 import Pins from "./pins.js";
 
-export default class extends Component {
-    constructor(props){
-        super(props);
-
-        this.state = {name: null}
+class Profile extends Component {
+    componentWillMount(){
+        this.props.fetchUserBoards(this.props.params.username);
     }
 
-    componentWillMount(){
-        const that = this;
-
-        firebase.database().ref("users").child(this.props.params.username).once("value", function(snap){
-            that.setState({name: snap.val().firstName + " " + snap.val().lastName});
-        });
+    componentWillUnmount(){
+        this.props.stopFetchingUserBoards(this.props.params.username);
     }
 
     render() {
         return (
             <div className="children">
-                <h1>{this.state.name}</h1>
+                <h1>@{this.props.params.username}</h1>
                 <h3>Your Boards</h3>
                 <Boards username={this.props.params.username}/>
                 <h3>Your Pins</h3>
@@ -30,3 +25,5 @@ export default class extends Component {
         );
     }
 }
+
+export default connect(null, actions)(Profile);

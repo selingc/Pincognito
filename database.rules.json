@@ -1,6 +1,13 @@
 {
   "rules": {
     ".read": "true",
-    ".write": "auth != null"
+    ".write": "auth != null",
+    "users":{
+    	"$username":{
+    		"boards":{
+    			".indexOn": ".value"
+    		}
+    	}
+    }
   }
 }

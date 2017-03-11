@@ -1,33 +1,49 @@
 import React, { Component } from 'react';
-import * as firebase from 'firebase';
+import {connect} from 'react-redux';
+import * as actions from '../../actions/index';
 
-export default class extends Component {
-    constructor(props){
-        super(props);
+class Pins extends Component {
+    createPin(e){
+        e.preventDefault();
 
-        this.state = {pins: []};
-    }
+        var data = {
+            name: this.refs.name.value,
+            description: this.refs.description.value,
+            tags: this.refs.tags.value
+        }
 
-    componentWillMount(){
-        const that = this;
+        this.props.createBoardPin(this.refs.board.value, data);
 
-        firebase.database().ref("user-pins").child(this.props.username).on("child_added", function(snap){
-            that.setState({pins: this.state.pins.concat(snap.val())});
-        });
+        this.refs.name.value = "";
+        this.refs.description.value = "";
+        this.refs.tags.value = "";
     }
 
     render() {
         return (
             <div>
-                <input type="file" className="form-control-file" id="image" /> <br />
-                <select className="form-control" id="dropdown">
-                    <option>Board 1</option>
-                    <option>Board 2</option>
-                </select> <br />
-                <input type="text" className="form-control" ref="PinName" placeholder="Pin name" /> <br />
-                <input type="text" className="form-control description" ref="PinDescription" placeholder="Description"/> <br />
-                <button type="submit" className="btn btn-danger">Create Pin</button>
+                <form onSubmit={this.createPin.bind(this)}>
+                    <input type="file" className="form-control-file" id="image" /> <br />
+                    <select className="form-control" ref="board" id="dropdown" defaultValue="none">
+                        <option value="none" disabled>--Select a Board--</option>
+                        {this.props.userBoards.map((board, index) => (
+                            <option value={board.id} key={index}>{board.name}</option>
+                        ))}
+                    </select><br />
+                    <input type="text" className="form-control" ref="name" placeholder="Pin name" /> <br />
+                    <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
+                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
+                    <button type="submit" className="btn btn-danger">Create Pin</button>
+                </form>
             </div>
         );
     }
 }
+
+function mapStateToProps(state){
+    return{
+        userBoards: state.userBoards
+    }
+}
+
+export default connect(mapStateToProps, actions)(Pins)
