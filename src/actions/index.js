@@ -13,47 +13,58 @@ import { browserHistory } from 'react-router'
  *	Will add more comments later.
  */
 
- firebase.initializeApp(config);
+firebase.initializeApp(config);
 
-const boardsRef = firebase.database().ref('boards');
+var firebaseUser = null;
 
-export function createBoard(board){
+export function sayHello(){
 	return dispatch => {
-		const key = boardsRef.push().key;
-		boardsRef.child(key).set(board);
 		dispatch({
-			type: actionTypes.CREATE_BOARD
+			type: actionTypes.SAY_HELLO,
+			payload: "Hello"
 		});
 	}
 }
 
-export function fetchBoards(){
+export function fetchUserBoards(){
 	return dispatch =>{
-		boardsRef.on('child_added', function(snap){
-			const data = snap.val();
-			data.id = snap.ref.key;
-			dispatch({
-				type: actionTypes.FETCH_BOARDS,
-				payload: data
+		if(firebaseUser){
+			firebase.database().ref("users/" + firebaseUser.displayName + "/ownedBoards").orderByValue().equalTo(true).on("child_added", function(snap){
+				firebase.data().ref("boards").child(snap.ref.key).on("child_added", function(snap){
+					dispatch({
+						type: actionTypes.FETCH_USER_BOARDS,
+						payload: snap.val()
+					});
+				});
 			});
-		});
+		}
 	}
 }
 
-export function deleteBoard(id){
+export function createUserBoard(data){
 	return dispatch =>{
-		boardsRef.child(id).remove();
+		var key = firebase.database().ref("boards").push().key;
+		firebase.database().ref("boards").child(key).set(data);
+		firebase.database().ref("users/" + firebaseUser.displayName + "/ownedBoards").child(key).set(true);
+
 		dispatch({
-			type: actionTypes.DELETE_BOARD,
-			payload: id
-		});
+			type: actionTypes.CREATE_USER_BOARD
+		})
 	}
 }
 
+export function stopFetchingUserBoards(){
+	return dispatch =>{
+		firebase.database().ref("user-boards").child(firebaseUser.uid).off();
+		dispatch({
+			type: actionTypes.STOP_FETCHING_USER_BOARDS
+		});
+	}
+}
 
 export function stopFetchingBoards(){
 	return dispatch =>{
-		boardsRef.off();
+		firebase.database().ref("").off();
 		dispatch({
 			type: actionTypes.STOP_BOARD_FETCH,
 			payload: [] //no need for empty payload, should clear array in the reducer.
@@ -64,6 +75,7 @@ export function stopFetchingBoards(){
 export function fetchUser(){
 	return dispatch => {
 		firebase.auth().onAuthStateChanged(function(user){
+			firebaseUser = user;
 			dispatch({
 				type: actionTypes.UPDATE_USER_STATE,
 				payload: user
@@ -110,6 +122,7 @@ export function logOff(){
 	return dispatch => {
 		firebase.auth().signOut().then(function() {
     		dispatch({type: actionTypes.LOGOFF_USER});
+    		browserHistory.push('/login');
 		}, function(error) {
     		console.log(error);
 		});

@@ -1,26 +1,27 @@
 import React, { Component } from 'react';
-import * as firebase from 'firebase';
+import {connect} from 'react-redux';
+import * as actions from '../../actions/index';
 
-export default class extends Component {
-    constructor(props){
-        super(props);
-
-        this.state = {boards: []};
-    }
-
+class Boards extends Component {
     componentWillMount(){
-        const that = this;
-
-        firebase.database().ref("user-boards").child(this.props.username).on("child_added", function(snap){
-            that.setState({boards: this.state.boards.concat(snap.val())});
-        });
+        this.props.fetchUserBoards();
     }
 
     createBoard(e){
         e.preventDefault();
 
-        
-        firebase.database().ref("user-boards").child(this.props.username).set();
+        var data = {
+            name: this.refs.BoardName.value,
+            description: this.refs.BoardDescription.value,
+            tags: this.refs.BoardTags.value
+        }
+
+        console.log(data);
+        this.props.createUserBoard(data);
+    }
+
+    componentWillUnmount(){
+        this.props.stopFetchingUserBoards();
     }
 
     render() {
@@ -36,3 +37,12 @@ export default class extends Component {
         );
     }
 }
+
+function mapStateToProps(state){
+    return{
+        userBoards: state.userBoards
+    }
+}
+
+export default connect(mapStateToProps, actions)(Boards);
+

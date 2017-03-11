@@ -18,14 +18,19 @@ export default function(state=initialState, action){
 	switch(action.type){
 		case actionTypes.CREATE_USER:
 			return Object.assign({}, state, {error: ""});
+
 		case actionTypes.UPDATE_USER_STATE:
 			return Object.assign({}, state, (action.payload ? {username: action.payload.displayName} : initialState));
+
 		case actionTypes.UPDATE_USER_PHOTOURL:
 			return Object.assign({}, state, {photoURL: action.payload});
+
 		case actionTypes.LOGIN_USER:
 			return Object.assign({}, state, {error: ""});
+
 		case actionTypes.LOGOFF_USER:
 			return state;
+			
 		case actionTypes.USER_ERROR:
 			return Object.assign({}, state, {error: action.payload});
 	}
