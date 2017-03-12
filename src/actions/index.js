@@ -123,10 +123,21 @@ export function fetchUserBoards(username){
 
 export function createUserBoard(username, data){
 	return dispatch =>{
-		var key = firebase.database().ref("boards").push().key;
-		data.timestamp = firebase.database.ServerValue.TIMESTAMP;
-		firebase.database().ref("boards").child(key).set(data);
+		const key = firebase.database().ref("boards").push().key;
+		var redoData = {
+			name: data.name,
+			description: data.description,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		}
+
+		firebase.database().ref("boards").child(key).set(redoData);
 		firebase.database().ref("users/" + username + "/boards").child(key).set(true);
+
+		var tagsArray = data.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<tagsArray.length; i++){
+			firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
+			firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
+		}
 
 		dispatch({
 			type: actionTypes.CREATE_USER_BOARD
@@ -158,10 +169,21 @@ export function fetchBoardPins(boardID){
 
 export function createBoardPin(boardID, data){
 	return dispatch =>{
-		var key = firebase.database().ref("pins").push().key;
-		data.timestamp = firebase.database.ServerValue.TIMESTAMP;
-		firebase.database().ref("pins").child(key).set(data);
+		const key = firebase.database().ref("pins").push().key;
+		var redoData = {
+			name: data.name,
+			description: data.description,
+			timestamp: firebase.database.ServerValue.TIMESTAMP
+		}
+
+		firebase.database().ref("pins").child(key).set(redoData);
 		firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
+
+		var tagsArray = data.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<tagsArray.length; i++){
+			firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
+			firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
+		}
 
 		dispatch({
 			type: actionTypes.CREATE_BOARD_PIN
