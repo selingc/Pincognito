@@ -15,7 +15,7 @@ const SignupForm = (props) => {
     const { handleSubmit, pristine, reset, submitting } = props;
 
     var background = {
-        backgroundImage: "url('https://cdn.pixabay.com/photo/2014/05/02/21/50/home-office-336377_960_720.jpg')",
+        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/signup.jpg?alt=media&token=7ce1dc7e-4f45-4ae9-9723-9b56e39d565a')",
         width: '100%',
         height: '550px',
         backgroundSize: 'cover'

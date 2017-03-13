@@ -8,7 +8,7 @@ const LoginForm = (props) => {
     const { handleSubmit, pristine, reset, submitting } = props;
         
     var background = {
-        backgroundImage: "url('https://cdn.pixabay.com/photo/2017/02/08/08/50/computational-2048167_960_720.jpg')",
+        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/login.jpg?alt=media&token=7de78808-bbc6-4f8b-b738-5ff0dcc61bcb')",
         width: '100%',
         height: '550px',
         backgroundSize: 'cover'
