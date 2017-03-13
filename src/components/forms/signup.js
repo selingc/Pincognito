@@ -14,10 +14,21 @@ import {Link} from 'react-router';
 const SignupForm = (props) => {
     const { handleSubmit, pristine, reset, submitting } = props;
 
+    var background = {
+        backgroundImage: "url('https://cdn.pixabay.com/photo/2014/05/02/21/50/home-office-336377_960_720.jpg')",
+        width: '100%',
+        height: '550px',
+        backgroundSize: 'cover'
+    };
+
     return (
         <div>
+        
+        <section style={ background }>
+      
             <div className="col-lg-3 col-md-3"></div>
-            <div className="signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+            <div className="form col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <h1>Sign Up</h1>
                 <hr />
                 <form onSubmit={handleSubmit}>
@@ -44,7 +55,11 @@ const SignupForm = (props) => {
                     </div>
                 </form>
             </div>
+
             <div className="col-lg-3 col-md-3"></div>
+
+        </section>
+
         </div>
     )
 }

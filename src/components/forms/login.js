@@ -7,10 +7,21 @@ import {Link} from 'react-router';
 const LoginForm = (props) => {
     const { handleSubmit, pristine, reset, submitting } = props;
         
+    var background = {
+        backgroundImage: "url('https://cdn.pixabay.com/photo/2017/02/08/08/50/computational-2048167_960_720.jpg')",
+        width: '100%',
+        height: '550px',
+        backgroundSize: 'cover'
+    };
+
     return (
         <div>
+
+        <section style={ background }>
+
             <div className="col-lg-3 col-md-3"></div>
-            <div className="signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+            <div className="form col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <h1>Log In</h1>
                 <hr />
                 <form onSubmit={handleSubmit}>
@@ -24,7 +35,11 @@ const LoginForm = (props) => {
                     </div>
                 </form>
             </div>
+
             <div className="col-lg-3 col-md-3"></div>
+
+        </section>
+
         </div>
     )
 }
