@@ -87,17 +87,25 @@ hr {
 	width: 30%;
 }
 
-/*BOARDS*/
-.boards {
-	border: 1px solid black;
-	height: 200px;
+/*BOARD & PIN PAGES*/
+.panel {
 	margin: 5px;
 }
 
+.panel-body {
+	height: 200px;
+}
+
+.panel-heading {
+	text-align: center;
+}
+
+/*BOARDPIN PAGE*/
 .pins {
 	width: 100%;
 }
 
+/*MODAL*/
 .modal-content {
     background-color: #fefefe ;
     padding: 10px;

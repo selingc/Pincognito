@@ -104,7 +104,7 @@ class Pins extends Component {
         return (
             <div>
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="boards col-lg-12">
+                    <div className="border col-lg-12">
                         <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Pin</Link>
                     </div>
                 </div>
