@@ -170,24 +170,28 @@ export function fetchBoardPins(boardID){
 export function createBoardPin(boardID, data){
 	return dispatch =>{
 		const key = firebase.database().ref("pins").push().key;
-		var redoData = {
-			name: data.name,
-			description: data.description,
-			timestamp: firebase.database.ServerValue.TIMESTAMP
-		}
 
-		firebase.database().ref("pins").child(key).set(redoData);
-		firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
+		firebase.storage().ref().child('images/pins/' + key + '.jpg').put(data.file).then(function(snapshot){
+			var redoData = {
+				name: data.name,
+				description: data.description,
+				timestamp: firebase.database.ServerValue.TIMESTAMP,
+				imageURL: snapshot.downloadURL
+			}
 
-		var tagsArray = data.tags.replace(/\s/g,"").split(",");
-		for(var i=0; i<tagsArray.length; i++){
-			firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
-			firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
-		}
+			firebase.database().ref("pins").child(key).set(redoData);
+			firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
 
-		dispatch({
-			type: actionTypes.CREATE_BOARD_PIN
-		})
+			var tagsArray = data.tags.replace(/\s/g,"").split(",");
+			for(var i=0; i<tagsArray.length; i++){
+				firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
+				firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
+			}
+
+			dispatch({
+				type: actionTypes.CREATE_BOARD_PIN
+			});
+		});
 	}
 }
 

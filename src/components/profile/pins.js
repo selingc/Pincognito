@@ -7,6 +7,7 @@ class Pins extends Component {
         e.preventDefault();
 
         var data = {
+            file: this.refs.image.files[0],
             name: this.refs.name.value,
             description: this.refs.description.value,
             tags: this.refs.tags.value
@@ -23,7 +24,7 @@ class Pins extends Component {
         return (
             <div>
                 <form onSubmit={this.createPin.bind(this)}>
-                    <input type="file" className="form-control-file" id="image" /> <br />
+                    <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
                     <select className="form-control" ref="board" id="dropdown" defaultValue="none">
                         <option value="none" disabled>--Select a Board--</option>
                         {this.props.userBoards.map((board, index) => (
