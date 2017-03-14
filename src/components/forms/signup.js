@@ -14,10 +14,21 @@ import {Link} from 'react-router';
 const SignupForm = (props) => {
     const { handleSubmit, pristine, reset, submitting } = props;
 
+    var background = {
+        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/signup.jpg?alt=media&token=7ce1dc7e-4f45-4ae9-9723-9b56e39d565a')",
+        width: '100%',
+        height: '550px',
+        backgroundSize: 'cover'
+    };
+
     return (
         <div>
+        
+        <section style={ background }>
+      
             <div className="col-lg-3 col-md-3"></div>
-            <div className="signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+            <div className="form col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <h1>Sign Up</h1>
                 <hr />
                 <form onSubmit={handleSubmit}>
@@ -44,7 +55,11 @@ const SignupForm = (props) => {
                     </div>
                 </form>
             </div>
+
             <div className="col-lg-3 col-md-3"></div>
+
+        </section>
+
         </div>
     )
 }
