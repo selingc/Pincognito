@@ -203,3 +203,23 @@ export function stopFetchingBoardPins(boardID){
 		});
 	}
 }
+
+export function fetchPins(){
+	return dispatch =>{
+		firebase.database().ref("pins").on("child_added", function(snap){
+			dispatch({
+				type: actionTypes.FETCH_PINS,
+				payload: snap.val()
+			});
+		});
+	}	
+}
+
+export function stopFetchingPins(){
+	return dispatch =>{
+		firebase.database().ref("pins").off();
+			dispatch({
+				type: actionTypes.STOP_FETCHING_PINS
+			});
+	}
+}

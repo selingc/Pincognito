@@ -12,12 +12,31 @@ class Home extends Component {
 		this.props.sayHello();
 	}
 
+    componentWillMount(){
+        this.props.fetchPins();
+    }
+
+    componentWillUnmount(){
+        this.props.stopFetchingPins();
+    }
+
     render() {
         return (
             <div className="children">
                 <h1>Pinfeed</h1>
                 <button type="submit" onClick={this.sayHello.bind(this)}>Say Hello</button>
                 <div>{this.props.hello}</div>
+
+                <div>{this.props.pins.map((pin, index) => (
+                            <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
+                                <div className="col-lg-12">
+                                    {pin.name}
+                                    <img src={pin.imageURL} className="pins" />
+                                </div>
+                            </div>
+                        ))}
+                </div>
+
             </div>
         );
     }
@@ -25,7 +44,8 @@ class Home extends Component {
 
 function mapStateToProps(state){
 	return{
-		hello: state.hello
+		hello: state.hello,
+        pins: state.pins
 	}
 }
 

@@ -8,6 +8,7 @@ import Layout from './components/pages/layout.js';
 import Login from './components/registration/login.js';
 import Signup from './components/registration/signup.js';
 import Profile from './components/profile/profile.js';
+import BoardPins from './components/profile/boardpins.js';
 
 /*
  *  index.js is the launchpad of our app, it looks for 'root' in the .html file and injects
@@ -26,6 +27,7 @@ ReactDOM.render(
                 <Route path="/login" component={Login}/>
                 <Route path="/signup" component={Signup}/>
                 <Route path="/:username" component={Profile}/>
+                <Route path="/board/:boardid" component={BoardPins}/>
             </Route>
         </Router>
     </Provider>,
