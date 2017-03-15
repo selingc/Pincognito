@@ -178,6 +178,13 @@ export function stopFetchingUserBoards(username){
 
 export function fetchBoardPins(boardID){
 	return dispatch =>{
+		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+			dispatch({
+				type: actionTypes.FETCH_BOARD_NAME,
+				payload: snap.val().name
+			});
+		});
+
 		firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
 			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 				dispatch({
@@ -243,5 +250,31 @@ export function stopFetchingPins(){
 			dispatch({
 				type: actionTypes.STOP_FETCHING_PINS
 			});
+	}
+}
+
+export function fetchUserPins(username){
+	return dispatch=>{
+		firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function(snap){
+			firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function(snap){
+				firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+					var data = snap.val();
+					data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+					dispatch({
+						type: actionTypes.FETCH_USER_PINS,
+						payload: data
+					});				
+				});
+			});
+		});
+	}
+}
+
+export function stopFetchingUserPins(username){
+	return dispatch =>{
+		firebase.database().ref("users/" + username).child("boards").off();
+		dispatch({
+			type: actionTypes.STOP_FETCHING_USER_PINS
+		});
 	}
 }

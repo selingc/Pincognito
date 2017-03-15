@@ -62,27 +62,27 @@
 
 	var _index2 = _interopRequireDefault(_index);
 
-	var _home = __webpack_require__(506);
+	var _home = __webpack_require__(507);
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(515);
+	var _layout = __webpack_require__(516);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(517);
+	var _login = __webpack_require__(518);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(519);
+	var _signup = __webpack_require__(520);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(521);
+	var _profile = __webpack_require__(522);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _boardpins = __webpack_require__(524);
+	var _boardpins = __webpack_require__(525);
 
 	var _boardpins2 = _interopRequireDefault(_boardpins);
 
@@ -29587,6 +29587,10 @@
 
 	var _pinsReducer2 = _interopRequireDefault(_pinsReducer);
 
+	var _userPinsReducer = __webpack_require__(506);
+
+	var _userPinsReducer2 = _interopRequireDefault(_userPinsReducer);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//reducers are combined into one for easy access to the store
@@ -29597,7 +29601,8 @@
 		hello: _testReducer2.default,
 		userBoards: _userBoardsReducer2.default,
 		boardPins: _boardPinsReducer2.default,
-		pins: _pinsReducer2.default
+		pins: _pinsReducer2.default,
+		userPins: _userPinsReducer2.default
 	});
 
 	exports.default = combinedReducers;
@@ -29606,23 +29611,25 @@
 /* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
 	exports.default = function () {
-		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
 		var action = arguments[1];
 
 		switch (action.type) {
+			case _types2.default.FETCH_BOARD_NAME:
+				return Object.assign({}, state, { name: action.payload });
 			case _types2.default.FETCH_BOARD_PINS:
-				return state.concat(action.payload);
+				return Object.assign({}, state, { pins: state.pins.concat(action.payload) });
 			case _types2.default.CREATE_BOARD_PIN:
 				return state;
 			case _types2.default.STOP_FETCHING_BOARD_PINS:
-				return [];
+				return initialState;
 		}
 		return state;
 	};
@@ -29632,6 +29639,11 @@
 	var _types2 = _interopRequireDefault(_types);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+		name: "",
+		pins: []
+	};
 
 /***/ },
 /* 291 */
@@ -29659,6 +29671,10 @@
 		FETCH_BOARD_PINS: 'FETCH_BOARD_PINS',
 		CREATE_BOARD_PIN: 'CREATE_BOARD_PIN',
 		STOP_FETCHING_BOARD_PINS: 'STOP_FETCHING_BOARD_PINS',
+		FETCH_BOARD_NAME: 'FETCH_BOARD_NAME',
+
+		FETCH_USER_PINS: 'FETCH_USER_PINS',
+		STOP_FETCHING_USER_PINS: 'STOP_FETCHING_USER_PINS',
 
 		FETCH_PINS: 'FETCH_PINS',
 		STOP_FETCHING_PINS: 'STOP_FETCHING_PINS',
@@ -40130,6 +40146,35 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function () {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+		var action = arguments[1];
+
+		switch (action.type) {
+			case _types2.default.FETCH_USER_PINS:
+				return state.concat(action.payload);
+			case _types2.default.STOP_FETCHING_USER_PINS:
+				return [];
+		}
+		return state;
+	};
+
+	var _types = __webpack_require__(291);
+
+	var _types2 = _interopRequireDefault(_types);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 507 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
@@ -40139,7 +40184,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -40254,7 +40299,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Home);
 
 /***/ },
-/* 507 */
+/* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40275,8 +40320,10 @@
 	exports.stopFetchingBoardPins = stopFetchingBoardPins;
 	exports.fetchPins = fetchPins;
 	exports.stopFetchingPins = stopFetchingPins;
+	exports.fetchUserPins = fetchUserPins;
+	exports.stopFetchingUserPins = stopFetchingUserPins;
 
-	var _firebase = __webpack_require__(508);
+	var _firebase = __webpack_require__(509);
 
 	var firebase = _interopRequireWildcard(_firebase);
 
@@ -40284,7 +40331,7 @@
 
 	var _types2 = _interopRequireDefault(_types);
 
-	var _firebase_config = __webpack_require__(514);
+	var _firebase_config = __webpack_require__(515);
 
 	var _firebase_config2 = _interopRequireDefault(_firebase_config);
 
@@ -40468,6 +40515,13 @@
 
 	function fetchBoardPins(boardID) {
 		return function (dispatch) {
+			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+				dispatch({
+					type: _types2.default.FETCH_BOARD_NAME,
+					payload: snap.val().name
+				});
+			});
+
 			firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
 				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
 					dispatch({
@@ -40536,8 +40590,34 @@
 		};
 	}
 
+	function fetchUserPins(username) {
+		return function (dispatch) {
+			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
+				firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
+					firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+						var data = snap.val();
+						data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+						dispatch({
+							type: _types2.default.FETCH_USER_PINS,
+							payload: data
+						});
+					});
+				});
+			});
+		};
+	}
+
+	function stopFetchingUserPins(username) {
+		return function (dispatch) {
+			firebase.database().ref("users/" + username).child("boards").off();
+			dispatch({
+				type: _types2.default.STOP_FETCHING_USER_PINS
+			});
+		};
+	}
+
 /***/ },
-/* 508 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40547,16 +40627,16 @@
 	 *
 	 *   firebase = require('firebase');
 	 */
-	var firebase = __webpack_require__(509);
-	__webpack_require__(510);
+	var firebase = __webpack_require__(510);
 	__webpack_require__(511);
 	__webpack_require__(512);
 	__webpack_require__(513);
+	__webpack_require__(514);
 	module.exports = firebase;
 
 
 /***/ },
-/* 509 */
+/* 510 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var firebase = (function(){
@@ -40595,10 +40675,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -40843,10 +40923,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41114,10 +41194,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 512 */
+/* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41175,10 +41255,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 513 */
+/* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41221,7 +41301,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 514 */
+/* 515 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41253,7 +41333,7 @@
 	exports.default = config;
 
 /***/ },
-/* 515 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41270,11 +41350,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(516);
+	var _navbar = __webpack_require__(517);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -41333,7 +41413,7 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Layout);
 
 /***/ },
-/* 516 */
+/* 517 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41346,7 +41426,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var _redux = __webpack_require__(250);
 
@@ -41443,7 +41523,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 517 */
+/* 518 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41460,9 +41540,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
-	var _login = __webpack_require__(518);
+	var _login = __webpack_require__(519);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -41516,7 +41596,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 518 */
+/* 519 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41606,7 +41686,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 519 */
+/* 520 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41623,9 +41703,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
-	var _signup = __webpack_require__(520);
+	var _signup = __webpack_require__(521);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -41689,7 +41769,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 520 */
+/* 521 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41818,7 +41898,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 521 */
+/* 522 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41835,15 +41915,15 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _boards = __webpack_require__(522);
+	var _boards = __webpack_require__(523);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(523);
+	var _pins = __webpack_require__(524);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -41910,7 +41990,7 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Profile);
 
 /***/ },
-/* 522 */
+/* 523 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41927,7 +42007,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42138,7 +42218,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
 
 /***/ },
-/* 523 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42155,7 +42235,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42192,6 +42272,16 @@
 	    }
 
 	    _createClass(Pins, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.props.fetchUserPins(this.props.username);
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.props.stopFetchingUserPins(this.props.username);
+	        }
+	    }, {
 	        key: 'createPin',
 	        value: function createPin(e) {
 	            e.preventDefault();
@@ -42339,6 +42429,34 @@
 	                        )
 	                    )
 	                ),
+	                this.props.userPins.map(function (pin, index) {
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel panel-danger boards' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    pin.name
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-body boardheight' },
+	                                    _react2.default.createElement(
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                    )
+	                                )
+	                            )
+	                        )
+	                    );
+	                }),
 	                getPopup()
 	            );
 	        }
@@ -42349,14 +42467,15 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        userBoards: state.userBoards
+	        userBoards: state.userBoards,
+	        userPins: state.userPins
 	    };
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
 
 /***/ },
-/* 524 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42373,7 +42492,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(507);
+	var _index = __webpack_require__(508);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42413,10 +42532,15 @@
 	                'div',
 	                { className: 'children' },
 	                _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    this.props.boardPins.name
+	                ),
+	                _react2.default.createElement(
 	                    'div',
 	                    null,
 	                    ' ',
-	                    this.props.boardPins.map(function (pin, index) {
+	                    this.props.boardPins.pins.map(function (pin, index) {
 	                        return _react2.default.createElement(
 	                            'div',
 	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
@@ -42454,7 +42578,10 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        boardPins: state.boardPins
+	        boardPins: {
+	            name: state.boardPins.name,
+	            pins: state.boardPins.pins
+	        }
 	    };
 	}
 

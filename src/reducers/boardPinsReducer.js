@@ -1,13 +1,20 @@
 import actionTypes from '../actions/types.js';
 
-export default function(state=[], action){
+const initialState = {
+	name: "",
+	pins: []
+} 
+
+export default function(state=initialState, action){
 	switch(action.type){
+		case actionTypes.FETCH_BOARD_NAME:
+			return Object.assign({}, state, {name: action.payload});
 		case actionTypes.FETCH_BOARD_PINS:
-			return state.concat(action.payload);
+			return Object.assign({}, state, {pins: state.pins.concat(action.payload)});
 		case actionTypes.CREATE_BOARD_PIN:
 			return state;
 		case actionTypes.STOP_FETCHING_BOARD_PINS:
-			return [];
+			return initialState;
 	}
 	return state;
 }

@@ -15,7 +15,8 @@ class BoardPins extends Component {
     render() {
         return (
             <div className="children">
-                <div> {this.props.boardPins.map((pin, index) => (
+                <h1>{this.props.boardPins.name}</h1>
+                <div> {this.props.boardPins.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div className="panel panel-danger">
@@ -35,7 +36,10 @@ class BoardPins extends Component {
 
 function mapStateToProps(state){
     return{
-        boardPins: state.boardPins
+        boardPins: {
+            name: state.boardPins.name,
+            pins: state.boardPins.pins
+        }
     }
 }
 

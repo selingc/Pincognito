@@ -18,6 +18,14 @@ class Pins extends Component {
         this.createPin = this.createPin.bind(this);
     }
 
+    componentWillMount(){
+        this.props.fetchUserPins(this.props.username);
+    }
+
+    componentWillUnmount(){
+        this.props.stopFetchingUserPins(this.props.username);
+    }
+
     createPin(e){
         e.preventDefault();
 
@@ -111,6 +119,20 @@ class Pins extends Component {
                     </div>
                 </div>
 
+                {this.props.userPins.map((pin, index) => (
+
+                    <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <div className="panel panel-danger boards">
+                                <div className="panel-heading">{pin.name}</div>
+                                <div className="panel-body boardheight">
+                                   <center><img src={pin.imageURL} className="my-panel-content"/></center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+
                 {getPopup()}
             </div>
         );
@@ -119,7 +141,8 @@ class Pins extends Component {
 
 function mapStateToProps(state){
     return{
-        userBoards: state.userBoards
+        userBoards: state.userBoards,
+        userPins: state.userPins
     }
 }
 
