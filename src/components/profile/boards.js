@@ -106,11 +106,13 @@ class Boards extends Component {
 
                     <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
                         <Link to={"/board/" + board.id}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-danger boards">
-                                <div className="panel-body boardheight">
-                                   <center><img src={board.imageURL} className="board-image"/></center>
+                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div className="panel panel-danger boards">
+                                    <div className="panel-body boardheight">
+                                       <center><img src={board.imageURL} className="board-image"/></center>
+                                    </div>
+                                    <div className="panel-heading">{board.name}</div>
                                 </div>
-                                <div className="panel-heading">{board.name}</div>
                             </div>
                         </Link>
                     </div>
