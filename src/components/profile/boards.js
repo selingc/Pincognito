@@ -94,29 +94,25 @@ class Boards extends Component {
 
         return (
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div className="panel panel-default col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="panel-body col-lg-12">
-                        <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Board</Link>
+                <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default">
+                        <div className="panel-body">
+                            <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Board</Link>
+                        </div>
                     </div>
                 </div>
 
+                {this.props.userBoards.map((board, index) => (
+                    <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
+                        <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-danger">
+                            <div className="panel-body">
+                               Image
+                            </div>
 
-                <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12"> {this.props.userBoards.map((board, index) => (
-                    
-                          
-
-                                <div className="panel panel-danger" key={index}>
-
-                                    <div className="panel-body">
-                                       Image
-                                    </div>
-
-                                    <div className="panel-heading"><Link to={"/board/" + board.id}>{board.name}</Link></div>
-                                </div>
-                     
-                   
-                        ))}
-                </div>
+                            <div className="panel-heading"><Link to={"/board/" + board.id}>{board.name}</Link></div>
+                        </div>
+                    </div>
+                ))}
 
                 {getPopup()}
             </div>
