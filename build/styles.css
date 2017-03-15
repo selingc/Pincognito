@@ -108,7 +108,7 @@ hr {
 	box-shadow: 0 0 6px rgba(217, 83, 79, 1);
 }
 
-.board-image{
+.my-panel-content{
 	height: 175px;
 	width: 175px;
 	object-fit: cover;

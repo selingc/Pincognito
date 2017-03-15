@@ -17,16 +17,13 @@ class BoardPins extends Component {
             <div className="children">
                 <div> {this.props.boardPins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
-                                <div className="col-lg-12 panel panel-danger">
-
-                                    <div className="panel-heading">{pin.name}</div>
-
-                                    <div className="panel-body">
-                                        <img src={pin.imageURL} className="pins" />
+                                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <div className="panel panel-danger">
+                                        <div className="panel-heading">{pin.name}</div>
+                                        <div className="panel-body">
+                                            <center><img src={pin.imageURL} className="my-panel-content"/></center>
+                                        </div>
                                     </div>
-
-                                    
-                                    
                                 </div>
                             </div>
                         ))}

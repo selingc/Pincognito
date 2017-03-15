@@ -8,6 +8,13 @@
     			".indexOn": ".value"
     		}
     	}
+    },
+    "boards":{
+        "$boardID":{
+            "pins":{
+                ".indexOn": ".value"
+            }
+        }
     }
   }
 }

@@ -62,25 +62,29 @@
 
 	var _index2 = _interopRequireDefault(_index);
 
-	var _home = __webpack_require__(505);
+	var _home = __webpack_require__(506);
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(514);
+	var _layout = __webpack_require__(515);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(516);
+	var _login = __webpack_require__(517);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(518);
+	var _signup = __webpack_require__(519);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(520);
+	var _profile = __webpack_require__(521);
 
 	var _profile2 = _interopRequireDefault(_profile);
+
+	var _boardpins = __webpack_require__(524);
+
+	var _boardpins2 = _interopRequireDefault(_boardpins);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -105,7 +109,8 @@
 	            _react2.default.createElement(_reactRouter.IndexRoute, { component: _home2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/login', component: _login2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/signup', component: _signup2.default }),
-	            _react2.default.createElement(_reactRouter.Route, { path: '/:username', component: _profile2.default })
+	            _react2.default.createElement(_reactRouter.Route, { path: '/:username', component: _profile2.default }),
+	            _react2.default.createElement(_reactRouter.Route, { path: '/board/:boardid', component: _boardpins2.default })
 	        )
 	    )
 	), document.getElementById('root'));
@@ -29578,6 +29583,10 @@
 
 	var _reduxForm = __webpack_require__(295);
 
+	var _pinsReducer = __webpack_require__(505);
+
+	var _pinsReducer2 = _interopRequireDefault(_pinsReducer);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//reducers are combined into one for easy access to the store
@@ -29587,7 +29596,8 @@
 		form: _reduxForm.reducer,
 		hello: _testReducer2.default,
 		userBoards: _userBoardsReducer2.default,
-		boardPins: _boardPinsReducer2.default
+		boardPins: _boardPinsReducer2.default,
+		pins: _pinsReducer2.default
 	});
 
 	exports.default = combinedReducers;
@@ -29649,6 +29659,9 @@
 		FETCH_BOARD_PINS: 'FETCH_BOARD_PINS',
 		CREATE_BOARD_PIN: 'CREATE_BOARD_PIN',
 		STOP_FETCHING_BOARD_PINS: 'STOP_FETCHING_BOARD_PINS',
+
+		FETCH_PINS: 'FETCH_PINS',
+		STOP_FETCHING_PINS: 'STOP_FETCHING_PINS',
 
 		SAY_HELLO: 'SAY_HELLO'
 	};
@@ -40088,6 +40101,35 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function () {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+		var action = arguments[1];
+
+		switch (action.type) {
+			case _types2.default.FETCH_PINS:
+				return state.concat(action.payload);
+			case _types2.default.STOP_FETCHING_PINS:
+				return [];
+		}
+		return state;
+	};
+
+	var _types = __webpack_require__(291);
+
+	var _types2 = _interopRequireDefault(_types);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ },
+/* 506 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
@@ -40097,7 +40139,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -40133,6 +40175,16 @@
 	            this.props.sayHello();
 	        }
 	    }, {
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.props.fetchPins();
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.props.stopFetchingPins();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
@@ -40152,6 +40204,38 @@
 	                    'div',
 	                    null,
 	                    this.props.hello
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    this.props.pins.map(function (pin, index) {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel panel-danger' },
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-heading' },
+	                                        pin.name
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-body' },
+	                                        _react2.default.createElement(
+	                                            'center',
+	                                            null,
+	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                        )
+	                                    )
+	                                )
+	                            )
+	                        );
+	                    })
 	                )
 	            );
 	        }
@@ -40162,14 +40246,15 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        hello: state.hello
+	        hello: state.hello,
+	        pins: state.pins
 	    };
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Home);
 
 /***/ },
-/* 506 */
+/* 507 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40188,8 +40273,10 @@
 	exports.fetchBoardPins = fetchBoardPins;
 	exports.createBoardPin = createBoardPin;
 	exports.stopFetchingBoardPins = stopFetchingBoardPins;
+	exports.fetchPins = fetchPins;
+	exports.stopFetchingPins = stopFetchingPins;
 
-	var _firebase = __webpack_require__(507);
+	var _firebase = __webpack_require__(508);
 
 	var firebase = _interopRequireWildcard(_firebase);
 
@@ -40197,7 +40284,7 @@
 
 	var _types2 = _interopRequireDefault(_types);
 
-	var _firebase_config = __webpack_require__(513);
+	var _firebase_config = __webpack_require__(514);
 
 	var _firebase_config2 = _interopRequireDefault(_firebase_config);
 
@@ -40316,10 +40403,31 @@
 				firebase.database().ref("boards").child(snap.ref.key).once("value", function (snap) {
 					var data = snap.val();
 					data.id = snap.ref.key;
-					dispatch({
-						type: _types2.default.FETCH_USER_BOARDS,
-						payload: data
-					});
+					if (snap.val().pins) {
+						firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
+							firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+								if (snap.val().imageURL) {
+									data.imageURL = snap.val().imageURL;
+									dispatch({
+										type: _types2.default.FETCH_USER_BOARDS,
+										payload: data
+									});
+								} else {
+									data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+									dispatch({
+										type: _types2.default.FETCH_USER_BOARDS,
+										payload: data
+									});
+								}
+							});
+						});
+					} else {
+						data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+						dispatch({
+							type: _types2.default.FETCH_USER_BOARDS,
+							payload: data
+						});
+					}
 				});
 			});
 		};
@@ -40328,9 +40436,20 @@
 	function createUserBoard(username, data) {
 		return function (dispatch) {
 			var key = firebase.database().ref("boards").push().key;
-			data.timestamp = firebase.database.ServerValue.TIMESTAMP;
-			firebase.database().ref("boards").child(key).set(data);
+			var redoData = {
+				name: data.name,
+				description: data.description,
+				timestamp: firebase.database.ServerValue.TIMESTAMP
+			};
+
+			firebase.database().ref("boards").child(key).set(redoData);
 			firebase.database().ref("users/" + username + "/boards").child(key).set(true);
+
+			var tagsArray = data.tags.replace(/\s/g, "").split(",");
+			for (var i = 0; i < tagsArray.length; i++) {
+				firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
+				firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
+			}
 
 			dispatch({
 				type: _types2.default.CREATE_USER_BOARD
@@ -40363,12 +40482,27 @@
 	function createBoardPin(boardID, data) {
 		return function (dispatch) {
 			var key = firebase.database().ref("pins").push().key;
-			data.timestamp = firebase.database.ServerValue.TIMESTAMP;
-			firebase.database().ref("pins").child(key).set(data);
-			firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
 
-			dispatch({
-				type: _types2.default.CREATE_BOARD_PIN
+			firebase.storage().ref().child('images/pins/' + key + '.jpg').put(data.file).then(function (snapshot) {
+				var redoData = {
+					name: data.name,
+					description: data.description,
+					timestamp: firebase.database.ServerValue.TIMESTAMP,
+					imageURL: snapshot.downloadURL
+				};
+
+				firebase.database().ref("pins").child(key).set(redoData);
+				firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
+
+				var tagsArray = data.tags.replace(/\s/g, "").split(",");
+				for (var i = 0; i < tagsArray.length; i++) {
+					firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
+					firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
+				}
+
+				dispatch({
+					type: _types2.default.CREATE_BOARD_PIN
+				});
 			});
 		};
 	}
@@ -40382,8 +40516,28 @@
 		};
 	}
 
+	function fetchPins() {
+		return function (dispatch) {
+			firebase.database().ref("pins").on("child_added", function (snap) {
+				dispatch({
+					type: _types2.default.FETCH_PINS,
+					payload: snap.val()
+				});
+			});
+		};
+	}
+
+	function stopFetchingPins() {
+		return function (dispatch) {
+			firebase.database().ref("pins").off();
+			dispatch({
+				type: _types2.default.STOP_FETCHING_PINS
+			});
+		};
+	}
+
 /***/ },
-/* 507 */
+/* 508 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -40393,16 +40547,16 @@
 	 *
 	 *   firebase = require('firebase');
 	 */
-	var firebase = __webpack_require__(508);
-	__webpack_require__(509);
+	var firebase = __webpack_require__(509);
 	__webpack_require__(510);
 	__webpack_require__(511);
 	__webpack_require__(512);
+	__webpack_require__(513);
 	module.exports = firebase;
 
 
 /***/ },
-/* 508 */
+/* 509 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var firebase = (function(){
@@ -40441,10 +40595,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 509 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(508);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -40689,10 +40843,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(508);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -40960,10 +41114,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(508);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41021,10 +41175,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 512 */
+/* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(508);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(509);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41067,7 +41221,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 513 */
+/* 514 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41099,7 +41253,7 @@
 	exports.default = config;
 
 /***/ },
-/* 514 */
+/* 515 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41116,11 +41270,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(515);
+	var _navbar = __webpack_require__(516);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -41179,7 +41333,7 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Layout);
 
 /***/ },
-/* 515 */
+/* 516 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41192,7 +41346,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
 	var _redux = __webpack_require__(250);
 
@@ -41289,7 +41443,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 516 */
+/* 517 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41306,9 +41460,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
-	var _login = __webpack_require__(517);
+	var _login = __webpack_require__(518);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -41362,7 +41516,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 517 */
+/* 518 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41390,49 +41544,60 @@
 	        submitting = props.submitting;
 
 
+	    var background = {
+	        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/login.jpg?alt=media&token=7de78808-bbc6-4f8b-b738-5ff0dcc61bcb')",
+	        width: '100%',
+	        height: '550px',
+	        backgroundSize: 'cover'
+	    };
+
 	    return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' }),
 	        _react2.default.createElement(
-	            'div',
-	            { className: 'signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12' },
+	            'section',
+	            { style: background },
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' }),
 	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                'Log In'
-	            ),
-	            _react2.default.createElement('hr', null),
-	            _react2.default.createElement(
-	                'form',
-	                { onSubmit: handleSubmit },
+	                'div',
+	                { className: 'form col-lg-6 col-md-6 col-sm-12 col-xs-12' },
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'form-group' },
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'email', component: 'input', type: 'text', placeholder: 'Username or Email Address', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'password', component: 'input', type: 'password', placeholder: 'Password', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
+	                    'h1',
+	                    null,
+	                    'Log In'
+	                ),
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(
+	                    'form',
+	                    { onSubmit: handleSubmit },
 	                    _react2.default.createElement(
-	                        'center',
-	                        null,
-	                        _react2.default.createElement(
-	                            'button',
-	                            { className: 'btn btn-danger' },
-	                            'Login'
-	                        ),
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'email', component: 'input', type: 'text', placeholder: 'Username or Email Address', className: 'form-control' }),
 	                        _react2.default.createElement('br', null),
-	                        'Don\'t have an account? ',
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'password', component: 'input', type: 'password', placeholder: 'Password', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
 	                        _react2.default.createElement(
-	                            _reactRouter.Link,
-	                            { to: '/signup' },
-	                            'Sign up!'
+	                            'center',
+	                            null,
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-danger' },
+	                                'Login'
+	                            ),
+	                            _react2.default.createElement('br', null),
+	                            'Don\'t have an account? ',
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: '/signup' },
+	                                'Sign up!'
+	                            )
 	                        )
 	                    )
 	                )
-	            )
-	        ),
-	        _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' })
+	            ),
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' })
+	        )
 	    );
 	};
 
@@ -41441,7 +41606,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 518 */
+/* 519 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41458,9 +41623,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
-	var _signup = __webpack_require__(519);
+	var _signup = __webpack_require__(520);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -41524,7 +41689,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 519 */
+/* 520 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41559,81 +41724,92 @@
 	        submitting = props.submitting;
 
 
+	    var background = {
+	        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/signup.jpg?alt=media&token=7ce1dc7e-4f45-4ae9-9723-9b56e39d565a')",
+	        width: '100%',
+	        height: '550px',
+	        backgroundSize: 'cover'
+	    };
+
 	    return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' }),
 	        _react2.default.createElement(
-	            'div',
-	            { className: 'signUpForm col-lg-6 col-md-6 col-sm-12 col-xs-12' },
+	            'section',
+	            { style: background },
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' }),
 	            _react2.default.createElement(
-	                'h1',
-	                null,
-	                'Sign Up'
-	            ),
-	            _react2.default.createElement('hr', null),
-	            _react2.default.createElement(
-	                'form',
-	                { onSubmit: handleSubmit },
+	                'div',
+	                { className: 'form col-lg-6 col-md-6 col-sm-12 col-xs-12' },
 	                _react2.default.createElement(
-	                    'div',
-	                    { className: 'form-group' },
+	                    'h1',
+	                    null,
+	                    'Sign Up'
+	                ),
+	                _react2.default.createElement('hr', null),
+	                _react2.default.createElement(
+	                    'form',
+	                    { onSubmit: handleSubmit },
 	                    _react2.default.createElement(
-	                        'table',
-	                        { width: '100%' },
+	                        'div',
+	                        { className: 'form-group' },
 	                        _react2.default.createElement(
-	                            'tbody',
-	                            null,
+	                            'table',
+	                            { width: '100%' },
 	                            _react2.default.createElement(
-	                                'tr',
+	                                'tbody',
 	                                null,
 	                                _react2.default.createElement(
-	                                    'td',
-	                                    { id: 'spaceTdLeft' },
-	                                    _react2.default.createElement(_reduxForm.Field, { name: 'firstName', component: 'input', type: 'text', placeholder: 'First Name', className: 'form-control' })
-	                                ),
-	                                _react2.default.createElement(
-	                                    'td',
-	                                    { id: 'spaceTdRight' },
-	                                    _react2.default.createElement(_reduxForm.Field, { name: 'lastName', component: 'input', type: 'text', placeholder: 'Last Name', className: 'form-control' })
+	                                    'tr',
+	                                    null,
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        { id: 'spaceTdLeft' },
+	                                        _react2.default.createElement(_reduxForm.Field, { name: 'firstName', component: 'input', type: 'text', placeholder: 'First Name', className: 'form-control' })
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'td',
+	                                        { id: 'spaceTdRight' },
+	                                        _react2.default.createElement(_reduxForm.Field, { name: 'lastName', component: 'input', type: 'text', placeholder: 'Last Name', className: 'form-control' })
+	                                    )
 	                                )
 	                            )
-	                        )
-	                    ),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'username', component: 'input', type: 'text', placeholder: 'Username', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'email', component: 'input', type: 'email', placeholder: 'Email', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'password', component: 'input', type: 'password', placeholder: 'Password', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(
-	                        'label',
-	                        { id: 'birthdate' },
-	                        'Date of Birth'
-	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { name: 'birthdate', component: 'input', type: 'date', className: 'form-control' }),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(
-	                        'center',
-	                        null,
-	                        _react2.default.createElement(
-	                            'button',
-	                            { type: 'submit', className: 'btn btn-danger' },
-	                            'Create Account'
 	                        ),
 	                        _react2.default.createElement('br', null),
-	                        'Have an account? ',
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'username', component: 'input', type: 'text', placeholder: 'Username', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'email', component: 'input', type: 'email', placeholder: 'Email', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'password', component: 'input', type: 'password', placeholder: 'Password', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
 	                        _react2.default.createElement(
-	                            _reactRouter.Link,
-	                            { to: '/login' },
-	                            'Log in!'
+	                            'label',
+	                            { id: 'birthdate' },
+	                            'Date of Birth'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'birthdate', component: 'input', type: 'date', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'center',
+	                            null,
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-danger' },
+	                                'Create Account'
+	                            ),
+	                            _react2.default.createElement('br', null),
+	                            'Have an account? ',
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: '/login' },
+	                                'Log in!'
+	                            )
 	                        )
 	                    )
 	                )
-	            )
-	        ),
-	        _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' })
+	            ),
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' })
+	        )
 	    );
 	};
 
@@ -41642,7 +41818,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 520 */
+/* 521 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41659,15 +41835,15 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _boards = __webpack_require__(521);
+	var _boards = __webpack_require__(522);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(522);
+	var _pins = __webpack_require__(523);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -41734,103 +41910,6 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Profile);
 
 /***/ },
-/* 521 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactRedux = __webpack_require__(239);
-
-	var _index = __webpack_require__(506);
-
-	var actions = _interopRequireWildcard(_index);
-
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Boards = function (_Component) {
-	    _inherits(Boards, _Component);
-
-	    function Boards() {
-	        _classCallCheck(this, Boards);
-
-	        return _possibleConstructorReturn(this, (Boards.__proto__ || Object.getPrototypeOf(Boards)).apply(this, arguments));
-	    }
-
-	    _createClass(Boards, [{
-	        key: 'createBoard',
-	        value: function createBoard(e) {
-	            e.preventDefault();
-
-	            var data = {
-	                name: this.refs.name.value,
-	                description: this.refs.description.value,
-	                tags: this.refs.tags.value
-	            };
-
-	            this.props.createUserBoard(this.props.username, data);
-
-	            this.refs.name.value = "";
-	            this.refs.description.value = "";
-	            this.refs.tags.value = "";
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'form',
-	                    { onSubmit: this.createBoard.bind(this) },
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Board name' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'btn btn-danger' },
-	                        'Create Board'
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-
-	    return Boards;
-	}(_react.Component);
-
-	function mapStateToProps(state) {
-	    return {
-	        userBoards: state.userBoards
-	    };
-	}
-
-	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
-
-/***/ },
 /* 522 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -41848,9 +41927,239 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(506);
+	var _index = __webpack_require__(507);
 
 	var actions = _interopRequireWildcard(_index);
+
+	var _reactRouter = __webpack_require__(183);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Boards = function (_Component) {
+	    _inherits(Boards, _Component);
+
+	    function Boards(props) {
+	        _classCallCheck(this, Boards);
+
+	        var _this = _possibleConstructorReturn(this, (Boards.__proto__ || Object.getPrototypeOf(Boards)).call(this, props));
+
+	        _this.state = { poppedUp: false, modalDown: false, contentDown: false };
+	        _this.onModalDown = _this.onModalDown.bind(_this);
+	        _this.onContentDown = _this.onContentDown.bind(_this);
+	        _this.onModalUp = _this.onModalUp.bind(_this);
+	        _this.onContentUp = _this.onContentUp.bind(_this);
+	        _this.checkClickLocation = _this.checkClickLocation.bind(_this);
+	        _this.openPopup = _this.openPopup.bind(_this);
+	        _this.closePopup = _this.closePopup.bind(_this);
+	        _this.createBoard = _this.createBoard.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Boards, [{
+	        key: 'createBoard',
+	        value: function createBoard(e) {
+	            e.preventDefault();
+
+	            var data = {
+	                name: this.refs.name.value,
+	                description: this.refs.description.value,
+	                tags: this.refs.tags.value
+	            };
+
+	            this.props.createUserBoard(this.props.username, data);
+	            this.refs.name.value = "";
+	            this.refs.description.value = "";
+	            this.refs.tags.value = "";
+
+	            this.closePopup();
+	        }
+	    }, {
+	        key: 'onModalDown',
+	        value: function onModalDown() {
+	            this.setState({ modalDown: true });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onContentDown',
+	        value: function onContentDown() {
+	            this.setState({ contentDown: true });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onModalUp',
+	        value: function onModalUp() {
+	            this.setState({ modalDown: false });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onContentUp',
+	        value: function onContentUp() {
+	            this.setState({ contentDown: false });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'checkClickLocation',
+	        value: function checkClickLocation() {
+	            if (this.state.modalDown && !this.state.contentDown) {
+	                this.closePopup();
+	            }
+	        }
+	    }, {
+	        key: 'openPopup',
+	        value: function openPopup() {
+	            this.setState({ poppedUp: true });
+	        }
+	    }, {
+	        key: 'closePopup',
+	        value: function closePopup() {
+	            this.setState({ poppedUp: false });
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var that = this;
+	            function getPopup() {
+	                if (that.state.poppedUp) {
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { className: 'modal', onMouseDown: that.onModalDown, onMouseUp: that.onModalUp },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-content', onMouseDown: that.onContentDown, onMouseUp: that.onContentUp },
+	                            _react2.default.createElement(
+	                                'span',
+	                                { onClick: that.closePopup },
+	                                'X'
+	                            ),
+	                            _react2.default.createElement(
+	                                'h1',
+	                                null,
+	                                'Create Board'
+	                            ),
+	                            _react2.default.createElement(
+	                                'form',
+	                                { onSubmit: that.createBoard },
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Board name' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { type: 'submit', className: 'btn btn-danger' },
+	                                    'Create Board'
+	                                )
+	                            )
+	                        )
+	                    );
+	                } else {
+	                    return null;
+	                }
+	            }
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'panel-body' },
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: "/" + this.props.username, onClick: this.openPopup },
+	                                'Create New Board'
+	                            )
+	                        )
+	                    )
+	                ),
+	                this.props.userBoards.map(function (board, index) {
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                        _react2.default.createElement(
+	                            _reactRouter.Link,
+	                            { to: "/board/" + board.id },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel panel-danger boards' },
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-body boardheight' },
+	                                        _react2.default.createElement(
+	                                            'center',
+	                                            null,
+	                                            _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content' })
+	                                        )
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-heading' },
+	                                        board.name
+	                                    )
+	                                )
+	                            )
+	                        )
+	                    );
+	                }),
+	                getPopup()
+	            );
+	        }
+	    }]);
+
+	    return Boards;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        userBoards: state.userBoards
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
+
+/***/ },
+/* 523 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(507);
+
+	var actions = _interopRequireWildcard(_index);
+
+	var _reactRouter = __webpack_require__(183);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -41865,10 +42174,21 @@
 	var Pins = function (_Component) {
 	    _inherits(Pins, _Component);
 
-	    function Pins() {
+	    function Pins(props) {
 	        _classCallCheck(this, Pins);
 
-	        return _possibleConstructorReturn(this, (Pins.__proto__ || Object.getPrototypeOf(Pins)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (Pins.__proto__ || Object.getPrototypeOf(Pins)).call(this, props));
+
+	        _this.state = { poppedUp: false, modalDown: false, contentDown: false };
+	        _this.onModalDown = _this.onModalDown.bind(_this);
+	        _this.onContentDown = _this.onContentDown.bind(_this);
+	        _this.onModalUp = _this.onModalUp.bind(_this);
+	        _this.onContentUp = _this.onContentUp.bind(_this);
+	        _this.checkClickLocation = _this.checkClickLocation.bind(_this);
+	        _this.openPopup = _this.openPopup.bind(_this);
+	        _this.closePopup = _this.closePopup.bind(_this);
+	        _this.createPin = _this.createPin.bind(_this);
+	        return _this;
 	    }
 
 	    _createClass(Pins, [{
@@ -41877,6 +42197,7 @@
 	            e.preventDefault();
 
 	            var data = {
+	                file: this.refs.image.files[0],
 	                name: this.refs.name.value,
 	                description: this.refs.description.value,
 	                tags: this.refs.tags.value
@@ -41887,51 +42208,138 @@
 	            this.refs.name.value = "";
 	            this.refs.description.value = "";
 	            this.refs.tags.value = "";
+
+	            this.closePopup();
+	        }
+	    }, {
+	        key: 'onModalDown',
+	        value: function onModalDown() {
+	            this.setState({ modalDown: true });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onContentDown',
+	        value: function onContentDown() {
+	            this.setState({ contentDown: true });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onModalUp',
+	        value: function onModalUp() {
+	            this.setState({ modalDown: false });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'onContentUp',
+	        value: function onContentUp() {
+	            this.setState({ contentDown: false });
+	            this.checkClickLocation();
+	        }
+	    }, {
+	        key: 'checkClickLocation',
+	        value: function checkClickLocation() {
+	            if (this.state.modalDown && !this.state.contentDown) {
+	                this.closePopup();
+	            }
+	        }
+	    }, {
+	        key: 'openPopup',
+	        value: function openPopup() {
+	            this.setState({ poppedUp: true });
+	        }
+	    }, {
+	        key: 'closePopup',
+	        value: function closePopup() {
+	            this.setState({ poppedUp: false });
 	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var that = this;
+	            function getPopup() {
+	                if (that.state.poppedUp) {
+	                    return _react2.default.createElement(
+	                        'div',
+	                        { className: 'modal', onMouseDown: that.onModalDown, onMouseUp: that.onModalUp },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'modal-content', onMouseDown: that.onContentDown, onMouseUp: that.onContentUp },
+	                            _react2.default.createElement(
+	                                'span',
+	                                { onClick: that.closePopup },
+	                                'X'
+	                            ),
+	                            _react2.default.createElement(
+	                                'h1',
+	                                null,
+	                                'Create Pin'
+	                            ),
+	                            _react2.default.createElement(
+	                                'form',
+	                                { onSubmit: that.createPin.bind(that) },
+	                                _react2.default.createElement('input', { type: 'file', accept: 'image/*', className: 'form-control-file', id: 'image', ref: 'image' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement(
+	                                    'select',
+	                                    { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: 'none' },
+	                                    _react2.default.createElement(
+	                                        'option',
+	                                        { value: 'none', disabled: true },
+	                                        '--Select a Board--'
+	                                    ),
+	                                    that.props.userBoards.map(function (board, index) {
+	                                        return _react2.default.createElement(
+	                                            'option',
+	                                            { value: board.id, key: index },
+	                                            board.name
+	                                        );
+	                                    })
+	                                ),
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)' }),
+	                                ' ',
+	                                _react2.default.createElement('br', null),
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { type: 'submit', className: 'btn btn-danger' },
+	                                    'Create Pin'
+	                                )
+	                            )
+	                        )
+	                    );
+	                } else {
+	                    return null;
+	                }
+	            }
+
 	            return _react2.default.createElement(
 	                'div',
-	                null,
+	                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
 	                _react2.default.createElement(
-	                    'form',
-	                    { onSubmit: this.createPin.bind(this) },
-	                    _react2.default.createElement('input', { type: 'file', className: 'form-control-file', id: 'image' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
+	                    'div',
+	                    { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12' },
 	                    _react2.default.createElement(
-	                        'select',
-	                        { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: 'none' },
+	                        'div',
+	                        { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default' },
 	                        _react2.default.createElement(
-	                            'option',
-	                            { value: 'none', disabled: true },
-	                            '--Select a Board--'
-	                        ),
-	                        this.props.userBoards.map(function (board, index) {
-	                            return _react2.default.createElement(
-	                                'option',
-	                                { value: board.id, key: index },
-	                                board.name
-	                            );
-	                        })
-	                    ),
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)' }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'btn btn-danger' },
-	                        'Create Pin'
+	                            'div',
+	                            { className: 'panel-body' },
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: "/" + this.props.username, onClick: this.openPopup },
+	                                'Create New Pin'
+	                            )
+	                        )
 	                    )
-	                )
+	                ),
+	                getPopup()
 	            );
 	        }
 	    }]);
@@ -41946,6 +42354,111 @@
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
+
+/***/ },
+/* 524 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(507);
+
+	var actions = _interopRequireWildcard(_index);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var BoardPins = function (_Component) {
+	    _inherits(BoardPins, _Component);
+
+	    function BoardPins() {
+	        _classCallCheck(this, BoardPins);
+
+	        return _possibleConstructorReturn(this, (BoardPins.__proto__ || Object.getPrototypeOf(BoardPins)).apply(this, arguments));
+	    }
+
+	    _createClass(BoardPins, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.props.fetchBoardPins(this.props.params.boardid);
+	        }
+	    }, {
+	        key: 'componentWillUnmount',
+	        value: function componentWillUnmount() {
+	            this.props.stopFetchingBoardPins(this.props.params.boardid);
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'children' },
+	                _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    ' ',
+	                    this.props.boardPins.map(function (pin, index) {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel panel-danger' },
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-heading' },
+	                                        pin.name
+	                                    ),
+	                                    _react2.default.createElement(
+	                                        'div',
+	                                        { className: 'panel-body' },
+	                                        _react2.default.createElement(
+	                                            'center',
+	                                            null,
+	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                        )
+	                                    )
+	                                )
+	                            )
+	                        );
+	                    })
+	                )
+	            );
+	        }
+	    }]);
+
+	    return BoardPins;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        boardPins: state.boardPins
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(BoardPins);
 
 /***/ }
 /******/ ]);
