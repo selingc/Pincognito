@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import * as actions from '../../actions/index.js';
 import {connect} from 'react-redux';
+import Popup from '../popup/modal.js'
 
 // needs to be rewritten to avoid lifecycle methods.
 // main root page (before logging in) will go here.
@@ -15,14 +16,7 @@ class Home extends Component {
     constructor(props){
         super(props);
 
-        this.state = {poppedUp: false, modalDown: false, contentDown: false};
-        this.onModalDown = this.onModalDown.bind(this);
-        this.onContentDown = this.onContentDown.bind(this);
-        this.onModalUp = this.onModalUp.bind(this);
-        this.onContentUp = this.onContentUp.bind(this);
-        this.checkClickLocation = this.checkClickLocation.bind(this);
-        this.openPopup = this.openPopup.bind(this);
-        this.closePopup = this.closePopup.bind(this);
+        this.state = {poppedUp: false};
     }
 
     componentWillMount(){
@@ -31,32 +25,6 @@ class Home extends Component {
 
     componentWillUnmount(){
         this.props.stopFetchingPins();
-    }
-
-    onModalDown(){
-        this.setState({modalDown: true});
-        this.checkClickLocation();
-    }
-
-    onContentDown(){
-        this.setState({contentDown: true});
-        this.checkClickLocation();
-    }
-
-    onModalUp(){
-        this.setState({modalDown: false});
-        this.checkClickLocation();
-    }
-
-    onContentUp(){
-        this.setState({contentDown: false});
-        this.checkClickLocation();
-    }
-
-    checkClickLocation(){
-        if(this.state.modalDown && !this.state.contentDown){
-            this.closePopup();
-        }
     }
 
     openPopup(){
@@ -69,17 +37,10 @@ class Home extends Component {
 
     render() {
         var that = this;
-        function getPopup(){
+        function getPopup(pin){
             if(that.state.poppedUp){
                 return (
-                    <div className="modal" onMouseDown={that.onModalDown} onMouseUp={that.onModalUp}>
-                        <div className="modal-content" onMouseDown={that.onContentDown} onMouseUp={that.onContentUp}>
-                            <span className="glyphicon glyphicon-remove close" onClick={that.closePopup}></span>
-                            <h1>Pin name</h1>
-                            <hr className="stylehr"/>
-                            
-                        </div>
-                    </div>
+                    <Popup type="pin" pin={pin} closePopup={that.closePopup.bind(that)}/>
                 )
             }else{
                 return null;
@@ -96,18 +57,17 @@ class Home extends Component {
                 <div>{this.props.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div className="panel panel-danger border" onClick={this.openPopup}>
+                                    <div className="panel panel-danger border" onClick={this.openPopup.bind(this)}>
                                         <div className="panel-body">
                                             <center><img src={pin.imageURL} className="my-panel-content"/></center>
                                         </div>
                                         <div className="panel-heading">{pin.name}</div>
                                     </div>
                                 </div>
+                                {getPopup(pin)}
                             </div>
                         ))}
                 </div>
-
-                {getPopup()}
             </div>
         );
     }
