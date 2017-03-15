@@ -59,7 +59,7 @@ body{
 }
 
 /*SIGN UP PAGE ---------------------------------------------------------------------------------------*/
-hr {
+.stylehr {
     border: 0;
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
@@ -82,12 +82,22 @@ hr {
 	margin-top: 45px;
 }
 
-/*PIN PAGE*/
+/*PIN PAGE ---------------------------------------------------------------------------------------*/
 #dropdown {
 	width: 30%;
 }
 
-/*BOARD & PIN PAGES*/
+/*PIN POPUP ---------------------------------------------------------------------------------------*/
+.pinDescription {
+	padding-left: 15%;
+	padding-right: 15%;
+}
+.pinImage {
+	max-height: 80%; 
+	max-width: 80%;
+}
+
+/*BOARD & PIN PAGES ---------------------------------------------------------------------------------------*/
 .panel {
 	margin: 10px 5px 10px 5px;
 }
@@ -100,11 +110,11 @@ hr {
 	text-align: center;
 }
 
-.boards {
+.border {
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
 	transition: all 200ms ease-out;
 }
-.boards:hover {
+.border:hover {
 	box-shadow: 0 0 6px rgba(217, 83, 79, 1);
 }
 
@@ -112,6 +122,34 @@ hr {
 	height: 175px;
 	width: 175px;
 	object-fit: cover;
+}
+
+.close {
+	float: right;
+}
+
+.createPanel {
+	text-align: center;
+}
+
+.create {
+	color: black;
+}
+.create:hover {
+	text-decoration: none;
+	color: #d9534f;
+}
+
+.form {
+	margin: 30px 50px 30px 50px;
+}
+
+.images {
+	border-radius: 5px;
+}
+
+.goBack {
+	float: left;
 }
 
 /*BOARDPIN PAGE ---------------------------------------------------------------------------------------*/
@@ -143,4 +181,5 @@ hr {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding: 20px 20px 20px 20px;
 }

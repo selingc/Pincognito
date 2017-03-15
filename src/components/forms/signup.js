@@ -30,7 +30,7 @@ const SignupForm = (props) => {
 
             <div className="form col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <h1>Sign Up</h1>
-                <hr />
+                <hr className="stylehr"/>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <table width="100%">
