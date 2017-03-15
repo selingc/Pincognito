@@ -100,11 +100,11 @@ body{
 	text-align: center;
 }
 
-.boards {
+.border {
 	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
 	transition: all 200ms ease-out;
 }
-.boards:hover {
+.border:hover {
 	box-shadow: 0 0 6px rgba(217, 83, 79, 1);
 }
 
