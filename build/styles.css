@@ -59,7 +59,7 @@ body{
 }
 
 /*SIGN UP PAGE ---------------------------------------------------------------------------------------*/
-hr {
+.stylehr {
     border: 0;
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
@@ -114,6 +114,26 @@ hr {
 	object-fit: cover;
 }
 
+.close {
+	float: right;
+}
+
+.createPanel {
+	text-align: center;
+}
+
+.create {
+	color: black;
+}
+.create:hover {
+	text-decoration: none;
+	color: #d9534f;
+}
+
+.form {
+	margin: 30px 50px 30px 50px;
+}
+
 /*BOARDPIN PAGE ---------------------------------------------------------------------------------------*/
 .pins {
 	width: 100%;
@@ -143,4 +163,5 @@ hr {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding: 20px 20px 20px 20px;
 }

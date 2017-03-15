@@ -86,9 +86,10 @@ class Pins extends Component {
                 return (
                     <div className="modal" onMouseDown={that.onModalDown} onMouseUp={that.onModalUp}>
                         <div className="modal-content" onMouseDown={that.onContentDown} onMouseUp={that.onContentUp}>
-                            <span onClick={that.closePopup}>X</span>
+                            <span className="glyphicon glyphicon-remove close" onClick={that.closePopup}></span>
                             <h1>Create Pin</h1>
-                            <form onSubmit={that.createPin.bind(that)}>
+                            <hr className="stylehr"/>
+                            <form className="form" onSubmit={that.createPin.bind(that)}>
                                 <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
                                 <select className="form-control" ref="board" id="dropdown" defaultValue="none">
                                     <option value="none" disabled>--Select a Board--</option>
@@ -112,10 +113,14 @@ class Pins extends Component {
         return (
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default">
-                        <div className="panel-body">
-                            <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Pin</Link>
-                        </div>
+                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <Link className="create" to={"/" + this.props.username} onClick={this.openPopup}>
+                            <div className="panel panel-default boards">
+                                <div className="panel-body createPanel">
+                                    Create New Pin
+                                </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
 
@@ -124,10 +129,10 @@ class Pins extends Component {
                     <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div className="panel panel-danger boards">
-                                <div className="panel-heading">{pin.name}</div>
                                 <div className="panel-body boardheight">
                                    <center><img src={pin.imageURL} className="my-panel-content"/></center>
                                 </div>
+                                <div className="panel-heading">{pin.name}</div>
                             </div>
                         </div>
                     </div>

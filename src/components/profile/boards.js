@@ -76,9 +76,10 @@ class Boards extends Component {
                 return (
                     <div className="modal" onMouseDown={that.onModalDown} onMouseUp={that.onModalUp}>
                         <div className="modal-content" onMouseDown={that.onContentDown} onMouseUp={that.onContentUp}>
-                            <span onClick={that.closePopup}>X</span>
+                            <span className="glyphicon glyphicon-remove close" onClick={that.closePopup}></span>
                             <h1>Create Board</h1>
-                            <form onSubmit={that.createBoard}>
+                            <hr className="stylehr"/>
+                            <form className="form" onSubmit={that.createBoard}>
                                 <input type="text" className="form-control" ref="name" placeholder="Board name"/> <br />
                                 <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
                                 <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
@@ -95,10 +96,14 @@ class Boards extends Component {
         return (
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default">
-                        <div className="panel-body">
-                            <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Board</Link>
-                        </div>
+                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <Link className="create" to={"/" + this.props.username} onClick={this.openPopup}>
+                            <div className="panel panel-default boards">
+                                <div className="panel-body createPanel">
+                                    Create New Board
+                                </div>
+                            </div>
+                        </Link>
                     </div>
                 </div>
 

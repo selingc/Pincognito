@@ -23,7 +23,7 @@ const LoginForm = (props) => {
 
             <div className="form col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <h1>Log In</h1>
-                <hr />
+                <hr className="stylehr"/>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
                         <Field name="email" component="input" type="text" placeholder="Username or Email Address" className="form-control" /><br />
