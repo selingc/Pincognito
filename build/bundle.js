@@ -42782,6 +42782,7 @@
 	        var _this = _possibleConstructorReturn(this, (BoardPins.__proto__ || Object.getPrototypeOf(BoardPins)).call(this, props));
 
 	        _this.state = { poppedUp: false };
+	        _this.openPopup = _this.openPopup.bind(_this);
 	        return _this;
 	    }
 
@@ -42797,8 +42798,9 @@
 	        }
 	    }, {
 	        key: 'openPopup',
-	        value: function openPopup() {
+	        value: function openPopup(pin) {
 	            this.setState({ poppedUp: true });
+	            this.setState({ pin: pin });
 	        }
 	    }, {
 	        key: 'closePopup',
@@ -42811,9 +42813,9 @@
 	            var _this2 = this;
 
 	            var that = this;
-	            function getPopup(pin) {
+	            function getPopup() {
 	                if (that.state.poppedUp) {
-	                    return _react2.default.createElement(_modal2.default, { type: 'pin', pin: pin, closePopup: that.closePopup.bind(that) });
+	                    return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
 	                } else {
 	                    return null;
 	                }
@@ -42840,7 +42842,7 @@
 	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(_this2) },
+	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
 	                                    _react2.default.createElement(
 	                                        'div',
 	                                        { className: 'panel-body' },
@@ -42856,11 +42858,11 @@
 	                                        pin.name
 	                                    )
 	                                )
-	                            ),
-	                            getPopup(pin)
+	                            )
 	                        );
 	                    })
-	                )
+	                ),
+	                getPopup()
 	            );
 	        }
 	    }]);

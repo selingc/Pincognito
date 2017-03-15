@@ -8,6 +8,7 @@ class BoardPins extends Component {
         super(props);
 
         this.state = {poppedUp: false};
+        this.openPopup = this.openPopup.bind(this);
     }
 
     componentWillMount() {
@@ -18,8 +19,9 @@ class BoardPins extends Component {
         this.props.stopFetchingBoardPins(this.props.params.boardid);
     }
 
-    openPopup(){
+    openPopup(pin){
         this.setState({poppedUp: true});
+        this.setState({pin: pin});
     }
 
     closePopup(){
@@ -28,10 +30,10 @@ class BoardPins extends Component {
 
     render() {
         var that = this;
-        function getPopup(pin){
+        function getPopup(){
             if(that.state.poppedUp){
                 return (
-                    <Popup type="pin" pin={pin} closePopup={that.closePopup.bind(that)}/>
+                    <Popup type="pin" pin={that.state.pin} closePopup={that.closePopup.bind(that)}/>
                 )
             }else{
                 return null;
@@ -44,17 +46,17 @@ class BoardPins extends Component {
                 <div> {this.props.boardPins.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <div className="panel panel-danger border" onClick={this.openPopup.bind(this)}>
+                                    <div className="panel panel-danger border" onClick={this.openPopup.bind(null, pin)}>
                                         <div className="panel-body">
                                             <center><img src={pin.imageURL} className="my-panel-content"/></center>
                                         </div>
                                         <div className="panel-heading">{pin.name}</div>
                                     </div>
                                 </div>
-                                {getPopup(pin)}
                             </div>
                         ))}
                 </div>
+                {getPopup()}
             </div>
         );
     }
