@@ -40273,16 +40273,6 @@
 	                    'Pinfeed'
 	                ),
 	                _react2.default.createElement(
-	                    'button',
-	                    { type: 'submit', onClick: this.sayHello.bind(this) },
-	                    'Say Hello'
-	                ),
-	                _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    this.props.hello
-	                ),
-	                _react2.default.createElement(
 	                    'div',
 	                    null,
 	                    this.props.pins.map(function (pin, index) {
@@ -40301,7 +40291,7 @@
 	                                        _react2.default.createElement(
 	                                            'center',
 	                                            null,
-	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                        )
 	                                    ),
 	                                    _react2.default.createElement(
@@ -41534,11 +41524,15 @@
 	                    null,
 	                    this.props.pin.name
 	                ),
-	                _react2.default.createElement('img', { src: this.props.pin.imageURL, className: 'my-panel-content' }),
+	                _react2.default.createElement(
+	                    'center',
+	                    null,
+	                    _react2.default.createElement('img', { src: this.props.pin.imageURL, className: 'images pinImage' })
+	                ),
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
 	                _react2.default.createElement(
 	                    'p',
-	                    null,
+	                    { className: 'pinDescription' },
 	                    this.props.pin.description
 	                )
 	            );
@@ -42550,7 +42544,7 @@
 	                                        _react2.default.createElement(
 	                                            'center',
 	                                            null,
-	                                            _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content' })
+	                                            _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content images' })
 	                                        )
 	                                    ),
 	                                    _react2.default.createElement(
@@ -42709,7 +42703,7 @@
 	                                    _react2.default.createElement(
 	                                        'center',
 	                                        null,
-	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                    )
 	                                ),
 	                                _react2.default.createElement(
@@ -42762,6 +42756,8 @@
 	var _modal = __webpack_require__(516);
 
 	var _modal2 = _interopRequireDefault(_modal);
+
+	var _reactRouter = __webpack_require__(183);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -42827,6 +42823,11 @@
 	                _react2.default.createElement(
 	                    'h1',
 	                    null,
+	                    _react2.default.createElement(
+	                        _reactRouter.Link,
+	                        { to: "/" + this.props.user.username },
+	                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-left goBack' })
+	                    ),
 	                    this.props.boardPins.name
 	                ),
 	                _react2.default.createElement(
@@ -42849,7 +42850,7 @@
 	                                        _react2.default.createElement(
 	                                            'center',
 	                                            null,
-	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content' })
+	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                        )
 	                                    ),
 	                                    _react2.default.createElement(
@@ -42875,6 +42876,10 @@
 	        boardPins: {
 	            name: state.boardPins.name,
 	            pins: state.boardPins.pins
+	        },
+
+	        user: {
+	            username: state.user.username
 	        }
 	    };
 	}
