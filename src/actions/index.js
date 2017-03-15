@@ -112,10 +112,32 @@ export function fetchUserBoards(username){
 			firebase.database().ref("boards").child(snap.ref.key).once("value", function(snap){
 				var data = snap.val();
 				data.id = snap.ref.key;
-				dispatch({
-					type: actionTypes.FETCH_USER_BOARDS,
-					payload: data
-				});
+				if(snap.val().pins){
+					firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function(snap){
+						firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+							if(snap.val().imageURL){
+								data.imageURL = snap.val().imageURL;
+								dispatch({
+									type: actionTypes.FETCH_USER_BOARDS,
+									payload: data
+								});
+							}else{
+								data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+								dispatch({
+									type: actionTypes.FETCH_USER_BOARDS,
+									payload: data
+								});
+							}						
+						});
+					});
+				}else{
+					data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+					dispatch({
+						type: actionTypes.FETCH_USER_BOARDS,
+						payload: data
+					});
+				}
+				
 			});
 		});
 	}
