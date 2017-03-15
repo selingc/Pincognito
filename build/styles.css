@@ -58,7 +58,7 @@ body{
 	float: right;
 }
 
-/*SIGN UP PAGE*/
+/*SIGN UP PAGE ---------------------------------------------------------------------------------------*/
 hr {
     border: 0;
     height: 1px;
@@ -75,7 +75,7 @@ hr {
 	padding-left: 10px;
 }
 
-/*LOG IN & SIGN UP PAGES*/
+/*LOG IN & SIGN UP PAGES ---------------------------------------------------------------------------------------*/
 .form {
 	border-radius: 25px;
 	background: rgba(255,255,255,0.8);
@@ -89,7 +89,7 @@ hr {
 
 /*BOARD & PIN PAGES*/
 .panel {
-	margin: 5px;
+	margin: 10px 5px 10px 5px;
 }
 
 .panel-body {
@@ -100,12 +100,20 @@ hr {
 	text-align: center;
 }
 
-/*BOARDPIN PAGE*/
+.boards {
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+	transition: all 200ms ease-out;
+}
+.boards:hover {
+	box-shadow: 0 0 6px rgba(217, 83, 79, 1);
+}
+
+/*BOARDPIN PAGE ---------------------------------------------------------------------------------------*/
 .pins {
 	width: 100%;
 }
 
-/*MODAL*/
+/*MODAL ---------------------------------------------------------------------------------------*/
 .modal-content {
     background-color: #fefefe ;
     padding: 10px;

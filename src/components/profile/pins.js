@@ -104,8 +104,10 @@ class Pins extends Component {
         return (
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="border col-lg-12">
-                        <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Pin</Link>
+                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel panel-default">
+                        <div className="panel-body">
+                            <Link to={"/" + this.props.username} onClick={this.openPopup}>Create New Pin</Link>
+                        </div>
                     </div>
                 </div>
 
