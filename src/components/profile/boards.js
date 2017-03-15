@@ -52,7 +52,7 @@ class Boards extends Component {
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div className="panel panel-danger border">
                                     <div className="panel-body boardheight">
-                                       <center><img src={board.imageURL} className="my-panel-content"/></center>
+                                       <center><img src={board.imageURL} className="my-panel-content images"/></center>
                                     </div>
                                     <div className="panel-heading">{board.name}</div>
                                 </div>

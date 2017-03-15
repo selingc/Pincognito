@@ -7,9 +7,9 @@ class Pin extends Component {
         return (
             <div>
                 <h1>{this.props.pin.name}</h1>
-                <img src={this.props.pin.imageURL} className="my-panel-content"/>
+                <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
                 <hr className="stylehr"/>
-                <p>{this.props.pin.description}</p>
+                <p className="pinDescription">{this.props.pin.description}</p>
             </div>
         );
     }

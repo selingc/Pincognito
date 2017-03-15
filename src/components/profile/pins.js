@@ -62,7 +62,7 @@ class Pins extends Component {
                         <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                             <div className="panel panel-danger border" onClick={this.openPopup.bind(null, pin)}>
                                 <div className="panel-body boardheight">
-                                   <center><img src={pin.imageURL} className="my-panel-content"/></center>
+                                   <center><img src={pin.imageURL} className="my-panel-content images"/></center>
                                 </div>
                                 <div className="panel-heading">{pin.name}</div>
                             </div>
