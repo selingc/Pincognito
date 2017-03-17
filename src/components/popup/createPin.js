@@ -28,7 +28,7 @@ class CreatePin extends Component {
             <div>
                 <h1>Create Pin</h1>
                 <hr className="stylehr"/>
-                <form className="form" onSubmit={this.createPin.bind(this)}>
+                <form className="createForm" onSubmit={this.createPin.bind(this)}>
                     <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
                     <select className="form-control" ref="board" id="dropdown" defaultValue="none">
                         <option value="none" disabled>--Select a Board--</option>

@@ -25,7 +25,7 @@ class CreateBoard extends Component {
             <div>
                  <h1>Create Board</h1>
                     <hr className="stylehr"/>
-                    <form className="form" onSubmit={this.createBoard.bind(this)}>
+                    <form className="createForm" onSubmit={this.createBoard.bind(this)}>
                         <input type="text" className="form-control" ref="name" placeholder="Board name"/> <br />
                         <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
                         <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
