@@ -99,7 +99,8 @@ body{
 
 /*BOARD & PIN PAGES ---------------------------------------------------------------------------------------*/
 .panel {
-	margin: 10px 5px 10px 5px;
+	margin-top: 25px;
+	margin-bottom: 25px;
 }
 
 .boardheight {

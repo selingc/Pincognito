@@ -29,7 +29,7 @@ class CreateBoard extends Component {
                         <input type="text" className="form-control" ref="name" placeholder="Board name"/> <br />
                         <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
                         <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
-                        <button type="submit" className="btn btn-danger">Create Board</button>
+                        <center><button type="submit" className="btn btn-danger">Create Board</button></center>
                     </form>
             </div>
         );

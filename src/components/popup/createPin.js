@@ -39,7 +39,7 @@ class CreatePin extends Component {
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" /> <br />
                     <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
-                    <button type="submit" className="btn btn-danger">Create Pin</button>
+                    <center><button type="submit" className="btn btn-danger">Create Pin</button></center>
                 </form>
             </div>
         );
