@@ -29700,13 +29700,10 @@
 
 		switch (action.type) {
 			case _types2.default.CREATE_USER:
-				return Object.assign({}, state, { error: "" });
+				return Object.assign({}, state, { username: action.payload, error: "" });
 
 			case _types2.default.UPDATE_USER_STATE:
-				return Object.assign({}, state, action.payload ? { username: action.payload.displayName } : initialState);
-
-			case _types2.default.UPDATE_USER_PHOTOURL:
-				return Object.assign({}, state, { photoURL: action.payload });
+				return Object.assign({}, state, { username: action.payload ? action.payload.displayName : null });
 
 			case _types2.default.LOGIN_USER:
 				return Object.assign({}, state, { error: "" });
@@ -40389,6 +40386,7 @@
 	function fetchUser() {
 		return function (dispatch) {
 			firebase.auth().onAuthStateChanged(function (user) {
+				console.log(user);
 				dispatch({
 					type: _types2.default.UPDATE_USER_STATE,
 					payload: user
@@ -40414,10 +40412,10 @@
 							});
 
 							firebase.auth().currentUser.updateProfile({
-								displayName: username
+								displayName: data.username
 							});
 
-							dispatch({ type: _types2.default.CREATE_USER });
+							dispatch({ type: _types2.default.CREATE_USER, payload: data.username });
 							_reactRouter.browserHistory.push("/");
 						}).catch(function (error) {
 							dispatch({ type: _types2.default.USER_ERROR, payload: error.message });
@@ -41621,7 +41619,7 @@
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
 	                _react2.default.createElement(
 	                    'form',
-	                    { className: 'form', onSubmit: this.createPin.bind(this) },
+	                    { className: 'createForm', onSubmit: this.createPin.bind(this) },
 	                    _react2.default.createElement('input', { type: 'file', accept: 'image/*', className: 'form-control-file', id: 'image', ref: 'image' }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -41652,9 +41650,13 @@
 	                    ' ',
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'btn btn-danger' },
-	                        'Create Pin'
+	                        'center',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { type: 'submit', className: 'btn btn-danger' },
+	                            'Create Pin'
+	                        )
 	                    )
 	                )
 	            );
@@ -41745,7 +41747,7 @@
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
 	                _react2.default.createElement(
 	                    'form',
-	                    { className: 'form', onSubmit: this.createBoard.bind(this) },
+	                    { className: 'createForm', onSubmit: this.createBoard.bind(this) },
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Board name' }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -41756,9 +41758,13 @@
 	                    ' ',
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'btn btn-danger' },
-	                        'Create Board'
+	                        'center',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { type: 'submit', className: 'btn btn-danger' },
+	                            'Create Board'
+	                        )
 	                    )
 	                )
 	            );

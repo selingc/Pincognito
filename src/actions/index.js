@@ -27,6 +27,7 @@ export function sayHello(){
 export function fetchUser(){
 	return dispatch => {
 		firebase.auth().onAuthStateChanged(function(user){
+			console.log(user);
 			dispatch({
 				type: actionTypes.UPDATE_USER_STATE,
 				payload: user
@@ -52,10 +53,10 @@ export function createUser(data){
                         });
 
                         firebase.auth().currentUser.updateProfile({
-							displayName: username
+							displayName: data.username
 						});
 
-						dispatch({type: actionTypes.CREATE_USER});
+						dispatch({type: actionTypes.CREATE_USER, payload: data.username});
                         browserHistory.push("/");
 
                     }).catch(function(error){

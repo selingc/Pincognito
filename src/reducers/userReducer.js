@@ -17,13 +17,10 @@ const initialState = {
 export default function(state=initialState, action){
 	switch(action.type){
 		case actionTypes.CREATE_USER:
-			return Object.assign({}, state, {error: ""});
+			return Object.assign({}, state, {username: action.payload, error: ""});
 
 		case actionTypes.UPDATE_USER_STATE:
-			return Object.assign({}, state, (action.payload ? {username: action.payload.displayName} : initialState));
-
-		case actionTypes.UPDATE_USER_PHOTOURL:
-			return Object.assign({}, state, {photoURL: action.payload});
+			return Object.assign({}, state, {username: action.payload ? action.payload.displayName : null});
 
 		case actionTypes.LOGIN_USER:
 			return Object.assign({}, state, {error: ""});
