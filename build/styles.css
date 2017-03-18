@@ -58,6 +58,7 @@ body{
 	float: right;
 }
 
+
 /*SIGN UP PAGE ---------------------------------------------------------------------------------------*/
 .stylehr {
     border: 0;
@@ -93,18 +94,14 @@ body{
 	padding-right: 15%;
 }
 .pinImage {
-	max-height: 80%; 
 	max-width: 80%;
+	max-height: 400px;
 }
 
 /*BOARD & PIN PAGES ---------------------------------------------------------------------------------------*/
 .panel {
 	margin-top: 25px;
 	margin-bottom: 25px;
-}
-
-.boardheight {
-	height: 200px;
 }
 
 .panel-heading {
@@ -131,11 +128,14 @@ body{
 
 .createPanel {
 	text-align: center;
+	height: 245px;
+	line-height: 200px;
 }
 
 .create {
 	color: black;
 }
+
 .create:hover {
 	text-decoration: none;
 	color: #d9534f;

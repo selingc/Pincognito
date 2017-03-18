@@ -36,7 +36,7 @@ class Boards extends Component {
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <Link className="create" to={"/" + this.props.username} onClick={this.openPopup.bind(this)}>
-                            <div className="panel panel-default border">
+                            <div className="panel panel-danger border">
                                 <div className="panel-body createPanel">
                                     Create New Board
                                 </div>
@@ -51,7 +51,7 @@ class Boards extends Component {
                         <Link to={"/board/" + board.id}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div className="panel panel-danger border">
-                                    <div className="panel-body boardheight">
+                                    <div className="panel-body">
                                        <center><img src={board.imageURL} className="my-panel-content images"/></center>
                                     </div>
                                     <div className="panel-heading">{board.name}</div>
