@@ -40386,11 +40386,19 @@
 	function fetchUser() {
 		return function (dispatch) {
 			firebase.auth().onAuthStateChanged(function (user) {
-				console.log(user);
-				dispatch({
-					type: _types2.default.UPDATE_USER_STATE,
-					payload: user
-				});
+				if (user) {
+					if (user.displayName) {
+						dispatch({
+							type: _types2.default.UPDATE_USER_STATE,
+							payload: user
+						});
+					}
+				} else {
+					dispatch({
+						type: _types2.default.UPDATE_USER_STATE,
+						payload: user
+					});
+				}
 			});
 		};
 	}

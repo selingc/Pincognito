@@ -27,11 +27,19 @@ export function sayHello(){
 export function fetchUser(){
 	return dispatch => {
 		firebase.auth().onAuthStateChanged(function(user){
-			console.log(user);
-			dispatch({
-				type: actionTypes.UPDATE_USER_STATE,
-				payload: user
-			});
+			if(user){
+				if(user.displayName){
+					dispatch({
+						type: actionTypes.UPDATE_USER_STATE,
+						payload: user
+					});
+				}
+			}else{
+				dispatch({
+					type: actionTypes.UPDATE_USER_STATE,
+					payload: user
+				});
+			}
 		});
 	}
 }
