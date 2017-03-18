@@ -40614,7 +40614,7 @@
 	function fetchUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
+				firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
 					firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
 						var data = snap.val();
 						data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
