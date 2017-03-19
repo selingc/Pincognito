@@ -40374,6 +40374,8 @@
 
 	firebase.initializeApp(_firebase_config2.default);
 
+	var refs = [];
+
 	function sayHello() {
 		return function (dispatch) {
 			dispatch({
@@ -40622,7 +40624,9 @@
 	function fetchUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
+				var boardPinRef = firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true);
+				refs.push(boardPinRef);
+				boardPinRef.on("child_added", function (snap) {
 					firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
 						var data = snap.val();
 						data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
@@ -40639,6 +40643,9 @@
 	function stopFetchingUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("boards").off();
+			for (var i = 0; i < refs.length; i++) {
+				refs[i].off();
+			}
 			dispatch({
 				type: _types2.default.STOP_FETCHING_USER_PINS
 			});
@@ -41587,10 +41594,13 @@
 	var CreatePin = function (_Component) {
 	    _inherits(CreatePin, _Component);
 
-	    function CreatePin() {
+	    function CreatePin(props) {
 	        _classCallCheck(this, CreatePin);
 
-	        return _possibleConstructorReturn(this, (CreatePin.__proto__ || Object.getPrototypeOf(CreatePin)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (CreatePin.__proto__ || Object.getPrototypeOf(CreatePin)).call(this, props));
+
+	        _this.state = { error: "" };
+	        return _this;
 	    }
 
 	    _createClass(CreatePin, [{
@@ -41598,20 +41608,24 @@
 	        value: function createPin(e) {
 	            e.preventDefault();
 
-	            var data = {
-	                file: this.refs.image.files[0],
-	                name: this.refs.name.value,
-	                description: this.refs.description.value,
-	                tags: this.refs.tags.value
-	            };
+	            if (this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
+	                var data = {
+	                    file: this.refs.image.files[0],
+	                    name: this.refs.name.value,
+	                    description: this.refs.description.value,
+	                    tags: this.refs.tags.value
+	                };
 
-	            this.props.createBoardPin(this.refs.board.value, data);
+	                this.props.createBoardPin(this.refs.board.value, data);
 
-	            this.refs.name.value = "";
-	            this.refs.description.value = "";
-	            this.refs.tags.value = "";
+	                this.refs.name.value = "";
+	                this.refs.description.value = "";
+	                this.refs.tags.value = "";
 
-	            this.props.closePopup();
+	                this.props.closePopup();
+	            } else {
+	                this.setState({ error: "No fields can be empty" });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -41625,6 +41639,16 @@
 	                    'Create Pin'
 	                ),
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                this.state.error ? _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        'Error! '
+	                    ),
+	                    this.state.error
+	                ) : null,
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'createForm', onSubmit: this.createPin.bind(this) },
@@ -41717,10 +41741,13 @@
 	var CreateBoard = function (_Component) {
 	    _inherits(CreateBoard, _Component);
 
-	    function CreateBoard() {
+	    function CreateBoard(props) {
 	        _classCallCheck(this, CreateBoard);
 
-	        return _possibleConstructorReturn(this, (CreateBoard.__proto__ || Object.getPrototypeOf(CreateBoard)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (CreateBoard.__proto__ || Object.getPrototypeOf(CreateBoard)).call(this, props));
+
+	        _this.state = { error: "" };
+	        return _this;
 	    }
 
 	    _createClass(CreateBoard, [{
@@ -41728,18 +41755,22 @@
 	        value: function createBoard(e) {
 	            e.preventDefault();
 
-	            var data = {
-	                name: this.refs.name.value,
-	                description: this.refs.description.value,
-	                tags: this.refs.tags.value
-	            };
+	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
+	                var data = {
+	                    name: this.refs.name.value,
+	                    description: this.refs.description.value,
+	                    tags: this.refs.tags.value
+	                };
 
-	            this.props.createUserBoard(this.props.username, data);
-	            this.refs.name.value = "";
-	            this.refs.description.value = "";
-	            this.refs.tags.value = "";
+	                this.props.createUserBoard(this.props.username, data);
+	                this.refs.name.value = "";
+	                this.refs.description.value = "";
+	                this.refs.tags.value = "";
 
-	            this.props.closePopup();
+	                this.props.closePopup();
+	            } else {
+	                this.setState({ error: "No fields can be empty" });
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -41753,6 +41784,16 @@
 	                    'Create Board'
 	                ),
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                this.state.error ? _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        'Error! '
+	                    ),
+	                    this.state.error
+	                ) : null,
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'createForm', onSubmit: this.createBoard.bind(this) },
@@ -42529,7 +42570,7 @@
 	                            { className: 'create', to: "/" + this.props.username, onClick: this.openPopup.bind(this) },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'panel panel-default border' },
+	                                { className: 'panel panel-danger border' },
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'panel-body createPanel' },
@@ -42554,7 +42595,7 @@
 	                                    { className: 'panel panel-danger border' },
 	                                    _react2.default.createElement(
 	                                        'div',
-	                                        { className: 'panel-body boardheight' },
+	                                        { className: 'panel-body' },
 	                                        _react2.default.createElement(
 	                                            'center',
 	                                            null,
@@ -42691,7 +42732,7 @@
 	                            { className: 'create', to: "/" + this.props.username, onClick: this.openPopup.bind(null, null) },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'panel panel-default boards' },
+	                                { className: 'panel panel-default border' },
 	                                _react2.default.createElement(
 	                                    'div',
 	                                    { className: 'panel-body createPanel' },
@@ -42713,7 +42754,7 @@
 	                                { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel-body boardheight' },
+	                                    { className: 'panel-body' },
 	                                    _react2.default.createElement(
 	                                        'center',
 	                                        null,

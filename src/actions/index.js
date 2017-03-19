@@ -15,6 +15,8 @@ import { browserHistory } from 'react-router'
 
 firebase.initializeApp(config);
 
+var refs = [];
+
 export function sayHello(){
 	return dispatch => {
 		dispatch({
@@ -265,7 +267,9 @@ export function stopFetchingPins(){
 export function fetchUserPins(username){
 	return dispatch=>{
 		firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
+			var boardPinRef = firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true);
+			refs.push(boardPinRef);
+			boardPinRef.on("child_added", function(snap){
 				firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 					var data = snap.val();
 					data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
@@ -282,6 +286,9 @@ export function fetchUserPins(username){
 export function stopFetchingUserPins(username){
 	return dispatch =>{
 		firebase.database().ref("users/" + username).child("boards").off();
+		for(var i = 0; i < refs.length; i++){
+			refs[i].off();
+		}
 		dispatch({
 			type: actionTypes.STOP_FETCHING_USER_PINS
 		});
