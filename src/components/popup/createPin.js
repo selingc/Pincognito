@@ -20,7 +20,7 @@ class CreatePin extends Component {
                 tags: this.refs.tags.value
             }
 
-            this.props.createBoardPin(this.refs.board.value, data);
+            this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
 
             this.refs.name.value = "";
             this.refs.description.value = "";
@@ -62,7 +62,8 @@ class CreatePin extends Component {
 
 function mapStateToProps(state){
     return{
-        userBoards: state.userBoards
+        userBoards: state.userBoards,
+        user: state.user
     }
 }
 
