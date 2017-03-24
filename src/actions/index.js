@@ -15,7 +15,12 @@ import { browserHistory } from 'react-router'
 
 firebase.initializeApp(config);
 
+//aid in stopFetchingUserPins action
 var refs = [];
+
+/*--------------------------------------------------------------
+	learning purposes
+--------------------------------------------------------------*/
 
 export function sayHello(){
 	return dispatch => {
@@ -25,6 +30,10 @@ export function sayHello(){
 		});
 	}
 }
+
+/*--------------------------------------------------------------
+	user actions
+--------------------------------------------------------------*/
 
 export function fetchUser(){
 	return dispatch => {
@@ -117,6 +126,10 @@ export function logIn(data){
 	}
 }
 
+/*--------------------------------------------------------------
+	user board actions
+--------------------------------------------------------------*/
+
 export function fetchUserBoards(username){
 	return dispatch =>{
 		firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function(snap){
@@ -187,6 +200,47 @@ export function stopFetchingUserBoards(username){
 	}
 }
 
+export function deleteUserBoard(username, boardID){
+	return dispatch =>{
+		firebase.database().ref("boards").child(boardID).remove();
+		firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+		dispatch({
+			type: actionTypes.DELETE_USER_BOARD
+		})
+	}
+}
+
+export function editUserBoard(username, boardID, oldData, newData){
+	return dispatch =>{
+		var redoData = {
+			name: newData.name,
+			description: newData.description
+		}
+
+		firebase.database().ref("boards").child(boardID).update(redoData);
+
+		var oldTagsArray = oldData.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<oldTagsArray.length; i++){
+			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
+			firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
+		}
+
+		var newTagsArray = newData.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<newTagsArray.length; i++){
+			firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
+			firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
+		}
+
+		dispatch({
+			type: actionTypes.EDIT_USER_BOARD
+		})
+	}
+}
+
+/*--------------------------------------------------------------
+	board pin actions
+--------------------------------------------------------------*/
+
 export function fetchBoardPins(boardID){
 	return dispatch =>{
 		firebase.database().ref("boards").child(boardID).once("value", function(snap){
@@ -244,6 +298,67 @@ export function stopFetchingBoardPins(boardID){
 	}
 }
 
+export function deleteBoardPin(boardID, pinID){
+	return dispatch =>{
+		firebase.database().ref("pins").child(pinID).set(redoData);
+		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+		dispatch({
+			type: actionTypes.DELETE_BOARD_PIN
+		})
+	}
+}
+
+export function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData){
+	return dispatch =>{
+		var redoData = {
+			name: newData.name,
+			description: newData.description
+		}
+
+		if(newData.file){
+			firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function(snapshot){
+				redoData.imageURL = snapshot.downloadURL;
+				firebase.database().ref("pins").child(pinID).update(redoData);
+
+				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			});
+		}else{
+			firebase.database().ref("pins").child(pinID).update(redoData);
+
+			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+		}
+	}
+}
+
+export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData){
+	return dispatch =>{
+		if(oldBoardID !== newBoardID){
+			firebase.database().ref("boards/" + oldBoardID + "/pins").child(pinID).set(false);
+			firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
+		}
+
+		var oldTagsArray = oldData.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<oldTagsArray.length; i++){
+			firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
+			firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+		}
+
+		var newTagsArray = newData.tags.replace(/\s/g,"").split(",");
+		for(var i=0; i<newTagsArray.length; i++){
+			firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
+			firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
+		}
+
+		dispatch({
+			type: actionTypes.EDIT_BOARD_PIN
+		});
+	}
+}
+
+/*--------------------------------------------------------------
+	pin actions
+--------------------------------------------------------------*/
+
 export function fetchPins(){
 	return dispatch =>{
 		firebase.database().ref("pins").on("child_added", function(snap){
@@ -263,6 +378,10 @@ export function stopFetchingPins(){
 			});
 	}
 }
+
+/*--------------------------------------------------------------
+	user pin actions
+--------------------------------------------------------------*/
 
 export function fetchUserPins(username){
 	return dispatch=>{
