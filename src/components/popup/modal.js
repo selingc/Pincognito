@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Pin from './pin.js';
 import CreatePin from './createPin.js';
 import CreateBoard from './createBoard.js';
+import EditPin from './editPin.js';
 
 class Modal extends Component {
     constructor(props){
@@ -53,7 +54,12 @@ class Modal extends Component {
                 return(
                     <CreatePin username={that.props.username} closePopup={that.props.closePopup}/>
                 )
-            }else{
+            }else if(that.props.type==="editPin"){
+                return(
+                    <EditPin username={that.props.username} pin={that.props.pin} closePopup={that.props.closePopup}/>
+                )
+            }
+            else{
                 return(
                     <Pin pin={that.props.pin} closePopup={that.props.closePopup}/>
                 )

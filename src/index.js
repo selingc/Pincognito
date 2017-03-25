@@ -26,7 +26,7 @@ ReactDOM.render(
                 <IndexRoute component={Home}/>
                 <Route path="/login" component={Login}/>
                 <Route path="/signup" component={Signup}/>
-                <Route path="/:username" component={Profile}/>
+                <Route path="/profile" component={Profile}/>
                 <Route path="/board/:boardid" component={BoardPins}/>
             </Route>
         </Router>

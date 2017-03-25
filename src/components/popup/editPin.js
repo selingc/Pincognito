@@ -3,7 +3,7 @@ import {connect} from 'react-redux';
 import * as actions from '../../actions/index';
 import {Link} from 'react-router';
 
-class CreatePin extends Component {
+class EditPin extends Component {
     constructor(props){
         super(props);
         this.state = {error: ""};
@@ -12,20 +12,14 @@ class CreatePin extends Component {
     createPin(e){
         e.preventDefault();
 
-        if(this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value){
+        if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
             var data = {
                 file: this.refs.image.files[0],
                 name: this.refs.name.value,
                 description: this.refs.description.value,
                 tags: this.refs.tags.value
             }
-
-            this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-
-            this.refs.name.value = "";
-            this.refs.description.value = "";
-            this.refs.tags.value = "";
-
+            this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
             this.props.closePopup();
         }else{
             this.setState({error: "No fields can be empty"});
@@ -35,7 +29,7 @@ class CreatePin extends Component {
     render() {
         return (
             <div>
-                <h1>Create Pin</h1>
+                <h1>Edit Pin</h1>
                 <hr className="stylehr"/>
                 {this.state.error ? (
                     <div className="alert alert-danger"><strong>Error! </strong>{this.state.error}</div>
@@ -44,16 +38,16 @@ class CreatePin extends Component {
                 )}
                 <form className="createForm" onSubmit={this.createPin.bind(this)}>
                     <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
-                    <select className="form-control" ref="board" id="dropdown" defaultValue="none">
+                    <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
                         <option value="none" disabled>--Select a Board--</option>
                         {this.props.userBoards.map((board, index) => (
-                            <option value={board.id} key={index}>{board.name}</option>
+                            <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />
-                    <input type="text" className="form-control" ref="name" placeholder="Pin name" /> <br />
-                    <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
-                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
-                    <center><button type="submit" className="btn btn-danger">Create Pin</button></center>
+                    <input type="text" className="form-control" ref="name" placeholder="Pin name" defaultValue={this.props.pin.name}/> <br />
+                    <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.pin.description}/> <br />
+                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.pin.tags}/> <br />
+                    <center><button type="submit" className="btn btn-danger">Confirm Changes</button></center>
                 </form>
             </div>
         );
@@ -67,4 +61,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, actions)(CreatePin)
+export default connect(mapStateToProps, actions)(EditPin)

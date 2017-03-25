@@ -24,7 +24,7 @@ const NavBar = ({user, actions}) => {
 					</ul>)
 					:
 					(<ul id="menu">
-						<li><Link to={"/" + user.username} activeClassName="active" className="activeNav">Profile</Link></li>
+						<li><Link to="/profile" activeClassName="active" className="activeNav">Profile</Link></li>
 						<li><Link to="/" onClick={actions.logOff} id="logout">Logout</Link></li>
 					</ul>)
 				}

@@ -66,23 +66,23 @@
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(520);
+	var _layout = __webpack_require__(521);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(522);
+	var _login = __webpack_require__(523);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(524);
+	var _signup = __webpack_require__(525);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(526);
+	var _profile = __webpack_require__(527);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _boardpins = __webpack_require__(529);
+	var _boardpins = __webpack_require__(530);
 
 	var _boardpins2 = _interopRequireDefault(_boardpins);
 
@@ -29667,11 +29667,15 @@
 		FETCH_USER_BOARDS: 'FETCH_USER_BOARDS',
 		CREATE_USER_BOARD: 'CREATE_USER_BOARD',
 		STOP_FETCHING_USER_BOARDS: 'STOP_FETCHING_USER_BOARDS',
+		DELETE_USER_BOARD: 'DELETE_USER_BOARD',
+		EDIT_USER_BOARD: 'EDIT_USER_BOARD',
 
 		FETCH_BOARD_PINS: 'FETCH_BOARD_PINS',
 		CREATE_BOARD_PIN: 'CREATE_BOARD_PIN',
 		STOP_FETCHING_BOARD_PINS: 'STOP_FETCHING_BOARD_PINS',
 		FETCH_BOARD_NAME: 'FETCH_BOARD_NAME',
+		DELETE_BOARD_PIN: 'DELETE_BOARD_PIN',
+		EDIT_BOARD_PIN: 'EDIT_BOARD_PIN',
 
 		FETCH_USER_PINS: 'FETCH_USER_PINS',
 		STOP_FETCHING_USER_PINS: 'STOP_FETCHING_USER_PINS',
@@ -40335,9 +40339,14 @@
 	exports.fetchUserBoards = fetchUserBoards;
 	exports.createUserBoard = createUserBoard;
 	exports.stopFetchingUserBoards = stopFetchingUserBoards;
+	exports.deleteUserBoard = deleteUserBoard;
+	exports.editUserBoard = editUserBoard;
 	exports.fetchBoardPins = fetchBoardPins;
 	exports.createBoardPin = createBoardPin;
 	exports.stopFetchingBoardPins = stopFetchingBoardPins;
+	exports.deleteBoardPin = deleteBoardPin;
+	exports.editBoardPin = editBoardPin;
+	exports.editBoardPinData = editBoardPinData;
 	exports.fetchPins = fetchPins;
 	exports.stopFetchingPins = stopFetchingPins;
 	exports.fetchUserPins = fetchUserPins;
@@ -40374,7 +40383,12 @@
 
 	firebase.initializeApp(_firebase_config2.default);
 
+	//aid in stopFetchingUserPins action
 	var refs = [];
+
+	/*--------------------------------------------------------------
+		learning purposes
+	--------------------------------------------------------------*/
 
 	function sayHello() {
 		return function (dispatch) {
@@ -40384,6 +40398,10 @@
 			});
 		};
 	}
+
+	/*--------------------------------------------------------------
+		user actions
+	--------------------------------------------------------------*/
 
 	function fetchUser() {
 		return function (dispatch) {
@@ -40475,6 +40493,10 @@
 		};
 	}
 
+	/*--------------------------------------------------------------
+		user board actions
+	--------------------------------------------------------------*/
+
 	function fetchUserBoards(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
@@ -40544,6 +40566,47 @@
 		};
 	}
 
+	function deleteUserBoard(username, boardID) {
+		return function (dispatch) {
+			firebase.database().ref("boards").child(boardID).remove();
+			firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+			dispatch({
+				type: _types2.default.DELETE_USER_BOARD
+			});
+		};
+	}
+
+	function editUserBoard(username, boardID, oldData, newData) {
+		return function (dispatch) {
+			var redoData = {
+				name: newData.name,
+				description: newData.description
+			};
+
+			firebase.database().ref("boards").child(boardID).update(redoData);
+
+			var oldTagsArray = oldData.tags.replace(/\s/g, "").split(",");
+			for (var i = 0; i < oldTagsArray.length; i++) {
+				firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
+				firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
+			}
+
+			var newTagsArray = newData.tags.replace(/\s/g, "").split(",");
+			for (var i = 0; i < newTagsArray.length; i++) {
+				firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
+				firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
+			}
+
+			dispatch({
+				type: _types2.default.EDIT_USER_BOARD
+			});
+		};
+	}
+
+	/*--------------------------------------------------------------
+		board pin actions
+	--------------------------------------------------------------*/
+
 	function fetchBoardPins(boardID) {
 		return function (dispatch) {
 			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
@@ -40555,16 +40618,29 @@
 
 			firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
 				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+					var pinData = snap.val();
+					var tagKeys = Object.keys(pinData.tags);
+					var tags = "";
+					for (var i = 0; i < tagKeys.length; i++) {
+						tags += tagKeys[i];
+						if (i < tagKeys.length - 1) {
+							tags += ", ";
+						}
+					}
+					pinData.tags = tags;
+					pinData.boardID = boardID;
+					pinData.pinID = snap.ref.key;
+
 					dispatch({
 						type: _types2.default.FETCH_BOARD_PINS,
-						payload: snap.val()
+						payload: pinData
 					});
 				});
 			});
 		};
 	}
 
-	function createBoardPin(boardID, data) {
+	function createBoardPin(username, boardID, data) {
 		return function (dispatch) {
 			var key = firebase.database().ref("pins").push().key;
 
@@ -40578,6 +40654,7 @@
 
 				firebase.database().ref("pins").child(key).set(redoData);
 				firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
+				firebase.database().ref("users/" + username + "/pins").child(key).set(true);
 
 				var tagsArray = data.tags.replace(/\s/g, "").split(",");
 				for (var i = 0; i < tagsArray.length; i++) {
@@ -40601,6 +40678,67 @@
 		};
 	}
 
+	function deleteBoardPin(boardID, pinID) {
+		return function (dispatch) {
+			firebase.database().ref("pins").child(pinID).set(redoData);
+			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+			dispatch({
+				type: _types2.default.DELETE_BOARD_PIN
+			});
+		};
+	}
+
+	function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData) {
+		return function (dispatch) {
+			var redoData = {
+				name: newData.name,
+				description: newData.description
+			};
+
+			if (newData.file) {
+				firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function (snapshot) {
+					redoData.imageURL = snapshot.downloadURL;
+					firebase.database().ref("pins").child(pinID).update(redoData);
+
+					dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+				});
+			} else {
+				firebase.database().ref("pins").child(pinID).update(redoData);
+
+				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			}
+		};
+	}
+
+	function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData) {
+		return function (dispatch) {
+			if (oldBoardID !== newBoardID) {
+				firebase.database().ref("boards/" + oldBoardID + "/pins").child(pinID).set(false);
+				firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
+			}
+
+			var oldTagsArray = oldData.tags.replace(/\s/g, "").split(",");
+			for (var i = 0; i < oldTagsArray.length; i++) {
+				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
+				firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+			}
+
+			var newTagsArray = newData.tags.replace(/\s/g, "").split(",");
+			for (var i = 0; i < newTagsArray.length; i++) {
+				firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
+				firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
+			}
+
+			dispatch({
+				type: _types2.default.EDIT_BOARD_PIN
+			});
+		};
+	}
+
+	/*--------------------------------------------------------------
+		pin actions
+	--------------------------------------------------------------*/
+
 	function fetchPins() {
 		return function (dispatch) {
 			firebase.database().ref("pins").on("child_added", function (snap) {
@@ -40621,19 +40759,30 @@
 		};
 	}
 
+	/*--------------------------------------------------------------
+		user pin actions
+	--------------------------------------------------------------*/
+
 	function fetchUserPins(username) {
 		return function (dispatch) {
-			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
-				var boardPinRef = firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true);
-				refs.push(boardPinRef);
-				boardPinRef.on("child_added", function (snap) {
-					firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
-						var data = snap.val();
-						data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
-						dispatch({
-							type: _types2.default.FETCH_USER_PINS,
-							payload: data
-						});
+			firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+					var pinData = snap.val();
+					if (pinData.tags) {
+						var tagKeys = Object.keys(pinData.tags);
+						var tags = "";
+						for (var i = 0; i < tagKeys.length; i++) {
+							tags += tagKeys[i];
+							if (i < tagKeys.length - 1) {
+								tags += ", ";
+							}
+						}
+						pinData.tags = tags;
+					}
+					pinData.pinID = snap.ref.key;
+					dispatch({
+						type: _types2.default.FETCH_USER_PINS,
+						payload: pinData
 					});
 				});
 			});
@@ -40642,10 +40791,7 @@
 
 	function stopFetchingUserPins(username) {
 		return function (dispatch) {
-			firebase.database().ref("users/" + username).child("boards").off();
-			for (var i = 0; i < refs.length; i++) {
-				refs[i].off();
-			}
+			firebase.database().ref("users/" + username).child("pins").off();
 			dispatch({
 				type: _types2.default.STOP_FETCHING_USER_PINS
 			});
@@ -41396,6 +41542,10 @@
 
 	var _createBoard2 = _interopRequireDefault(_createBoard);
 
+	var _editPin = __webpack_require__(520);
+
+	var _editPin2 = _interopRequireDefault(_editPin);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41462,6 +41612,8 @@
 	                    return _react2.default.createElement(_createBoard2.default, { username: that.props.username, closePopup: that.props.closePopup });
 	                } else if (that.props.type === "createPin") {
 	                    return _react2.default.createElement(_createPin2.default, { username: that.props.username, closePopup: that.props.closePopup });
+	                } else if (that.props.type === "editPin") {
+	                    return _react2.default.createElement(_editPin2.default, { username: that.props.username, pin: that.props.pin, closePopup: that.props.closePopup });
 	                } else {
 	                    return _react2.default.createElement(_pin2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
 	                }
@@ -41616,7 +41768,7 @@
 	                    tags: this.refs.tags.value
 	                };
 
-	                this.props.createBoardPin(this.refs.board.value, data);
+	                this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
 
 	                this.refs.name.value = "";
 	                this.refs.description.value = "";
@@ -41700,7 +41852,8 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        userBoards: state.userBoards
+	        userBoards: state.userBoards,
+	        user: state.user
 	    };
 	}
 
@@ -41832,6 +41985,155 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(508);
+
+	var actions = _interopRequireWildcard(_index);
+
+	var _reactRouter = __webpack_require__(183);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var EditPin = function (_Component) {
+	    _inherits(EditPin, _Component);
+
+	    function EditPin(props) {
+	        _classCallCheck(this, EditPin);
+
+	        var _this = _possibleConstructorReturn(this, (EditPin.__proto__ || Object.getPrototypeOf(EditPin)).call(this, props));
+
+	        _this.state = { error: "" };
+	        return _this;
+	    }
+
+	    _createClass(EditPin, [{
+	        key: 'createPin',
+	        value: function createPin(e) {
+	            e.preventDefault();
+
+	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
+	                var data = {
+	                    file: this.refs.image.files[0],
+	                    name: this.refs.name.value,
+	                    description: this.refs.description.value,
+	                    tags: this.refs.tags.value
+	                };
+
+	                this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
+	                //oldBoardID, newBoardID, pinID, oldData, newData
+
+	                this.props.closePopup();
+	            } else {
+	                this.setState({ error: "No fields can be empty" });
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var that = this;
+
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    'Edit Pin'
+	                ),
+	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                this.state.error ? _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        'Error! '
+	                    ),
+	                    this.state.error
+	                ) : null,
+	                _react2.default.createElement(
+	                    'form',
+	                    { className: 'createForm', onSubmit: this.createPin.bind(this) },
+	                    _react2.default.createElement('input', { type: 'file', accept: 'image/*', className: 'form-control-file', id: 'image', ref: 'image' }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'select',
+	                        { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: this.props.pin.boardID },
+	                        _react2.default.createElement(
+	                            'option',
+	                            { value: 'none', disabled: true },
+	                            '--Select a Board--'
+	                        ),
+	                        this.props.userBoards.map(function (board, index) {
+	                            return _react2.default.createElement(
+	                                'option',
+	                                { value: board.id, key: index },
+	                                board.name
+	                            );
+	                        })
+	                    ),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name', defaultValue: this.props.pin.name }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description', defaultValue: this.props.pin.description }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)', defaultValue: this.props.pin.tags }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'center',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { type: 'submit', className: 'btn btn-danger' },
+	                            'Edit Pin'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return EditPin;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        userBoards: state.userBoards,
+	        user: state.user
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(EditPin);
+
+/***/ },
+/* 521 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
@@ -41847,7 +42149,7 @@
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(521);
+	var _navbar = __webpack_require__(522);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -41906,7 +42208,7 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Layout);
 
 /***/ },
-/* 521 */
+/* 522 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42016,7 +42318,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 522 */
+/* 523 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42035,7 +42337,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _login = __webpack_require__(523);
+	var _login = __webpack_require__(524);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -42089,7 +42391,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 523 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42179,7 +42481,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 524 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42198,7 +42500,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _signup = __webpack_require__(525);
+	var _signup = __webpack_require__(526);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -42262,7 +42564,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 525 */
+/* 526 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42391,7 +42693,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 526 */
+/* 527 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42412,11 +42714,11 @@
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _boards = __webpack_require__(527);
+	var _boards = __webpack_require__(528);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(528);
+	var _pins = __webpack_require__(529);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -42485,7 +42787,7 @@
 	exports.default = (0, _reactRedux.connect)(null, actions)(Profile);
 
 /***/ },
-/* 527 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42629,7 +42931,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
 
 /***/ },
-/* 528 */
+/* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42787,7 +43089,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
 
 /***/ },
-/* 529 */
+/* 530 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42841,17 +43143,20 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            this.props.fetchBoardPins(this.props.params.boardid);
+	            this.props.fetchUserBoards(this.props.user.username);
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            this.props.stopFetchingBoardPins(this.props.params.boardid);
+	            this.props.stopFetchingUserBoards(this.props.user.username);
 	        }
 	    }, {
 	        key: 'openPopup',
-	        value: function openPopup(pin) {
+	        value: function openPopup(pin, type) {
 	            this.setState({ poppedUp: true });
 	            this.setState({ pin: pin });
+	            this.setState({ type: type });
 	        }
 	    }, {
 	        key: 'closePopup',
@@ -42866,7 +43171,11 @@
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {
-	                    return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                    if (that.state.type === "openPin") {
+	                        return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                    } else {
+	                        return _react2.default.createElement(_modal2.default, { type: 'editPin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                    }
 	                } else {
 	                    return null;
 	                }
@@ -42898,7 +43207,7 @@
 	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
+	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin, "openPin") },
 	                                    _react2.default.createElement(
 	                                        'div',
 	                                        { className: 'panel-body' },
@@ -42913,6 +43222,11 @@
 	                                        { className: 'panel-heading' },
 	                                        pin.name
 	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-default', onClick: _this2.openPopup.bind(null, pin, "editPin") },
+	                                    'Edit'
 	                                )
 	                            )
 	                        );

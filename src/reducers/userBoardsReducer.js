@@ -8,6 +8,15 @@ export default function(state=[], action){
 			return state;
 		case actionTypes.STOP_FETCHING_USER_BOARDS:
 			return [];
+		case actionTypes.FETCH_USER_BOARD_IMAGE:
+			var newState = state.slice();
+			for(var i=0; i<state.length; i++){
+				if(state[i].boardID === action.payload.boardID){
+					newState[i] = action.payload;
+					return newState;
+				}
+			}
+			return state;
 	}
 	return state;
 }

@@ -1,22 +1,30 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import * as actions from '../../actions/index';
+import Popup from '../popup/modal.js';
 
 class Pin extends Component{
+    constructor(props){
+        super(props);
+
+        this.state = {poppedUp: false};
+    }
+
+    openPopup(pin, type){
+        this.setState({poppedUp: true});
+    }
+
+    closePopup(){
+        this.setState({poppedUp: false});
+    }
+
     render() {
         var that = this;
-
-        function getTags(){
-            if(that.props.pin.tags){
-                var tagKeys = Object.keys(that.props.pin.tags);
-                var tags = "";
-                for(var i=0; i<tagKeys.length; i++){
-                    tags += tagKeys[i];
-                    if(i < tagKeys.length - 1){
-                        tags += ", ";
-                    }
-                }
-                return tags;
+        function getPopup(){
+            if(that.state.poppedUp){
+                return(
+                    <Popup type="editPin" pin={that.props.pin} closePopup={that.closePopup.bind(that)}/>
+                )
             }
         }
 
@@ -24,14 +32,19 @@ class Pin extends Component{
             <div>
                 <h1>{this.props.pin.name}</h1>
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
+                {this.props.pin.createdBy === this.props.user.username ? <button className="btn btn-default" onClick={this.openPopup.bind(this)}>Edit</button> : null}
                 <hr className="stylehr"/>
                 <p className="pinDescription">{this.props.pin.description}</p>
-                <p>
-                    {getTags()}
-                </p>
+                {getPopup()}
             </div>
         );
     }
 }
 
-export default Pin;
+function mapStateToProps(state){
+    return{
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps, actions)(Pin);

@@ -15,9 +15,6 @@ import { browserHistory } from 'react-router'
 
 firebase.initializeApp(config);
 
-//aid in stopFetchingUserPins action
-var refs = [];
-
 /*--------------------------------------------------------------
 	learning purposes
 --------------------------------------------------------------*/
@@ -135,33 +132,32 @@ export function fetchUserBoards(username){
 		firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function(snap){
 			firebase.database().ref("boards").child(snap.ref.key).once("value", function(snap){
 				var data = snap.val();
-				data.id = snap.ref.key;
+				data.boardID = snap.ref.key;
+				data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+				dispatch({
+					type: actionTypes.FETCH_USER_BOARDS,
+					payload: data
+				});
+
 				if(snap.val().pins){
 					firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function(snap){
 						firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 							if(snap.val().imageURL){
 								data.imageURL = snap.val().imageURL;
 								dispatch({
-									type: actionTypes.FETCH_USER_BOARDS,
+									type: actionTypes.FETCH_USER_BOARD_IMAGE,
 									payload: data
 								});
 							}else{
 								data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
 								dispatch({
-									type: actionTypes.FETCH_USER_BOARDS,
+									type: actionTypes.FETCH_USER_BOARD_IMAGE,
 									payload: data
 								});
 							}						
 						});
 					});
-				}else{
-					data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
-					dispatch({
-						type: actionTypes.FETCH_USER_BOARDS,
-						payload: data
-					});
 				}
-				
 			});
 		});
 	}
@@ -173,7 +169,8 @@ export function createUserBoard(username, data){
 		var redoData = {
 			name: data.name,
 			description: data.description,
-			timestamp: firebase.database.ServerValue.TIMESTAMP
+			timestamp: firebase.database.ServerValue.TIMESTAMP,
+			createdBy: username
 		}
 
 		firebase.database().ref("boards").child(key).set(redoData);
@@ -252,9 +249,22 @@ export function fetchBoardPins(boardID){
 
 		firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
 			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+				var pinData = snap.val();
+                var tagKeys = Object.keys(pinData.tags);
+                var tags = "";
+                for(var i=0; i<tagKeys.length; i++){
+                    tags += tagKeys[i];
+                    if(i < tagKeys.length - 1){
+                        tags += ", ";
+                    }
+                }
+                pinData.tags = tags;
+                pinData.boardID = boardID;
+                pinData.pinID = snap.ref.key;
+
 				dispatch({
 					type: actionTypes.FETCH_BOARD_PINS,
-					payload: snap.val()
+					payload: pinData
 				});
 			});
 		});
@@ -270,7 +280,9 @@ export function createBoardPin(username, boardID, data){
 				name: data.name,
 				description: data.description,
 				timestamp: firebase.database.ServerValue.TIMESTAMP,
-				imageURL: snapshot.downloadURL
+				imageURL: snapshot.downloadURL,
+				createdBy: username,
+				boardID: boardID
 			}
 
 			firebase.database().ref("pins").child(key).set(redoData);
@@ -313,7 +325,8 @@ export function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData){
 	return dispatch =>{
 		var redoData = {
 			name: newData.name,
-			description: newData.description
+			description: newData.description,
+			boardID: newBoardID
 		}
 
 		if(newData.file){
@@ -388,11 +401,22 @@ export function fetchUserPins(username){
 	return dispatch=>{
 		firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
 			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
-				var data = snap.val();
-				data.imageURL = snap.val().imageURL ? snap.val().imageURL : "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+				var pinData = snap.val();
+				if(pinData.tags){
+					var tagKeys = Object.keys(pinData.tags);
+	                var tags = "";
+	                for(var i=0; i<tagKeys.length; i++){
+	                    tags += tagKeys[i];
+	                    if(i < tagKeys.length - 1){
+	                        tags += ", ";
+	                    }
+	                }
+	                pinData.tags = tags;
+				}
+                pinData.pinID = snap.ref.key;
 				dispatch({
 					type: actionTypes.FETCH_USER_PINS,
-					payload: data
+					payload: pinData
 				});
 			});
 		});

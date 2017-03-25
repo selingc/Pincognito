@@ -24,7 +24,7 @@ class Boards extends Component {
         function getPopup(){
             if(that.state.poppedUp){
                 return (
-                    <Popup type="createBoard" username={that.props.username} closePopup={that.closePopup.bind(that)}/>
+                    <Popup type="createBoard" username={that.props.user.username} closePopup={that.closePopup.bind(that)}/>
                 )
             }else{
                 return null;
@@ -35,7 +35,7 @@ class Boards extends Component {
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
                     <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <Link className="create" to={"/" + this.props.username} onClick={this.openPopup.bind(this)}>
+                        <Link className="create" to="/profile" onClick={this.openPopup.bind(this)}>
                             <div className="panel panel-danger border">
                                 <div className="panel-body createPanel">
                                     Create New Board
@@ -48,7 +48,7 @@ class Boards extends Component {
                 {this.props.userBoards.map((board, index) => (
 
                     <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
-                        <Link to={"/board/" + board.id}>
+                        <Link to={"/board/" + board.boardID}>
                             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div className="panel panel-danger border">
                                     <div className="panel-body">
