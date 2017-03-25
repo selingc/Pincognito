@@ -24,7 +24,7 @@ class Boards extends Component {
         function getPopup(){
             if(that.state.poppedUp){
                 return (
-                    <Popup type="createBoard" username={that.props.user.username} closePopup={that.closePopup.bind(that)}/>
+                    <Popup type="createBoard" closePopup={that.closePopup.bind(that)}/>
                 )
             }else{
                 return null;
@@ -69,7 +69,8 @@ class Boards extends Component {
 
 function mapStateToProps(state){
     return{
-        userBoards: state.userBoards
+        userBoards: state.userBoards,
+        user: state.user
     }
 }
 

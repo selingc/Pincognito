@@ -18,7 +18,7 @@ class CreateBoard extends Component {
                 tags: this.refs.tags.value
             }
 
-            this.props.createUserBoard(this.props.username, data);
+            this.props.createUserBoard(this.props.user.username, data);
             this.refs.name.value = "";
             this.refs.description.value = "";
             this.refs.tags.value = "";
@@ -50,5 +50,11 @@ class CreateBoard extends Component {
     }
 }
 
-export default connect(null, actions)(CreateBoard);
+function mapStateToProps(state){
+    return{
+        user: state.user
+    }
+}
+
+export default connect(mapStateToProps, actions)(CreateBoard);
 

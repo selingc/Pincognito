@@ -9,7 +9,7 @@ class EditPin extends Component {
         this.state = {error: ""};
     }
 
-    createPin(e){
+    editPin(e){
         e.preventDefault();
 
         if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
@@ -36,7 +36,7 @@ class EditPin extends Component {
                 ):(
                     null
                 )}
-                <form className="createForm" onSubmit={this.createPin.bind(this)}>
+                <form className="createForm" onSubmit={this.editPin.bind(this)}>
                     <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
                     <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
                         <option value="none" disabled>--Select a Board--</option>

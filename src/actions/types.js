@@ -28,7 +28,8 @@ const types = {
 	FETCH_PINS: 'FETCH_PINS',
 	STOP_FETCHING_PINS: 'STOP_FETCHING_PINS',
 
-	SAY_HELLO: 'SAY_HELLO'
+	SAY_HELLO: 'SAY_HELLO',
+	RESET_STATE: 'RESET_STATE'
 };
 
 export default types;

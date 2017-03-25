@@ -48,15 +48,15 @@ class Modal extends Component {
         function getContent(){
             if(that.props.type==="createBoard"){
                 return(
-                    <CreateBoard username={that.props.username} closePopup={that.props.closePopup}/>
+                    <CreateBoard closePopup={that.props.closePopup}/>
                 )
             }else if(that.props.type==="createPin"){
                 return(
-                    <CreatePin username={that.props.username} closePopup={that.props.closePopup}/>
+                    <CreatePin closePopup={that.props.closePopup}/>
                 )
             }else if(that.props.type==="editPin"){
                 return(
-                    <EditPin username={that.props.username} pin={that.props.pin} closePopup={that.props.closePopup}/>
+                    <EditPin pin={that.props.pin} closePopup={that.props.closePopup}/>
                 )
             }
             else{

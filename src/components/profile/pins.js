@@ -28,7 +28,7 @@ class Pins extends Component {
                 if(that.state.pin){
                     return <Popup type="pin" pin={that.state.pin} closePopup={that.closePopup.bind(that)}/>
                 }else{
-                    return <Popup type="createPin" username={that.props.user.username} closePopup={that.closePopup.bind(that)}/>
+                    return <Popup type="createPin" closePopup={that.closePopup.bind(that)}/>
                 }
             }else{
                 return null;

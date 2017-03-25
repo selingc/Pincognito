@@ -47,7 +47,7 @@ class CreatePin extends Component {
                     <select className="form-control" ref="board" id="dropdown" defaultValue="none">
                         <option value="none" disabled>--Select a Board--</option>
                         {this.props.userBoards.map((board, index) => (
-                            <option value={board.id} key={index}>{board.name}</option>
+                            <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" /> <br />

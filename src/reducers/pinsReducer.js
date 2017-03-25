@@ -6,6 +6,8 @@ export default function(state=[], action){
 			return state.concat(action.payload);
 		case actionTypes.STOP_FETCHING_PINS:
 			return [];
+		case actionTypes.RESET_STATE:
+			return [];
 	}
 	return state;
 }

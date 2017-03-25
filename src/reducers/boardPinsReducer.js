@@ -15,6 +15,8 @@ export default function(state=initialState, action){
 			return state;
 		case actionTypes.STOP_FETCHING_BOARD_PINS:
 			return initialState;
+		case actionTypes.RESET_STATE:
+			return initialState;
 	}
 	return state;
 }

@@ -47,6 +47,9 @@ export function fetchUser(){
 					type: actionTypes.UPDATE_USER_STATE,
 					payload: user
 				});
+				dispatch({
+					type: actionTypes.RESET_STATE
+				});
 			}
 		});
 	}
@@ -376,9 +379,22 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 export function fetchPins(){
 	return dispatch =>{
 		firebase.database().ref("pins").on("child_added", function(snap){
+			var pinData = snap.val();
+			if(pinData.tags){
+				var tagKeys = Object.keys(pinData.tags);
+                var tags = "";
+                for(var i=0; i<tagKeys.length; i++){
+                    tags += tagKeys[i];
+                    if(i < tagKeys.length - 1){
+                        tags += ", ";
+                    }
+                }
+                pinData.tags = tags;
+			}
+
 			dispatch({
 				type: actionTypes.FETCH_PINS,
-				payload: snap.val()
+				payload: pinData
 			});
 		});
 	}	
