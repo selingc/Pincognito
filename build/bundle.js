@@ -66,23 +66,23 @@
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(521);
+	var _layout = __webpack_require__(522);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(523);
+	var _login = __webpack_require__(524);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(525);
+	var _signup = __webpack_require__(526);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(527);
+	var _profile = __webpack_require__(528);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _boardpins = __webpack_require__(530);
+	var _boardpins = __webpack_require__(531);
 
 	var _boardpins2 = _interopRequireDefault(_boardpins);
 
@@ -29611,7 +29611,7 @@
 /* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -29622,8 +29622,8 @@
 		var action = arguments[1];
 
 		switch (action.type) {
-			case _types2.default.FETCH_BOARD_NAME:
-				return Object.assign({}, state, { name: action.payload });
+			case _types2.default.FETCH_BOARD_INFO:
+				return Object.assign({}, state, { board: action.payload });
 			case _types2.default.FETCH_BOARD_PINS:
 				return Object.assign({}, state, { pins: state.pins.concat(action.payload) });
 			case _types2.default.CREATE_BOARD_PIN:
@@ -29643,7 +29643,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var initialState = {
-		name: "",
+		board: null,
 		pins: []
 	};
 
@@ -29676,7 +29676,7 @@
 		FETCH_BOARD_PINS: 'FETCH_BOARD_PINS',
 		CREATE_BOARD_PIN: 'CREATE_BOARD_PIN',
 		STOP_FETCHING_BOARD_PINS: 'STOP_FETCHING_BOARD_PINS',
-		FETCH_BOARD_NAME: 'FETCH_BOARD_NAME',
+		FETCH_BOARD_INFO: 'FETCH_BOARD_INFO',
 		DELETE_BOARD_PIN: 'DELETE_BOARD_PIN',
 		EDIT_BOARD_PIN: 'EDIT_BOARD_PIN',
 
@@ -40586,8 +40586,12 @@
 		};
 	}
 
-	function deleteUserBoard(username, boardID) {
+	function deleteUserBoard(username, boardID, pins) {
 		return function (dispatch) {
+			for (var i = 0; i < pins.length; i++) {
+				dispatch(deleteBoardPin(username, boardID, pins[i].pinID, pins[i].createdBy));
+			}
+
 			firebase.database().ref("boards").child(boardID).remove();
 			firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
 			dispatch({
@@ -40630,9 +40634,24 @@
 	function fetchBoardPins(boardID) {
 		return function (dispatch) {
 			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+				var data = snap.val();
+				data.boardID = snap.ref.key;
+				if (data.tags) {
+					var tagKeys = Object.keys(data.tags);
+					var tags = "";
+					for (var i = 0; i < tagKeys.length; i++) {
+						if (data.tags[tagKeys[i]]) {
+							if (i !== 0) {
+								tags += ", ";
+							}
+							tags += tagKeys[i];
+						}
+					}
+					data.tags = tags;
+				}
 				dispatch({
-					type: _types2.default.FETCH_BOARD_NAME,
-					payload: snap.val().name
+					type: _types2.default.FETCH_BOARD_INFO,
+					payload: data
 				});
 			});
 
@@ -40642,9 +40661,11 @@
 					var tagKeys = Object.keys(pinData.tags);
 					var tags = "";
 					for (var i = 0; i < tagKeys.length; i++) {
-						tags += tagKeys[i];
-						if (i < tagKeys.length - 1) {
-							tags += ", ";
+						if (pinData.tags[tagKeys[i]]) {
+							tags += tagKeys[i];
+							if (i < tagKeys.length - 1) {
+								tags += ", ";
+							}
 						}
 					}
 					pinData.tags = tags;
@@ -40700,10 +40721,15 @@
 		};
 	}
 
-	function deleteBoardPin(boardID, pinID) {
+	function deleteBoardPin(username, boardID, pinID, pinCreatedBy) {
 		return function (dispatch) {
-			firebase.database().ref("pins").child(pinID).set(redoData);
 			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+			firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+
+			if (username === pinCreatedBy) {
+				firebase.database().ref("pins").child(pinID).remove();
+			}
+
 			dispatch({
 				type: _types2.default.DELETE_BOARD_PIN
 			});
@@ -40740,10 +40766,12 @@
 				firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
 			}
 
-			var oldTagsArray = oldData.tags.replace(/\s/g, "").split(",");
-			for (var i = 0; i < oldTagsArray.length; i++) {
-				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
-				firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, "").split(",") : null;
+			if (oldTagsArray) {
+				for (var i = 0; i < oldTagsArray.length; i++) {
+					firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
+					firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+				}
 			}
 
 			var newTagsArray = newData.tags.replace(/\s/g, "").split(",");
@@ -40766,13 +40794,16 @@
 		return function (dispatch) {
 			firebase.database().ref("pins").on("child_added", function (snap) {
 				var pinData = snap.val();
+				pinData.pinID = snap.ref.key;
 				if (pinData.tags) {
 					var tagKeys = Object.keys(pinData.tags);
-					var tags = "";
+					var tags = null;
 					for (var i = 0; i < tagKeys.length; i++) {
-						tags += tagKeys[i];
-						if (i < tagKeys.length - 1) {
-							tags += ", ";
+						if (pinData.tags[tagKeys[i]]) {
+							tags += tagKeys[i];
+							if (i < tagKeys.length - 1) {
+								tags += ", ";
+							}
 						}
 					}
 					pinData.tags = tags;
@@ -40808,9 +40839,11 @@
 						var tagKeys = Object.keys(pinData.tags);
 						var tags = "";
 						for (var i = 0; i < tagKeys.length; i++) {
-							tags += tagKeys[i];
-							if (i < tagKeys.length - 1) {
-								tags += ", ";
+							if (pinData.tags[tagKeys[i]]) {
+								tags += tagKeys[i];
+								if (i < tagKeys.length - 1) {
+									tags += ", ";
+								}
 							}
 						}
 						pinData.tags = tags;
@@ -41582,6 +41615,10 @@
 
 	var _editPin2 = _interopRequireDefault(_editPin);
 
+	var _editBoard = __webpack_require__(521);
+
+	var _editBoard2 = _interopRequireDefault(_editBoard);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41650,6 +41687,8 @@
 	                    return _react2.default.createElement(_createPin2.default, { closePopup: that.props.closePopup });
 	                } else if (that.props.type === "editPin") {
 	                    return _react2.default.createElement(_editPin2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
+	                } else if (that.props.type === "editBoard") {
+	                    return _react2.default.createElement(_editBoard2.default, { board: that.props.board, closePopup: that.props.closePopup });
 	                } else {
 	                    return _react2.default.createElement(_pin2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
 	                }
@@ -41730,6 +41769,15 @@
 	        key: 'closePopup',
 	        value: function closePopup() {
 	            this.setState({ poppedUp: false });
+	            this.props.closePopup();
+	        }
+	    }, {
+	        key: 'deletePin',
+	        value: function deletePin() {
+	            var confirmation = confirm("Are you sure you want to remove this pin?");
+	            if (confirmation) {
+	                this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -41755,9 +41803,18 @@
 	                    _react2.default.createElement('img', { src: this.props.pin.imageURL, className: 'images pinImage' })
 	                ),
 	                this.props.pin.createdBy === this.props.user.username ? _react2.default.createElement(
-	                    'button',
-	                    { className: 'btn btn-default', onClick: this.openPopup.bind(this) },
-	                    'Edit'
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-default', onClick: this.openPopup.bind(this) },
+	                        'Edit'
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-danger', onClick: this.deletePin.bind(this) },
+	                        'Delete'
+	                    )
 	                ) : null,
 	                _react2.default.createElement('hr', { className: 'stylehr' }),
 	                _react2.default.createElement(
@@ -41841,11 +41898,6 @@
 	                };
 
 	                this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-
-	                this.refs.name.value = "";
-	                this.refs.description.value = "";
-	                this.refs.tags.value = "";
-
 	                this.props.closePopup();
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
@@ -41988,10 +42040,6 @@
 	                };
 
 	                this.props.createUserBoard(this.props.user.username, data);
-	                this.refs.name.value = "";
-	                this.refs.description.value = "";
-	                this.refs.tags.value = "";
-
 	                this.props.closePopup();
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
@@ -42114,6 +42162,7 @@
 	                    description: this.refs.description.value,
 	                    tags: this.refs.tags.value
 	                };
+
 	                this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
 	                this.props.closePopup();
 	            } else {
@@ -42207,6 +42256,127 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(508);
+
+	var actions = _interopRequireWildcard(_index);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CreateBoard = function (_Component) {
+	    _inherits(CreateBoard, _Component);
+
+	    function CreateBoard(props) {
+	        _classCallCheck(this, CreateBoard);
+
+	        var _this = _possibleConstructorReturn(this, (CreateBoard.__proto__ || Object.getPrototypeOf(CreateBoard)).call(this, props));
+
+	        _this.state = { error: "" };
+	        return _this;
+	    }
+
+	    _createClass(CreateBoard, [{
+	        key: 'editBoard',
+	        value: function editBoard(e) {
+	            e.preventDefault();
+
+	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
+	                var data = {
+	                    name: this.refs.name.value,
+	                    description: this.refs.description.value,
+	                    tags: this.refs.tags.value
+	                };
+
+	                this.props.editUserBoard(this.props.user.username, this.props.board.boardID, this.props.board, data);
+	                this.props.closePopup();
+	            } else {
+	                this.setState({ error: "No fields can be empty" });
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    'Edit Board'
+	                ),
+	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                this.state.error ? _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        'Error! '
+	                    ),
+	                    this.state.error
+	                ) : null,
+	                _react2.default.createElement(
+	                    'form',
+	                    { className: 'createForm', onSubmit: this.editBoard.bind(this) },
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Board name', defaultValue: this.props.board.name }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description', defaultValue: this.props.board.description }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)', defaultValue: this.props.board.tags }),
+	                    ' ',
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'center',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { type: 'submit', className: 'btn btn-danger' },
+	                            'Create Board'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return CreateBoard;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        user: state.user
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(CreateBoard);
+
+/***/ },
+/* 522 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
@@ -42222,7 +42392,7 @@
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(522);
+	var _navbar = __webpack_require__(523);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -42299,7 +42469,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Layout);
 
 /***/ },
-/* 522 */
+/* 523 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42409,7 +42579,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 523 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42428,7 +42598,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _login = __webpack_require__(524);
+	var _login = __webpack_require__(525);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -42482,7 +42652,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 524 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42572,7 +42742,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 525 */
+/* 526 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42591,7 +42761,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _signup = __webpack_require__(526);
+	var _signup = __webpack_require__(527);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -42655,7 +42825,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 526 */
+/* 527 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42784,7 +42954,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 527 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42801,11 +42971,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _boards = __webpack_require__(528);
+	var _boards = __webpack_require__(529);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(529);
+	var _pins = __webpack_require__(530);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -42868,7 +43038,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Profile);
 
 /***/ },
-/* 528 */
+/* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43013,7 +43183,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
 
 /***/ },
-/* 529 */
+/* 530 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43162,7 +43332,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
 
 /***/ },
-/* 530 */
+/* 531 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43224,9 +43394,24 @@
 	        }
 	    }, {
 	        key: 'openPopup',
-	        value: function openPopup(pin, type) {
+	        value: function openPopup(pin) {
 	            this.setState({ poppedUp: true });
 	            this.setState({ pin: pin });
+	            this.setState({ type: "openPin" });
+	        }
+	    }, {
+	        key: 'openEditBoardPopup',
+	        value: function openEditBoardPopup() {
+	            this.setState({ poppedUp: true });
+	            this.setState({ type: "editBoard" });
+	        }
+	    }, {
+	        key: 'deleteBoard',
+	        value: function deleteBoard() {
+	            var confirmation = confirm("Are you sure you want to remove this board?");
+	            if (confirmation) {
+	                this.props.deleteUserBoard(this.props.user.username, this.props.params.boardid, this.props.boardPins.pins);
+	            }
 	        }
 	    }, {
 	        key: 'closePopup',
@@ -43241,7 +43426,11 @@
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {
-	                    return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                    if (that.state.type === "openPin") {
+	                        return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                    } else {
+	                        return _react2.default.createElement(_modal2.default, { type: 'editBoard', board: that.props.boardPins.board, closePopup: that.closePopup.bind(that) });
+	                    }
 	                } else {
 	                    return null;
 	                }
@@ -43258,8 +43447,22 @@
 	                        { to: "/profile" },
 	                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-menu-left goBack' })
 	                    ),
-	                    this.props.boardPins.name
+	                    this.props.boardPins.board ? this.props.boardPins.board.name : null
 	                ),
+	                (this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-default', onClick: this.openEditBoardPopup.bind(this) },
+	                        'Edit'
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-danger', onClick: this.deleteBoard.bind(this) },
+	                        'Delete'
+	                    )
+	                ) : null,
 	                _react2.default.createElement(
 	                    'div',
 	                    null,
@@ -43303,10 +43506,7 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        boardPins: {
-	            name: state.boardPins.name,
-	            pins: state.boardPins.pins
-	        },
+	        boardPins: state.boardPins,
 	        user: state.user
 	    };
 	}

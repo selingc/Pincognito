@@ -21,11 +21,6 @@ class CreatePin extends Component {
             }
 
             this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-
-            this.refs.name.value = "";
-            this.refs.description.value = "";
-            this.refs.tags.value = "";
-
             this.props.closePopup();
         }else{
             this.setState({error: "No fields can be empty"});

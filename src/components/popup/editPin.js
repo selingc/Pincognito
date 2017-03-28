@@ -19,6 +19,7 @@ class EditPin extends Component {
                 description: this.refs.description.value,
                 tags: this.refs.tags.value
             }
+            
             this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
             this.props.closePopup();
         }else{

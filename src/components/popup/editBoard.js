@@ -8,7 +8,7 @@ class CreateBoard extends Component {
         this.state = {error: ""};
     }
 
-    createBoard(e){
+    editBoard(e){
         e.preventDefault();
 
         if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
@@ -18,7 +18,7 @@ class CreateBoard extends Component {
                 tags: this.refs.tags.value
             }
 
-            this.props.createUserBoard(this.props.user.username, data);
+            this.props.editUserBoard(this.props.user.username, this.props.board.boardID, this.props.board, data);
             this.props.closePopup();
         }else{
             this.setState({error: "No fields can be empty"});
@@ -28,17 +28,17 @@ class CreateBoard extends Component {
     render() {
         return (
             <div>
-                <h1>Create Board</h1>
+                <h1>Edit Board</h1>
                 <hr className="stylehr"/>
                 {this.state.error ? (
                     <div className="alert alert-danger"><strong>Error! </strong>{this.state.error}</div>
                 ):(
                     null
                 )}
-                <form className="createForm" onSubmit={this.createBoard.bind(this)}>
-                    <input type="text" className="form-control" ref="name" placeholder="Board name"/> <br />
-                    <input type="text" className="form-control" ref="description" placeholder="Description"/> <br />
-                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)"/> <br />
+                <form className="createForm" onSubmit={this.editBoard.bind(this)}>
+                    <input type="text" className="form-control" ref="name" placeholder="Board name" defaultValue={this.props.board.name}/> <br />
+                    <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.board.description}/> <br />
+                    <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.board.tags}/> <br />
                     <center><button type="submit" className="btn btn-danger">Create Board</button></center>
                 </form>
             </div>

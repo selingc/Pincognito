@@ -16,6 +16,14 @@ class Pin extends Component{
 
     closePopup(){
         this.setState({poppedUp: false});
+        this.props.closePopup();
+    }
+
+    deletePin(){
+        var confirmation = confirm("Are you sure you want to remove this pin?");
+        if (confirmation) {
+            this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
+        }
     }
 
     render() {
@@ -32,7 +40,14 @@ class Pin extends Component{
             <div>
                 <h1>{this.props.pin.name}</h1>
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
-                {this.props.pin.createdBy === this.props.user.username ? <button className="btn btn-default" onClick={this.openPopup.bind(this)}>Edit</button> : null}
+
+                {this.props.pin.createdBy === this.props.user.username ? (
+                    <div>
+                        <button className="btn btn-default" onClick={this.openPopup.bind(this)}>Edit</button>
+                        <button className="btn btn-danger" onClick={this.deletePin.bind(this)}>Delete</button>
+                    </div>) 
+                : null}
+
                 <hr className="stylehr"/>
                 <p className="pinDescription">{this.props.pin.description}</p>
                 {getPopup()}
