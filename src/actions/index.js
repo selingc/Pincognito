@@ -163,6 +163,15 @@ export function fetchUserBoards(username){
 				}
 			});
 		});
+
+		firebase.database().ref("users/" + username).child("boards").on("child_changed", function(snap){
+			if(snap.val() === false){
+				dispatch({
+					type: actionTypes.FETCH_USER_REMOVED_BOARDS,
+					payload: snap.ref.key
+				});
+			}
+		});
 	}
 }
 
@@ -293,6 +302,15 @@ export function fetchBoardPins(boardID){
 				});
 			});
 		});
+
+		firebase.database().ref("boards/" + boardID).child("pins").on("child_changed", function(snap){
+			if(snap.val() === false){
+				dispatch({
+					type: actionTypes.FETCH_REMOVED_BOARD_PINS,
+					payload: snap.ref.key
+				});
+			}
+		});
 	}
 }
 
@@ -381,7 +399,7 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 			firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
 		}
 
-		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g,"").split(",") : null;
+		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g,"").split(",") : "";
 		if(oldTagsArray){
 			for(var i=0; i<oldTagsArray.length; i++){
 				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
@@ -412,7 +430,7 @@ export function fetchPins(){
 			pinData.pinID = snap.ref.key;
 			if(pinData.tags){
 				var tagKeys = Object.keys(pinData.tags);
-                var tags = null;
+                var tags = "";
                 for(var i=0; i<tagKeys.length; i++){
                 	if(pinData.tags[tagKeys[i]]){
 	                    tags += tagKeys[i];
@@ -427,6 +445,13 @@ export function fetchPins(){
 			dispatch({
 				type: actionTypes.FETCH_PINS,
 				payload: pinData
+			});
+		});
+
+		firebase.database().ref("pins").on("child_removed", function(snap){
+			dispatch({
+				type: actionTypes.FETCH_REMOVED_PINS,
+				payload: snap.ref.key
 			});
 		});
 	}
@@ -469,6 +494,15 @@ export function fetchUserPins(username){
 					payload: pinData
 				});
 			});
+		});
+
+		firebase.database().ref("users/" + username).child("pins").on("child_changed", function(snap){
+			if(snap.val() === false){
+				dispatch({
+					type: actionTypes.FETCH_USER_REMOVED_PINS,
+					payload: snap.ref.key
+				});
+			}
 		});
 	}
 }

@@ -6,6 +6,21 @@ export default function(state=[], action){
 			return state.concat(action.payload);
 		case actionTypes.STOP_FETCHING_USER_PINS:
 			return [];
+		case actionTypes.FETCH_USER_REMOVED_PINS:
+			var newState = state.slice();
+			var index = -1;
+			for(var i=0; i<state.length; i++){
+				if(state[i].pinID === action.payload){
+					index = i;
+				}
+			}
+
+			if(index >= 0){
+				newState.splice(index, 1);
+				return newState;
+			}
+
+			return state;
 		case actionTypes.RESET_STATE:
 			return [];
 	}

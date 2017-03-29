@@ -23,6 +23,7 @@ class Pin extends Component{
         var confirmation = confirm("Are you sure you want to remove this pin?");
         if (confirmation) {
             this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
+            this.closePopup();
         }
     }
 
