@@ -29624,14 +29624,42 @@
 		switch (action.type) {
 			case _types2.default.FETCH_BOARD_INFO:
 				return Object.assign({}, state, { board: action.payload });
+
 			case _types2.default.FETCH_BOARD_PINS:
+				var newState = Object.assign({}, state);
+				for (var i = 0; i < state.pins.length; i++) {
+					if (state.pins[i].pinID === action.payload.pinID) {
+						newState.pins[i] = action.payload;
+						return newState;
+					}
+				}
 				return Object.assign({}, state, { pins: state.pins.concat(action.payload) });
+
+			case _types2.default.FETCH_REMOVED_BOARD_PINS:
+				var newState = Object.assign({}, state);
+				var index = -1;
+				for (var i = 0; i < state.pins.length; i++) {
+					if (state.pins[i].pinID === action.payload) {
+						index = i;
+					}
+				}
+
+				if (index >= 0) {
+					return Object.assign({}, state, { pins: state.pins.slice(index, 1) });
+				}
+				return state;
+
 			case _types2.default.CREATE_BOARD_PIN:
 				return state;
+
 			case _types2.default.STOP_FETCHING_BOARD_PINS:
 				return initialState;
+
 			case _types2.default.RESET_STATE:
 				return initialState;
+
+			case _types2.default.EDIT_BOARD_PIN:
+				return state;
 		}
 		return state;
 	};
@@ -29672,6 +29700,7 @@
 		DELETE_USER_BOARD: 'DELETE_USER_BOARD',
 		EDIT_USER_BOARD: 'EDIT_USER_BOARD',
 		FETCH_USER_BOARD_IMAGE: 'FETCH_USER_BOARD_IMAGE',
+		FETCH_USER_REMOVED_BOARDS: 'FETCH_USER_REMOVED_BOARDS',
 
 		FETCH_BOARD_PINS: 'FETCH_BOARD_PINS',
 		CREATE_BOARD_PIN: 'CREATE_BOARD_PIN',
@@ -29679,11 +29708,14 @@
 		FETCH_BOARD_INFO: 'FETCH_BOARD_INFO',
 		DELETE_BOARD_PIN: 'DELETE_BOARD_PIN',
 		EDIT_BOARD_PIN: 'EDIT_BOARD_PIN',
+		FETCH_REMOVED_BOARD_PINS: 'FETCH_REMOVED_BOARD_PINS',
 
 		FETCH_USER_PINS: 'FETCH_USER_PINS',
+		FETCH_USER_REMOVED_PINS: 'FETCH_USER_REMOVED_PINS',
 		STOP_FETCHING_USER_PINS: 'STOP_FETCHING_USER_PINS',
 
 		FETCH_PINS: 'FETCH_PINS',
+		FETCH_REMOVED_PINS: 'FETCH_REMOVED_PINS',
 		STOP_FETCHING_PINS: 'STOP_FETCHING_PINS',
 
 		SAY_HELLO: 'SAY_HELLO',
@@ -29801,6 +29833,21 @@
 						return newState;
 					}
 				}
+				return state;
+			case _types2.default.FETCH_USER_REMOVED_BOARDS:
+				var newState = state.slice();
+				var index = -1;
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].boardID === action.payload) {
+						index = i;
+					}
+				}
+
+				if (index >= 0) {
+					newState.splice(index, 1);
+					return newState;
+				}
+
 				return state;
 			case _types2.default.RESET_STATE:
 				return [];
@@ -40142,7 +40189,29 @@
 
 		switch (action.type) {
 			case _types2.default.FETCH_PINS:
+				var newState = state.slice();
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].pinID === action.payload.pinID) {
+						newState[i] = action.payload;
+						return newState;
+					}
+				}
 				return state.concat(action.payload);
+			case _types2.default.FETCH_REMOVED_PINS:
+				var newState = state.slice();
+				var index = -1;
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].pinID === action.payload) {
+						index = i;
+					}
+				}
+
+				if (index >= 0) {
+					newState.splice(index, 1);
+					return newState;
+				}
+
+				return state;
 			case _types2.default.STOP_FETCHING_PINS:
 				return [];
 			case _types2.default.RESET_STATE:
@@ -40173,9 +40242,31 @@
 
 		switch (action.type) {
 			case _types2.default.FETCH_USER_PINS:
+				var newState = state.slice();
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].pinID === action.payload.pinID) {
+						newState[i] = action.payload;
+						return newState;
+					}
+				}
 				return state.concat(action.payload);
 			case _types2.default.STOP_FETCHING_USER_PINS:
 				return [];
+			case _types2.default.FETCH_USER_REMOVED_PINS:
+				var newState = state.slice();
+				var index = -1;
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].pinID === action.payload) {
+						index = i;
+					}
+				}
+
+				if (index >= 0) {
+					newState.splice(index, 1);
+					return newState;
+				}
+
+				return state;
 			case _types2.default.RESET_STATE:
 				return [];
 		}
@@ -40549,6 +40640,15 @@
 					}
 				});
 			});
+
+			firebase.database().ref("users/" + username).child("boards").on("child_changed", function (snap) {
+				if (snap.val() === false) {
+					dispatch({
+						type: _types2.default.FETCH_USER_REMOVED_BOARDS,
+						payload: snap.ref.key
+					});
+				}
+			});
 		};
 	}
 
@@ -40597,6 +40697,7 @@
 			dispatch({
 				type: _types2.default.DELETE_USER_BOARD
 			});
+			_reactRouter.browserHistory.push("/profile");
 		};
 	}
 
@@ -40633,7 +40734,7 @@
 
 	function fetchBoardPins(boardID) {
 		return function (dispatch) {
-			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+			firebase.database().ref("boards").child(boardID).on("value", function (snap) {
 				var data = snap.val();
 				data.boardID = snap.ref.key;
 				if (data.tags) {
@@ -40656,7 +40757,7 @@
 			});
 
 			firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).on("value", function (snap) {
 					var pinData = snap.val();
 					var tagKeys = Object.keys(pinData.tags);
 					var tags = "";
@@ -40677,6 +40778,16 @@
 						payload: pinData
 					});
 				});
+			});
+
+			firebase.database().ref("boards/" + boardID).child("pins").on("child_changed", function (snap) {
+				if (snap.val() === false) {
+					console.log("changed");
+					dispatch({
+						type: _types2.default.FETCH_REMOVED_BOARD_PINS,
+						payload: snap.ref.key
+					});
+				}
 			});
 		};
 	}
@@ -40766,7 +40877,7 @@
 				firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
 			}
 
-			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, "").split(",") : null;
+			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, "").split(",") : "";
 			if (oldTagsArray) {
 				for (var i = 0; i < oldTagsArray.length; i++) {
 					firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
@@ -40797,7 +40908,7 @@
 				pinData.pinID = snap.ref.key;
 				if (pinData.tags) {
 					var tagKeys = Object.keys(pinData.tags);
-					var tags = null;
+					var tags = "";
 					for (var i = 0; i < tagKeys.length; i++) {
 						if (pinData.tags[tagKeys[i]]) {
 							tags += tagKeys[i];
@@ -40812,6 +40923,36 @@
 				dispatch({
 					type: _types2.default.FETCH_PINS,
 					payload: pinData
+				});
+			});
+
+			firebase.database().ref("pins").on("child_changed", function (snap) {
+				var pinData = snap.val();
+				pinData.pinID = snap.ref.key;
+				if (pinData.tags) {
+					var tagKeys = Object.keys(pinData.tags);
+					var tags = "";
+					for (var i = 0; i < tagKeys.length; i++) {
+						if (pinData.tags[tagKeys[i]]) {
+							tags += tagKeys[i];
+							if (i < tagKeys.length - 1) {
+								tags += ", ";
+							}
+						}
+					}
+					pinData.tags = tags;
+				}
+
+				dispatch({
+					type: _types2.default.FETCH_PINS,
+					payload: pinData
+				});
+			});
+
+			firebase.database().ref("pins").on("child_removed", function (snap) {
+				dispatch({
+					type: _types2.default.FETCH_REMOVED_PINS,
+					payload: snap.ref.key
 				});
 			});
 		};
@@ -40833,7 +40974,7 @@
 	function fetchUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).on("value", function (snap) {
 					var pinData = snap.val();
 					if (pinData.tags) {
 						var tagKeys = Object.keys(pinData.tags);
@@ -40854,6 +40995,15 @@
 						payload: pinData
 					});
 				});
+			});
+
+			firebase.database().ref("users/" + username).child("pins").on("child_changed", function (snap) {
+				if (snap.val() === false) {
+					dispatch({
+						type: _types2.default.FETCH_USER_REMOVED_PINS,
+						payload: snap.ref.key
+					});
+				}
 			});
 		};
 	}
@@ -41777,6 +41927,7 @@
 	            var confirmation = confirm("Are you sure you want to remove this pin?");
 	            if (confirmation) {
 	                this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
+	                this.closePopup();
 	            }
 	        }
 	    }, {
@@ -43423,6 +43574,7 @@
 	        value: function render() {
 	            var _this2 = this;
 
+	            console.log(this.props.boardPins.pins);
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {

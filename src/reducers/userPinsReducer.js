@@ -3,6 +3,13 @@ import actionTypes from '../actions/types.js';
 export default function(state=[], action){
 	switch(action.type){
 		case actionTypes.FETCH_USER_PINS:
+			var newState = state.slice();
+			for(var i=0; i<state.length; i++){
+				if(state[i].pinID === action.payload.pinID){
+					newState[i] = action.payload;
+					return newState;
+				}
+			}
 			return state.concat(action.payload);
 		case actionTypes.STOP_FETCHING_USER_PINS:
 			return [];

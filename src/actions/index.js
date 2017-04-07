@@ -257,7 +257,7 @@ export function editUserBoard(username, boardID, oldData, newData){
 
 export function fetchBoardPins(boardID){
 	return dispatch =>{
-		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+		firebase.database().ref("boards").child(boardID).on("value", function(snap){
 			var data = snap.val();
 			data.boardID = snap.ref.key;
 			if(data.tags){
@@ -280,7 +280,7 @@ export function fetchBoardPins(boardID){
 		});
 
 		firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).on("value", function(snap){
 				var pinData = snap.val();
                 var tagKeys = Object.keys(pinData.tags);
                 var tags = "";
@@ -305,6 +305,7 @@ export function fetchBoardPins(boardID){
 
 		firebase.database().ref("boards/" + boardID).child("pins").on("child_changed", function(snap){
 			if(snap.val() === false){
+				console.log("changed");
 				dispatch({
 					type: actionTypes.FETCH_REMOVED_BOARD_PINS,
 					payload: snap.ref.key
@@ -448,6 +449,29 @@ export function fetchPins(){
 			});
 		});
 
+		firebase.database().ref("pins").on("child_changed", function(snap){
+			var pinData = snap.val();
+			pinData.pinID = snap.ref.key;
+			if(pinData.tags){
+				var tagKeys = Object.keys(pinData.tags);
+                var tags = "";
+                for(var i=0; i<tagKeys.length; i++){
+                	if(pinData.tags[tagKeys[i]]){
+	                    tags += tagKeys[i];
+	                    if(i < tagKeys.length - 1){
+	                        tags += ", ";
+	                    }
+	                }
+                }
+                pinData.tags = tags;
+			}
+
+			dispatch({
+				type: actionTypes.FETCH_PINS,
+				payload: pinData
+			});
+		});
+
 		firebase.database().ref("pins").on("child_removed", function(snap){
 			dispatch({
 				type: actionTypes.FETCH_REMOVED_PINS,
@@ -473,7 +497,7 @@ export function stopFetchingPins(){
 export function fetchUserPins(username){
 	return dispatch=>{
 		firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).on("value", function(snap){
 				var pinData = snap.val();
 				if(pinData.tags){
 					var tagKeys = Object.keys(pinData.tags);
