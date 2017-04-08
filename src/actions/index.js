@@ -539,3 +539,24 @@ export function stopFetchingUserPins(username){
 		});
 	}
 }
+
+export function repinToBoard(username, boardID, pinID){
+	return dispatch =>{
+		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
+		firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
+
+		dispatch({
+			type: actionTypes.REPIN_TO_BOARD
+		})
+	}
+}
+
+export function followBoard(username, boardID){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
+
+		dispatch({
+			type: actionTypes.FOLLOW_BOARD
+		});
+	}
+}

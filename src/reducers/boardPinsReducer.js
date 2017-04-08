@@ -45,6 +45,10 @@ export default function(state=initialState, action){
 
 		case actionTypes.EDIT_BOARD_PIN:
 			return state;
+			
+		case actionTypes.REPIN_TO_BOARD:
+			return state;
+
 	}
 	return state;
 }

@@ -34,6 +34,9 @@ export default function(state=[], action){
 			return state;
 		case actionTypes.RESET_STATE:
 			return [];
+
+		case actionTypes.FOLLOW_BOARD:
+			return state;
 	}
 	return state;
 }
