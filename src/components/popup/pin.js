@@ -31,18 +31,24 @@ class Pin extends Component{
 
         return (
             <div>
+            <div className="hoverContainer">
                 <h1>{this.props.pin.name}</h1>
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
 
-                {this.props.pin.createdBy === this.props.user.username ? (
+                <div className="overlay">
+                    {this.props.pin.createdBy === this.props.user.username ? (
                     <div>
-                        <button className="btn btn-default" onClick={this.openPopup.bind(this)}><span className="glyphicon glyphicon-pencil"></span></button>
+                        <button className="btn btn-default buttonHover" onClick={this.openPopup.bind(this)}><span className="glyphicon glyphicon-pencil"></span></button>
                     </div>) 
                 : null}
+                </div>
+
+                
 
                 <hr className="stylehr"/>
                 <p className="pinDescription">{this.props.pin.description}</p>
                 {getPopup()}
+            </div>
             </div>
         );
     }
