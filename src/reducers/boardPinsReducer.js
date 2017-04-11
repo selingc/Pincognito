@@ -30,7 +30,8 @@ export default function(state=initialState, action){
 			}
 
 			if(index >= 0){
-				return Object.assign({}, state, {pins: state.pins.slice(index, 1)});
+				newState.pins.splice(index, 1);
+				return newState;
 			}
 			return state;
 
