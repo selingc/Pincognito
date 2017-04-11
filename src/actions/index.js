@@ -551,6 +551,13 @@ export function repinToBoard(username, boardID, pinID){
 	}
 }
 
+export function unpinFromBoard(username, boardID, pinID){
+	return dispatch =>{
+		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+		firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+	}
+}
+
 export function followBoard(username, boardID){
 	return dispatch =>{
 		firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);

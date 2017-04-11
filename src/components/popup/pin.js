@@ -29,6 +29,13 @@ class Pin extends Component{
         }
     }
 
+    unpinFromBoard(){
+        this.props.unpinFromBoard(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID);
+        this.closePopup();
+
+
+    }
+
 
     render() {
         var that = this;
@@ -48,6 +55,15 @@ class Pin extends Component{
             }
         }
 
+        function checkIfPinned(){
+            for(var i = 0; i < that.props.userPins.length; i++){
+                if ( that.props.userPins[i].pinID === that.props.pin.pinID){
+                    return true; 
+                }
+            }
+            return false; 
+        }
+
         return (
             <div>
                 <h1>{this.props.pin.name}</h1>
@@ -59,7 +75,9 @@ class Pin extends Component{
                         <button className="btn btn-danger" onClick={this.deletePin.bind(this)}>Delete</button>
                     </div>) 
                 :   <div>
-                        <button className="btn btn-default"onClick={this.openPopup.bind(null, "repin")}>Pin</button>
+                        {checkIfPinned() ? (<button className="btn btn-default" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>): 
+                        <button className="btn btn-default"onClick={this.openPopup.bind(null, "repin")}>Pin</button>}
+                        
                     </div>}
 
                 <hr className="stylehr"/>
@@ -72,7 +90,8 @@ class Pin extends Component{
 
 function mapStateToProps(state){
     return{
-        user: state.user
+        user: state.user,
+        userPins: state.userPins
     }
 }
 
