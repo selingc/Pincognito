@@ -93,9 +93,15 @@ body{
 	padding-left: 15%;
 	padding-right: 15%;
 }
+
 .pinImage {
 	max-width: 80%;
 	max-height: 400px;
+}
+
+/*EDIT PIN POPUP -------------------------------------------------------------------------------------*/
+.confirmChangeButton {
+	float: right;
 }
 
 /*BOARD & PIN PAGES ---------------------------------------------------------------------------------------*/
