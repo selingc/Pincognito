@@ -13,14 +13,9 @@ class Repin extends Component {
         e.preventDefault();
 
         if(this.refs.board.value !== "none"){
-            console.log(this.refs.board.value);
             this.props.repinToBoard(this.props.user.username, this.refs.board.value, this.props.pin.pinID);
             this.props.closePopup();
-
         }
-            
-
-        
     }
 
     render() {

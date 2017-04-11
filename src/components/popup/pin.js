@@ -22,7 +22,7 @@ class Pin extends Component{
     }
 
     unpinFromBoard(){
-        this.props.unpinFromBoard(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID);
+        this.props.unpinFromBoard(this.props.user.username, this.props.pin.pinID);
         this.closePopup();
     }
 
