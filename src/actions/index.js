@@ -188,7 +188,7 @@ export function createUserBoard(username, data){
 		firebase.database().ref("boards").child(key).set(redoData);
 		firebase.database().ref("users/" + username + "/boards").child(key).set(true);
 
-		var tagsArray = data.tags.replace(/\s/g,"").split(",");
+		var tagsArray = data.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<tagsArray.length; i++){
 			firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
 			firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
@@ -233,13 +233,13 @@ export function editUserBoard(username, boardID, oldData, newData){
 
 		firebase.database().ref("boards").child(boardID).update(redoData);
 
-		var oldTagsArray = oldData.tags.replace(/\s/g,"").split(",");
+		var oldTagsArray = oldData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<oldTagsArray.length; i++){
 			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
 			firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
 		}
 
-		var newTagsArray = newData.tags.replace(/\s/g,"").split(",");
+		var newTagsArray = newData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<newTagsArray.length; i++){
 			firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
 			firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
@@ -333,7 +333,7 @@ export function createBoardPin(username, boardID, data){
 			firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
 			firebase.database().ref("users/" + username + "/pins").child(key).set(true);
 
-			var tagsArray = data.tags.replace(/\s/g,"").split(",");
+			var tagsArray = data.tags.replace(/\s/g," ").split(",");
 			for(var i=0; i<tagsArray.length; i++){
 				firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
 				firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
@@ -400,7 +400,7 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 			firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
 		}
 
-		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g,"").split(",") : "";
+		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g," ").split(",") : "";
 		if(oldTagsArray){
 			for(var i=0; i<oldTagsArray.length; i++){
 				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
@@ -408,7 +408,7 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 			}
 		}
 
-		var newTagsArray = newData.tags.replace(/\s/g,"").split(",");
+		var newTagsArray = newData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<newTagsArray.length; i++){
 			firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
 			firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
@@ -536,6 +536,21 @@ export function stopFetchingUserPins(username){
 		firebase.database().ref("users/" + username).child("pins").off();
 		dispatch({
 			type: actionTypes.STOP_FETCHING_USER_PINS
+		});
+	}
+}
+
+/*--------------------------------------------------------------
+				forgetpassword action 
+--------------------------------------------------------------*/
+
+export function forgetPassword(data){
+	return dispatch =>{
+		console.log(data);
+		firebase.auth().sendPasswordResetEmail(data.email).then(function() {
+		  console.log("sent email");// Email sent.
+		}, function(error) {
+		  console.log("error when email sent");
 		});
 	}
 }
