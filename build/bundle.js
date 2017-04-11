@@ -66,25 +66,29 @@
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(522);
+	var _layout = __webpack_require__(523);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(524);
+	var _login = __webpack_require__(525);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(526);
+	var _signup = __webpack_require__(527);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(528);
+	var _profile = __webpack_require__(529);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _boardpins = __webpack_require__(531);
+	var _boardpins = __webpack_require__(532);
 
 	var _boardpins2 = _interopRequireDefault(_boardpins);
+
+	var _forgetpassword = __webpack_require__(533);
+
+	var _forgetpassword2 = _interopRequireDefault(_forgetpassword);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -110,7 +114,8 @@
 	            _react2.default.createElement(_reactRouter.Route, { path: '/login', component: _login2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/signup', component: _signup2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/profile', component: _profile2.default }),
-	            _react2.default.createElement(_reactRouter.Route, { path: '/board/:boardid', component: _boardpins2.default })
+	            _react2.default.createElement(_reactRouter.Route, { path: '/board/:boardid', component: _boardpins2.default }),
+	            _react2.default.createElement(_reactRouter.Route, { path: '/forgetpassword', component: _forgetpassword2.default })
 	        )
 	    )
 	), document.getElementById('root'));
@@ -29660,6 +29665,10 @@
 
 			case _types2.default.EDIT_BOARD_PIN:
 				return state;
+
+			case _types2.default.REPIN_TO_BOARD:
+				return state;
+
 		}
 		return state;
 	};
@@ -29717,6 +29726,9 @@
 		FETCH_PINS: 'FETCH_PINS',
 		FETCH_REMOVED_PINS: 'FETCH_REMOVED_PINS',
 		STOP_FETCHING_PINS: 'STOP_FETCHING_PINS',
+
+		FOLLOW_BOARD: 'FOLLOW_BOARD',
+		REPIN_TO_BOARD: 'REPIN_TO_BOARD',
 
 		SAY_HELLO: 'SAY_HELLO',
 		RESET_STATE: 'RESET_STATE'
@@ -29851,6 +29863,9 @@
 				return state;
 			case _types2.default.RESET_STATE:
 				return [];
+
+			case _types2.default.FOLLOW_BOARD:
+				return state;
 		}
 		return state;
 	};
@@ -40461,6 +40476,10 @@
 	exports.stopFetchingPins = stopFetchingPins;
 	exports.fetchUserPins = fetchUserPins;
 	exports.stopFetchingUserPins = stopFetchingUserPins;
+	exports.repinToBoard = repinToBoard;
+	exports.unpinFromBoard = unpinFromBoard;
+	exports.followBoard = followBoard;
+	exports.forgetPassword = forgetPassword;
 
 	var _firebase = __webpack_require__(509);
 
@@ -40665,7 +40684,7 @@
 			firebase.database().ref("boards").child(key).set(redoData);
 			firebase.database().ref("users/" + username + "/boards").child(key).set(true);
 
-			var tagsArray = data.tags.replace(/\s/g, "").split(",");
+			var tagsArray = data.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < tagsArray.length; i++) {
 				firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
 				firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
@@ -40710,13 +40729,13 @@
 
 			firebase.database().ref("boards").child(boardID).update(redoData);
 
-			var oldTagsArray = oldData.tags.replace(/\s/g, "").split(",");
+			var oldTagsArray = oldData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < oldTagsArray.length; i++) {
 				firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
 				firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
 			}
 
-			var newTagsArray = newData.tags.replace(/\s/g, "").split(",");
+			var newTagsArray = newData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < newTagsArray.length; i++) {
 				firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
 				firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
@@ -40810,7 +40829,7 @@
 				firebase.database().ref("boards/" + boardID + "/pins").child(key).set(true);
 				firebase.database().ref("users/" + username + "/pins").child(key).set(true);
 
-				var tagsArray = data.tags.replace(/\s/g, "").split(",");
+				var tagsArray = data.tags.replace(/\s/g, " ").split(",");
 				for (var i = 0; i < tagsArray.length; i++) {
 					firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
 					firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
@@ -40855,18 +40874,8 @@
 				boardID: newBoardID
 			};
 
-			if (newData.file) {
-				firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function (snapshot) {
-					redoData.imageURL = snapshot.downloadURL;
-					firebase.database().ref("pins").child(pinID).update(redoData);
-
-					dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
-				});
-			} else {
-				firebase.database().ref("pins").child(pinID).update(redoData);
-
-				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
-			}
+			firebase.database().ref("pins").child(pinID).update(redoData);
+			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
 		};
 	}
 
@@ -40877,7 +40886,7 @@
 				firebase.database().ref("boards/" + newBoardID + "/pins").child(pinID).set(true);
 			}
 
-			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, "").split(",") : "";
+			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, " ").split(",") : "";
 			if (oldTagsArray) {
 				for (var i = 0; i < oldTagsArray.length; i++) {
 					firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
@@ -40885,7 +40894,7 @@
 				}
 			}
 
-			var newTagsArray = newData.tags.replace(/\s/g, "").split(",");
+			var newTagsArray = newData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < newTagsArray.length; i++) {
 				firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
 				firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
@@ -41013,6 +41022,49 @@
 			firebase.database().ref("users/" + username).child("pins").off();
 			dispatch({
 				type: _types2.default.STOP_FETCHING_USER_PINS
+			});
+		};
+	}
+
+	function repinToBoard(username, boardID, pinID) {
+		return function (dispatch) {
+			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
+			firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
+		};
+	}
+
+	function unpinFromBoard(username, pinID) {
+		return function (dispatch) {
+			firebase.database().ref("users/" + username + "/boards").orderByValue().equalTo(true).on("child_added", function (snap) {
+				var boardID = snap.ref.key;
+				firebase.database().ref("boards/" + boardID + "/pins").child(pinID).once("value", function (snap) {
+					if (snap.val()) {
+						firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+					}
+				});
+			});
+
+			firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+		};
+	}
+
+	function followBoard(username, boardID) {
+		return function (dispatch) {
+			firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
+		};
+	}
+
+	/*--------------------------------------------------------------
+					forgetpassword action 
+	--------------------------------------------------------------*/
+
+	function forgetPassword(data) {
+		return function (dispatch) {
+			console.log(data);
+			firebase.auth().sendPasswordResetEmail(data.email).then(function () {
+				console.log("sent email"); // Email sent.
+			}, function (error) {
+				console.log("error when email sent");
 			});
 		};
 	}
@@ -41769,6 +41821,10 @@
 
 	var _editBoard2 = _interopRequireDefault(_editBoard);
 
+	var _repinForm = __webpack_require__(522);
+
+	var _repinForm2 = _interopRequireDefault(_repinForm);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -41839,6 +41895,8 @@
 	                    return _react2.default.createElement(_editPin2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
 	                } else if (that.props.type === "editBoard") {
 	                    return _react2.default.createElement(_editBoard2.default, { board: that.props.board, closePopup: that.props.closePopup });
+	                } else if (that.props.type === "repin") {
+	                    return _react2.default.createElement(_repinForm2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
 	                } else {
 	                    return _react2.default.createElement(_pin2.default, { pin: that.props.pin, closePopup: that.props.closePopup });
 	                }
@@ -41907,13 +41965,15 @@
 	        var _this = _possibleConstructorReturn(this, (Pin.__proto__ || Object.getPrototypeOf(Pin)).call(this, props));
 
 	        _this.state = { poppedUp: false };
+	        _this.openPopup = _this.openPopup.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(Pin, [{
 	        key: 'openPopup',
-	        value: function openPopup(pin, type) {
+	        value: function openPopup(type) {
 	            this.setState({ poppedUp: true });
+	            this.setState({ type: type });
 	        }
 	    }, {
 	        key: 'closePopup',
@@ -41922,13 +41982,10 @@
 	            this.props.closePopup();
 	        }
 	    }, {
-	        key: 'deletePin',
-	        value: function deletePin() {
-	            var confirmation = confirm("Are you sure you want to remove this pin?");
-	            if (confirmation) {
-	                this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
-	                this.closePopup();
-	            }
+	        key: 'unpinFromBoard',
+	        value: function unpinFromBoard() {
+	            this.props.unpinFromBoard(this.props.user.username, this.props.pin.pinID);
+	            this.closePopup();
 	        }
 	    }, {
 	        key: 'render',
@@ -41936,44 +41993,72 @@
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {
-	                    return _react2.default.createElement(_modal2.default, { type: 'editPin', pin: that.props.pin, closePopup: that.closePopup.bind(that) });
+	                    if (that.state.type === "editPin") {
+	                        return _react2.default.createElement(_modal2.default, { type: 'editPin', pin: that.props.pin, closePopup: that.closePopup.bind(that) });
+	                    } else {
+	                        return _react2.default.createElement(_modal2.default, { type: 'repin', pin: that.props.pin, closePopup: that.closePopup.bind(that) });
+	                    }
 	                }
+	            }
+
+	            function checkIfPinned() {
+	                for (var i = 0; i < that.props.userPins.length; i++) {
+	                    if (that.props.userPins[i].pinID === that.props.pin.pinID) {
+	                        return true;
+	                    }
+	                }
+	                return false;
 	            }
 
 	            return _react2.default.createElement(
 	                'div',
 	                null,
 	                _react2.default.createElement(
-	                    'h1',
-	                    null,
-	                    this.props.pin.name
-	                ),
-	                _react2.default.createElement(
-	                    'center',
-	                    null,
-	                    _react2.default.createElement('img', { src: this.props.pin.imageURL, className: 'images pinImage' })
-	                ),
-	                this.props.pin.createdBy === this.props.user.username ? _react2.default.createElement(
 	                    'div',
-	                    null,
+	                    { className: 'hoverContainer' },
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-default', onClick: this.openPopup.bind(this) },
-	                        'Edit'
+	                        'h1',
+	                        null,
+	                        this.props.pin.name
 	                    ),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-danger', onClick: this.deletePin.bind(this) },
-	                        'Delete'
-	                    )
-	                ) : null,
-	                _react2.default.createElement('hr', { className: 'stylehr' }),
-	                _react2.default.createElement(
-	                    'p',
-	                    { className: 'pinDescription' },
-	                    this.props.pin.description
-	                ),
-	                getPopup()
+	                        'center',
+	                        null,
+	                        _react2.default.createElement('img', { src: this.props.pin.imageURL, className: 'images pinImage' })
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'overlay' },
+	                        this.props.pin.createdBy === this.props.user.username ? _react2.default.createElement(
+	                            'div',
+	                            null,
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-default buttonHover', onClick: this.openPopup.bind(null, "editPin") },
+	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' })
+	                            )
+	                        ) : _react2.default.createElement(
+	                            'div',
+	                            null,
+	                            checkIfPinned() ? _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-danger', onClick: this.unpinFromBoard.bind(this) },
+	                                'Unpin'
+	                            ) : _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "repin") },
+	                                'Pin'
+	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement('hr', { className: 'stylehr' }),
+	                    _react2.default.createElement(
+	                        'p',
+	                        { className: 'pinDescription' },
+	                        this.props.pin.description
+	                    ),
+	                    getPopup()
+	                )
 	            );
 	        }
 	    }]);
@@ -41983,7 +42068,8 @@
 
 	function mapStateToProps(state) {
 	    return {
-	        user: state.user
+	        user: state.user,
+	        userPins: state.userPins
 	    };
 	}
 
@@ -42308,7 +42394,6 @@
 
 	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
 	                var data = {
-	                    file: this.refs.image.files[0],
 	                    name: this.refs.name.value,
 	                    description: this.refs.description.value,
 	                    tags: this.refs.tags.value
@@ -42318,6 +42403,15 @@
 	                this.props.closePopup();
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
+	            }
+	        }
+	    }, {
+	        key: 'deletePin',
+	        value: function deletePin() {
+	            var confirmation = confirm("Are you sure you want to remove this pin?");
+	            if (confirmation) {
+	                this.props.deleteBoardPin(this.props.user.username, this.props.pin.boardID, this.props.pin.pinID, this.props.pin.createdBy);
+	                this.closePopup();
 	            }
 	        }
 	    }, {
@@ -42345,7 +42439,7 @@
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'createForm', onSubmit: this.editPin.bind(this) },
-	                    _react2.default.createElement('input', { type: 'file', accept: 'image/*', className: 'form-control-file', id: 'image', ref: 'image' }),
+	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name', defaultValue: this.props.pin.name }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
@@ -42365,9 +42459,6 @@
 	                        })
 	                    ),
 	                    _react2.default.createElement('br', null),
-	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name', defaultValue: this.props.pin.name }),
-	                    ' ',
-	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description', defaultValue: this.props.pin.description }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -42375,13 +42466,14 @@
 	                    ' ',
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
-	                        'center',
-	                        null,
-	                        _react2.default.createElement(
-	                            'button',
-	                            { type: 'submit', className: 'btn btn-danger' },
-	                            'Confirm Changes'
-	                        )
+	                        'button',
+	                        { className: 'btn btn-danger', onClick: this.deletePin.bind(this) },
+	                        'Delete'
+	                    ),
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'submit', className: 'btn btn-default confirmChangeButton' },
+	                        'Confirm Changes'
 	                    )
 	                )
 	            );
@@ -42528,6 +42620,130 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(508);
+
+	var actions = _interopRequireWildcard(_index);
+
+	var _reactRouter = __webpack_require__(183);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Repin = function (_Component) {
+	    _inherits(Repin, _Component);
+
+	    function Repin(props) {
+	        _classCallCheck(this, Repin);
+
+	        var _this = _possibleConstructorReturn(this, (Repin.__proto__ || Object.getPrototypeOf(Repin)).call(this, props));
+
+	        _this.state = { error: "" };
+	        return _this;
+	    }
+
+	    _createClass(Repin, [{
+	        key: 'repinToBoard',
+	        value: function repinToBoard(e) {
+	            e.preventDefault();
+
+	            if (this.refs.board.value !== "none") {
+	                this.props.repinToBoard(this.props.user.username, this.refs.board.value, this.props.pin.pinID);
+	                this.props.closePopup();
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    'Add Pin'
+	                ),
+	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                this.state.error ? _react2.default.createElement(
+	                    'div',
+	                    { className: 'alert alert-danger' },
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        'Error! '
+	                    ),
+	                    this.state.error
+	                ) : null,
+	                _react2.default.createElement(
+	                    'form',
+	                    { className: 'createForm', onSubmit: this.repinToBoard.bind(this) },
+	                    _react2.default.createElement(
+	                        'select',
+	                        { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: 'none' },
+	                        _react2.default.createElement(
+	                            'option',
+	                            { value: 'none', disabled: true },
+	                            '--Select a Board--'
+	                        ),
+	                        this.props.userBoards.map(function (board, index) {
+	                            return _react2.default.createElement(
+	                                'option',
+	                                { value: board.boardID, key: index },
+	                                board.name
+	                            );
+	                        })
+	                    ),
+	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'center',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { type: 'submit', className: 'btn btn-danger' },
+	                            'Confirm Changes'
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return Repin;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        userBoards: state.userBoards,
+	        user: state.user
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Repin);
+
+/***/ },
+/* 523 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
 
@@ -42543,7 +42759,7 @@
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(523);
+	var _navbar = __webpack_require__(524);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -42620,7 +42836,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Layout);
 
 /***/ },
-/* 523 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42711,6 +42927,24 @@
 						)
 					)
 				)
+			),
+			_react2.default.createElement(
+				'nav',
+				null,
+				_react2.default.createElement(
+					'div',
+					{ className: 'input-group' },
+					_react2.default.createElement('input', { type: 'text', className: 'form-control search', placeholder: 'Search' }),
+					_react2.default.createElement(
+						'span',
+						{ className: 'input-group-btn' },
+						_react2.default.createElement(
+							'button',
+							{ className: 'btn btn-default', type: 'button' },
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
+						)
+					)
+				)
 			)
 		);
 	};
@@ -42730,7 +42964,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 524 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42749,7 +42983,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _login = __webpack_require__(525);
+	var _login = __webpack_require__(526);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -42803,7 +43037,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 525 */
+/* 526 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42878,6 +43112,13 @@
 	                                _reactRouter.Link,
 	                                { to: '/signup' },
 	                                'Sign up!'
+	                            ),
+	                            _react2.default.createElement('br', null),
+	                            'Forgot password? ',
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: '/forgetpassword' },
+	                                'Reset Password!'
 	                            )
 	                        )
 	                    )
@@ -42893,7 +43134,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 526 */
+/* 527 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42912,7 +43153,7 @@
 
 	var _index = __webpack_require__(508);
 
-	var _signup = __webpack_require__(527);
+	var _signup = __webpack_require__(528);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -42976,7 +43217,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 527 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43105,7 +43346,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 528 */
+/* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43122,11 +43363,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _boards = __webpack_require__(529);
+	var _boards = __webpack_require__(530);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(530);
+	var _pins = __webpack_require__(531);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -43189,7 +43430,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Profile);
 
 /***/ },
-/* 529 */
+/* 530 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43334,7 +43575,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
 
 /***/ },
-/* 530 */
+/* 531 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43483,7 +43724,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
 
 /***/ },
-/* 531 */
+/* 532 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43574,7 +43815,6 @@
 	        value: function render() {
 	            var _this2 = this;
 
-	            console.log(this.props.boardPins.pins);
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {
@@ -43664,6 +43904,158 @@
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(BoardPins);
+
+/***/ },
+/* 533 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _redux = __webpack_require__(250);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _index = __webpack_require__(508);
+
+	var _forgetpassword = __webpack_require__(534);
+
+	var _forgetpassword2 = _interopRequireDefault(_forgetpassword);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// basically the same as signup.js - more comments are in that file
+
+	var ForgetPassword = function ForgetPassword(_ref) {
+	    var user = _ref.user,
+	        actions = _ref.actions;
+
+
+	    var handleSubmit = function handleSubmit(values) {
+	        var data = {
+	            email: values.email
+
+	        };
+
+	        console.log(data);
+	        actions.forgetPassword(data);
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        { className: 'children' },
+	        _react2.default.createElement(_forgetpassword2.default, { onSubmit: handleSubmit })
+	    );
+	};
+
+	function mapStateToProps(state) {
+	    return {
+	        user: {
+	            error: state.user.error
+	        }
+	    };
+	}
+
+	function mapDispatchToProps(dispatch) {
+	    return { actions: (0, _redux.bindActionCreators)({ forgetPassword: _index.forgetPassword }, dispatch) };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ForgetPassword);
+
+/***/ },
+/* 534 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reduxForm = __webpack_require__(295);
+
+	var _reactRouter = __webpack_require__(183);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	//  same as the signup form - more comments there
+
+	var ForgetPasswordForm = function ForgetPasswordForm(props) {
+	    var handleSubmit = props.handleSubmit,
+	        pristine = props.pristine,
+	        reset = props.reset,
+	        submitting = props.submitting;
+
+
+	    var background = {
+	        backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/login.jpg?alt=media&token=7de78808-bbc6-4f8b-b738-5ff0dcc61bcb')",
+	        width: '100%',
+	        height: '550px',
+	        backgroundSize: 'cover'
+	    };
+
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	            'section',
+	            { style: background },
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' }),
+	            _react2.default.createElement(
+	                'div',
+	                { className: 'form col-lg-6 col-md-6 col-sm-12 col-xs-12' },
+	                _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    'Forgot Password?'
+	                ),
+	                _react2.default.createElement('hr', { className: 'stylehr' }),
+	                _react2.default.createElement(
+	                    'form',
+	                    { onSubmit: handleSubmit },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(_reduxForm.Field, { name: 'email', component: 'input', type: 'text', placeholder: 'Email Address', className: 'form-control' }),
+	                        _react2.default.createElement('br', null),
+	                        _react2.default.createElement(
+	                            'center',
+	                            null,
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-danger' },
+	                                'send email'
+	                            ),
+	                            _react2.default.createElement('br', null),
+	                            'Don\'t have an account? ',
+	                            _react2.default.createElement(
+	                                _reactRouter.Link,
+	                                { to: '/signup' },
+	                                'Sign up!'
+	                            )
+	                        )
+	                    )
+	                )
+	            ),
+	            _react2.default.createElement('div', { className: 'col-lg-3 col-md-3' })
+	        )
+	    );
+	};
+
+	exports.default = (0, _reduxForm.reduxForm)({
+	    form: 'ForgetPasswordForm' // a unique identifier for this form
+	})(ForgetPasswordForm);
 
 /***/ }
 /******/ ]);

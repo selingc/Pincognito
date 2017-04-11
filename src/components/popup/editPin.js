@@ -14,7 +14,6 @@ class EditPin extends Component {
 
         if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
             var data = {
-                file: this.refs.image.files[0],
                 name: this.refs.name.value,
                 description: this.refs.description.value,
                 tags: this.refs.tags.value
@@ -48,6 +47,12 @@ class EditPin extends Component {
                 )}
                 <form className="createForm" onSubmit={this.editPin.bind(this)}>
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" defaultValue={this.props.pin.name}/> <br />
+                    <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
+                        <option value="none" disabled>--Select a Board--</option>
+                        {this.props.userBoards.map((board, index) => (
+                            <option value={board.boardID} key={index}>{board.name}</option>
+                        ))}
+                    </select><br />
                     <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.pin.description}/> <br />
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.pin.tags}/> <br />
                     <button className="btn btn-danger" onClick={this.deletePin.bind(this)}>Delete</button>

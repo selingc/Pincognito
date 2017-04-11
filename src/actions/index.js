@@ -378,18 +378,8 @@ export function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData){
 			boardID: newBoardID
 		}
 
-		if(newData.file){
-			firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function(snapshot){
-				redoData.imageURL = snapshot.downloadURL;
-				firebase.database().ref("pins").child(pinID).update(redoData);
-
-				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
-			});
-		}else{
-			firebase.database().ref("pins").child(pinID).update(redoData);
-
-			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
-		}
+		firebase.database().ref("pins").child(pinID).update(redoData);
+		dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
 	}
 }
 
