@@ -43,7 +43,6 @@ class BoardPins extends Component {
     }
 
     render() {
-        console.log(this.props.boardPins.pins);
         var that = this;
         function getPopup(){
             if(that.state.poppedUp){

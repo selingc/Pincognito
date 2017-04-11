@@ -36,7 +36,7 @@ const types = {
 	REPIN_TO_BOARD: 'REPIN_TO_BOARD',
 
 	SAY_HELLO: 'SAY_HELLO',
-	RESET_STATE: 'RESET_STATE'
+	RESET_STATE: 'RESET_STATE',
 };
 
 export default types;
