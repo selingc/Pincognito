@@ -24,10 +24,19 @@ const NavBar = ({user, actions}) => {
 					</ul>)
 					:
 					(<ul id="menu">
+						
 						<li><Link to="/profile" activeClassName="active" className="activeNav">Profile</Link></li>
 						<li><Link to="/" onClick={actions.logOff} id="logout">Logout</Link></li>
 					</ul>)
 				}
+			</nav>
+			<nav>
+				<div className="input-group">
+				    <input type="text" className="form-control search" placeholder="Search"/>
+				    <span className="input-group-btn">
+				    	<button className="btn btn-default" type="button"><span className="glyphicon glyphicon-search"></span></button>
+				    </span>
+			    </div>
 			</nav>
 		</div>
 	)
