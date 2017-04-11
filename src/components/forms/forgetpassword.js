@@ -26,7 +26,7 @@ const ForgetPasswordForm = (props) => {
                 <hr className="stylehr"/>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <Field name="email" component="input" type="text" placeholder="Username or Email Address" className="form-control" /><br />
+                        <Field name="email" component="input" type="text" placeholder="Email Address" className="form-control" /><br />
                         
                     <center>
                         <button className="btn btn-danger">send email</button><br/>
