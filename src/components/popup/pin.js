@@ -8,10 +8,12 @@ class Pin extends Component{
         super(props);
 
         this.state = {poppedUp: false};
+        this.openPopup = this.openPopup.bind(this);
     }
 
-    openPopup(pin, type){
+    openPopup(type){
         this.setState({poppedUp: true});
+        this.setState({type: type});
     }
 
     closePopup(){
@@ -27,13 +29,22 @@ class Pin extends Component{
         }
     }
 
+
     render() {
         var that = this;
         function getPopup(){
             if(that.state.poppedUp){
-                return(
-                    <Popup type="editPin" pin={that.props.pin} closePopup={that.closePopup.bind(that)}/>
-                )
+                if(that.state.type ==="editPin"){
+                            return(
+                                <Popup type="editPin" pin={that.props.pin} closePopup={that.closePopup.bind(that)}/>
+                            )
+                }
+                else{
+                        return(
+                            <Popup type="repin" pin={that.props.pin} closePopup={that.closePopup.bind(that)}/>
+                        )
+                }
+          
             }
         }
 
@@ -44,10 +55,12 @@ class Pin extends Component{
 
                 {this.props.pin.createdBy === this.props.user.username ? (
                     <div>
-                        <button className="btn btn-default" onClick={this.openPopup.bind(this)}>Edit</button>
+                        <button className="btn btn-default" onClick={this.openPopup.bind(null, "editPin")}>Edit</button>
                         <button className="btn btn-danger" onClick={this.deletePin.bind(this)}>Delete</button>
                     </div>) 
-                : null}
+                :   <div>
+                        <button className="btn btn-default"onClick={this.openPopup.bind(null, "repin")}>Pin</button>
+                    </div>}
 
                 <hr className="stylehr"/>
                 <p className="pinDescription">{this.props.pin.description}</p>
