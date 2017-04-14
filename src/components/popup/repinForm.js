@@ -19,6 +19,12 @@ class Repin extends Component {
     }
 
     render() {
+        var newArray = [];
+        for ( var i = 0; i < this.props.userBoards.length; i++) {
+            if (this.props.userBoards[i].createdBy === this.props.user.username) {
+                newArray = newArray.concat(this.props.userBoards[i]);
+            }
+        }
         return (
             <div>
                 <h1>Add Pin</h1>
@@ -32,7 +38,7 @@ class Repin extends Component {
 
                     <select className="form-control" ref="board" id="dropdown" defaultValue="none">
                         <option value="none" disabled>--Select a Board--</option>
-                        {this.props.userBoards.map((board, index) => (
+                        {newArray.map((board, index) => (
                             <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />

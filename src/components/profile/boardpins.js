@@ -42,6 +42,15 @@ class BoardPins extends Component {
         this.setState({poppedUp: false});
     }
 
+    followBoard(){
+        this.props.followBoard(this.props.user.username, this.props.params.boardid);
+    }
+
+    unfollowBoard(){
+        this.props.unfollowBoard(this.props.user.username, this.props.params.boardid);
+    }
+
+
     render() {
         var that = this;
         function getPopup(){
@@ -59,6 +68,14 @@ class BoardPins extends Component {
                 return null;
             }
         }
+        function checkIfFollowed(){
+            for(var i = 0; i < that.props.userBoards.length; i++){
+                if ( that.props.userBoards[i].boardID === that.props.params.boardid ){
+                    return true; 
+                }
+            }
+            return false; 
+        }
 
         return (
             <div className="children">
@@ -68,7 +85,19 @@ class BoardPins extends Component {
                         <button className="btn btn-default" onClick={this.openEditBoardPopup.bind(this)}>Edit</button>
                         <button className="btn btn-danger" onClick={this.deleteBoard.bind(this)}>Delete</button>
                     </div>) 
-                : null}
+                : 
+                     <div>
+                        {checkIfFollowed() ? (
+                            <button className="btn btn-danger" onClick={this.unfollowBoard.bind(this)}>Unfollow</button>)
+                        : 
+                            <button className="btn btn-danger"onClick={this.followBoard.bind(this)}>Follow</button>
+                        }
+                     </div>
+
+
+
+                   
+                }
                 <div> {this.props.boardPins.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -91,7 +120,8 @@ class BoardPins extends Component {
 function mapStateToProps(state){
     return{
         boardPins: state.boardPins,
-        user: state.user
+        user: state.user, 
+        userBoards: state.userBoards
     }
 }
 

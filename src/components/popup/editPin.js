@@ -36,6 +36,12 @@ class EditPin extends Component {
 
 
     render() {
+        var newArray = [];
+        for ( var i = 0; i < this.props.userBoards.length; i++) {
+            if (this.props.userBoards[i].createdBy === this.props.user.username) {
+                newArray = newArray.concat(this.props.userBoards[i]);
+            }
+        }
         return (
             <div>
                 <h1>Edit Pin</h1>
@@ -49,7 +55,7 @@ class EditPin extends Component {
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" defaultValue={this.props.pin.name}/> <br />
                     <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
                         <option value="none" disabled>--Select a Board--</option>
-                        {this.props.userBoards.map((board, index) => (
+                        {newArray.map((board, index) => (
                             <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />

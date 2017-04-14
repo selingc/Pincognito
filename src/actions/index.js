@@ -558,6 +558,12 @@ export function followBoard(username, boardID){
 	}
 }
 
+export function unfollowBoard(username, boardID){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+	}
+}
+
 /*--------------------------------------------------------------
 				forgetpassword action 
 --------------------------------------------------------------*/
