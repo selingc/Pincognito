@@ -541,8 +541,8 @@ export function unpinFromBoard(username, pinID){
 	return dispatch =>{
 		firebase.database().ref("users/" + username + "/boards").orderByValue().equalTo(true).on("child_added", function(snap){
 			var boardID = snap.ref.key;
-			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).once("value", function(snap){
-				if(snap.val()){
+			firebase.database().ref("boards").child(boardID).once("value", function(snap){
+				if(snap.val().createdBy === username){
 					firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
 				}
 			});
