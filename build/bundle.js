@@ -40408,24 +40408,20 @@
 	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
+	                                    { className: 'panel-body' },
 	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-body' },
-	                                        _react2.default.createElement(
-	                                            'center',
-	                                            null,
-	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
-	                                        )
-	                                    ),
-	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-heading' },
-	                                        pin.name
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    pin.name
 	                                )
 	                            )
 	                        );
@@ -40480,6 +40476,7 @@
 	exports.repinToBoard = repinToBoard;
 	exports.unpinFromBoard = unpinFromBoard;
 	exports.followBoard = followBoard;
+	exports.unfollowBoard = unfollowBoard;
 	exports.forgetPassword = forgetPassword;
 
 	var _firebase = __webpack_require__(509);
@@ -40687,8 +40684,8 @@
 
 			var tagsArray = data.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < tagsArray.length; i++) {
-				firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
-				firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
+				firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i].trim()).set(true);
+				firebase.database().ref("tags/boards/" + tagsArray[i].trim()).child(key).set(true);
 			}
 
 			dispatch({
@@ -40732,14 +40729,14 @@
 
 			var oldTagsArray = oldData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < oldTagsArray.length; i++) {
-				firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
-				firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
+				firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i].trim()).set(false);
+				firebase.database().ref("tags/boards/" + oldTagsArray[i].trim()).child(boardID).set(false);
 			}
 
 			var newTagsArray = newData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < newTagsArray.length; i++) {
-				firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
-				firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
+				firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i].trim()).set(true);
+				firebase.database().ref("tags/boards/" + newTagsArray[i].trim()).child(boardID).set(true);
 			}
 
 			dispatch({
@@ -40832,8 +40829,8 @@
 
 				var tagsArray = data.tags.replace(/\s/g, " ").split(",");
 				for (var i = 0; i < tagsArray.length; i++) {
-					firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
-					firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
+					firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i].trim()).set(true);
+					firebase.database().ref("tags/pins/" + tagsArray[i].trim()).child(key).set(true);
 				}
 
 				dispatch({
@@ -40890,15 +40887,15 @@
 			var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g, " ").split(",") : "";
 			if (oldTagsArray) {
 				for (var i = 0; i < oldTagsArray.length; i++) {
-					firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
-					firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+					firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i].trim()).set(false);
+					firebase.database().ref("tags/pins/" + oldTagsArray[i].trim()).child(pinID).set(false);
 				}
 			}
 
 			var newTagsArray = newData.tags.replace(/\s/g, " ").split(",");
 			for (var i = 0; i < newTagsArray.length; i++) {
-				firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
-				firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
+				firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i].trim()).set(true);
+				firebase.database().ref("tags/pins/" + newTagsArray[i].trim()).child(pinID).set(true);
 			}
 
 			dispatch({
@@ -40984,7 +40981,7 @@
 	function fetchUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("pins").child(snap.ref.key).on("value", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
 					var pinData = snap.val();
 					if (pinData.tags) {
 						var tagKeys = Object.keys(pinData.tags);
@@ -41009,6 +41006,7 @@
 
 			firebase.database().ref("users/" + username).child("pins").on("child_changed", function (snap) {
 				if (snap.val() === false) {
+					console.log("unpinned");
 					dispatch({
 						type: _types2.default.FETCH_USER_REMOVED_PINS,
 						payload: snap.ref.key
@@ -41031,6 +41029,10 @@
 		return function (dispatch) {
 			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
 			firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
+			firebase.database().ref("pins").child(pinID).once("value", function (snap) {
+				var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+				firebase.database().ref("pins").child(pinID).update({ numRepins: numRepins += 1 });
+			});
 		};
 	}
 
@@ -41038,20 +41040,38 @@
 		return function (dispatch) {
 			firebase.database().ref("users/" + username + "/boards").orderByValue().equalTo(true).on("child_added", function (snap) {
 				var boardID = snap.ref.key;
-				firebase.database().ref("boards/" + boardID + "/pins").child(pinID).once("value", function (snap) {
-					if (snap.val()) {
+				firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+					if (snap.val().createdBy === username) {
 						firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
 					}
 				});
 			});
 
 			firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+			firebase.database().ref("pins").child(pinID).once("value", function (snap) {
+				var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+				firebase.database().ref("pins").child(pinID).update({ numRepins: numRepins -= 1 });
+			});
 		};
 	}
 
 	function followBoard(username, boardID) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
+			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+				var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+				firebase.database().ref("boards").child(boardID).update({ numFollowers: numFollowers += 1 });
+			});
+		};
+	}
+
+	function unfollowBoard(username, boardID) {
+		return function (dispatch) {
+			firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+			firebase.database().ref("boards").child(boardID).once("value", function (snap) {
+				var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+				firebase.database().ref("boards").child(boardID).update({ numFollowers: numFollowers -= 1 });
+			});
 		};
 	}
 
@@ -42144,6 +42164,13 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var newArray = [];
+	            for (var i = 0; i < this.props.userBoards.length; i++) {
+	                if (this.props.userBoards[i].createdBy === this.props.user.username) {
+	                    newArray = newArray.concat(this.props.userBoards[i]);
+	                }
+	            }
+
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -42177,7 +42204,7 @@
 	                            { value: 'none', disabled: true },
 	                            '--Select a Board--'
 	                        ),
-	                        this.props.userBoards.map(function (board, index) {
+	                        newArray.map(function (board, index) {
 	                            return _react2.default.createElement(
 	                                'option',
 	                                { value: board.boardID, key: index },
@@ -42418,6 +42445,12 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var newArray = [];
+	            for (var i = 0; i < this.props.userBoards.length; i++) {
+	                if (this.props.userBoards[i].createdBy === this.props.user.username) {
+	                    newArray = newArray.concat(this.props.userBoards[i]);
+	                }
+	            }
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -42439,7 +42472,7 @@
 	                ) : null,
 	                _react2.default.createElement(
 	                    'form',
-	                    { className: 'createForm', onSubmit: this.editPin.bind(this) },
+	                    { className: 'createForm', onSubmit: this.editPin.bind(this), onReset: this.deletePin.bind(this) },
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name', defaultValue: this.props.pin.name }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -42451,7 +42484,7 @@
 	                            { value: 'none', disabled: true },
 	                            '--Select a Board--'
 	                        ),
-	                        this.props.userBoards.map(function (board, index) {
+	                        newArray.map(function (board, index) {
 	                            return _react2.default.createElement(
 	                                'option',
 	                                { value: board.boardID, key: index },
@@ -42468,7 +42501,7 @@
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
 	                        'button',
-	                        { className: 'btn btn-danger', onClick: this.deletePin.bind(this) },
+	                        { type: 'reset', className: 'btn btn-danger' },
 	                        'Delete'
 	                    ),
 	                    _react2.default.createElement(
@@ -42673,6 +42706,12 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var newArray = [];
+	            for (var i = 0; i < this.props.userBoards.length; i++) {
+	                if (this.props.userBoards[i].createdBy === this.props.user.username) {
+	                    newArray = newArray.concat(this.props.userBoards[i]);
+	                }
+	            }
 	            return _react2.default.createElement(
 	                'div',
 	                null,
@@ -42703,7 +42742,7 @@
 	                            { value: 'none', disabled: true },
 	                            '--Select a Board--'
 	                        ),
-	                        this.props.userBoards.map(function (board, index) {
+	                        newArray.map(function (board, index) {
 	                            return _react2.default.createElement(
 	                                'option',
 	                                { value: board.boardID, key: index },
@@ -43509,19 +43548,15 @@
 	                    'div',
 	                    { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12' },
 	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                        _reactRouter.Link,
+	                        { className: 'create', to: '/profile', onClick: this.openPopup.bind(this) },
 	                        _react2.default.createElement(
-	                            _reactRouter.Link,
-	                            { className: 'create', to: '/profile', onClick: this.openPopup.bind(this) },
+	                            'div',
+	                            { className: 'panel panel-danger border' },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'panel panel-danger border' },
-	                                _react2.default.createElement(
-	                                    'div',
-	                                    { className: 'panel-body createPanel' },
-	                                    'Create New Board'
-	                                )
+	                                { className: 'panel-body createPanel' },
+	                                'Create New Board'
 	                            )
 	                        )
 	                    )
@@ -43535,24 +43570,20 @@
 	                            { to: "/board/" + board.boardID },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                { className: 'panel panel-danger border' },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel panel-danger border' },
+	                                    { className: 'panel-body' },
 	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-body' },
-	                                        _react2.default.createElement(
-	                                            'center',
-	                                            null,
-	                                            _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content images' })
-	                                        )
-	                                    ),
-	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-heading' },
-	                                        board.name
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content images' })
 	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    board.name
 	                                )
 	                            )
 	                        )
@@ -43662,19 +43693,15 @@
 	                    'div',
 	                    { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12' },
 	                    _react2.default.createElement(
-	                        'div',
-	                        { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                        _reactRouter.Link,
+	                        { className: 'create', to: '/profile', onClick: this.openPopup.bind(null, null) },
 	                        _react2.default.createElement(
-	                            _reactRouter.Link,
-	                            { className: 'create', to: '/profile', onClick: this.openPopup.bind(null, null) },
+	                            'div',
+	                            { className: 'panel panel-default border' },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'panel panel-default border' },
-	                                _react2.default.createElement(
-	                                    'div',
-	                                    { className: 'panel-body createPanel' },
-	                                    'Create New Pin'
-	                                )
+	                                { className: 'panel-body createPanel' },
+	                                'Create New Pin'
 	                            )
 	                        )
 	                    )
@@ -43685,24 +43712,20 @@
 	                        { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
 	                        _react2.default.createElement(
 	                            'div',
-	                            { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                            { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
+	                                { className: 'panel-body' },
 	                                _react2.default.createElement(
-	                                    'div',
-	                                    { className: 'panel-body' },
-	                                    _react2.default.createElement(
-	                                        'center',
-	                                        null,
-	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
-	                                    )
-	                                ),
-	                                _react2.default.createElement(
-	                                    'div',
-	                                    { className: 'panel-heading' },
-	                                    pin.name
+	                                    'center',
+	                                    null,
+	                                    _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel-heading' },
+	                                pin.name
 	                            )
 	                        )
 	                    );
@@ -43812,6 +43835,16 @@
 	            this.setState({ poppedUp: false });
 	        }
 	    }, {
+	        key: 'followBoard',
+	        value: function followBoard() {
+	            this.props.followBoard(this.props.user.username, this.props.params.boardid);
+	        }
+	    }, {
+	        key: 'unfollowBoard',
+	        value: function unfollowBoard() {
+	            this.props.unfollowBoard(this.props.user.username, this.props.params.boardid);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _this2 = this;
@@ -43827,6 +43860,14 @@
 	                } else {
 	                    return null;
 	                }
+	            }
+	            function checkIfFollowed() {
+	                for (var i = 0; i < that.props.userBoards.length; i++) {
+	                    if (that.props.userBoards[i].boardID === that.props.params.boardid) {
+	                        return true;
+	                    }
+	                }
+	                return false;
 	            }
 
 	            return _react2.default.createElement(
@@ -43855,7 +43896,19 @@
 	                        { className: 'btn btn-danger', onClick: this.deleteBoard.bind(this) },
 	                        'Delete'
 	                    )
-	                ) : null,
+	                ) : _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    checkIfFollowed() ? _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-danger', onClick: this.unfollowBoard.bind(this) },
+	                        'Unfollow'
+	                    ) : _react2.default.createElement(
+	                        'button',
+	                        { className: 'btn btn-danger', onClick: this.followBoard.bind(this) },
+	                        'Follow'
+	                    )
+	                ),
 	                _react2.default.createElement(
 	                    'div',
 	                    null,
@@ -43866,24 +43919,20 @@
 	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
 	                            _react2.default.createElement(
 	                                'div',
-	                                { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                                { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
 	                                _react2.default.createElement(
 	                                    'div',
-	                                    { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
+	                                    { className: 'panel-body' },
 	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-body' },
-	                                        _react2.default.createElement(
-	                                            'center',
-	                                            null,
-	                                            _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
-	                                        )
-	                                    ),
-	                                    _react2.default.createElement(
-	                                        'div',
-	                                        { className: 'panel-heading' },
-	                                        pin.name
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
 	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    pin.name
 	                                )
 	                            )
 	                        );
@@ -43900,7 +43949,8 @@
 	function mapStateToProps(state) {
 	    return {
 	        boardPins: state.boardPins,
-	        user: state.user
+	        user: state.user,
+	        userBoards: state.userBoards
 	    };
 	}
 

@@ -8,17 +8,32 @@ admin.initializeApp({
 });
 
 // admin.database().ref("pins").on("child_added", function(snap){
-// 	var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
-// 	var pinID = snap.ref.key;
-// 	var createdBy = snap.val().createdBy;
-// 	admin.database().ref("users").on("child_added", function(snap){
-// 		var username = snap.ref.key;
-// 		var pins = snap.val().pins;
-// 		if(pins && pins[pinID] && createdBy !== username){
-// 			console.log(pinID, numRepins, createdBy, username);
-// 			admin.database().ref("pins").child(pinID).update({numRepins: numRepins+=1});
-// 		}
-// 	});
+// 	var pinData = snap.val();
+// 	if(pinData.tags){
+// 		var tagKeys = Object.keys(pinData.tags);
+// 	    for(var i=0; i<tagKeys.length; i++){
+// 	    	if(pinData.tags[tagKeys[i]]){
+// 	            admin.database().ref("pins/"+ snap.ref.key +"/tags").child(tagKeys[i]).remove();
+// 	            admin.database().ref("pins/"+ snap.ref.key +"/tags").child(tagKeys[i].trim()).set(true);
+// 	        }else{
+// 	        	admin.database().ref("pins/"+ snap.ref.key +"/tags").child(tagKeys[i]).remove();
+// 	        }
+// 	    }
+// 	}
+// });
+
+//admin.database().ref("tags/pins").remove();
+
+// admin.database().ref("pins").on("child_added", function(snap){
+// 	var pinData = snap.val();
+// 	if(pinData.tags){
+// 		var tagKeys = Object.keys(pinData.tags);
+// 	    for(var i=0; i<tagKeys.length; i++){
+// 	    	if(pinData.tags[tagKeys[i]]){
+// 	            admin.database().ref("tags/pins/" + tagKeys[i]).child(snap.ref.key).set(true);
+// 	        }
+// 	    }
+// 	}
 // });
 
 // admin.database().ref("boards").on("child_added", function(snap){
