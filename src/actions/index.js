@@ -487,7 +487,7 @@ export function stopFetchingPins(){
 export function fetchUserPins(username){
 	return dispatch=>{
 		firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("pins").child(snap.ref.key).on("value", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 				var pinData = snap.val();
 				if(pinData.tags){
 					var tagKeys = Object.keys(pinData.tags);
@@ -512,6 +512,7 @@ export function fetchUserPins(username){
 
 		firebase.database().ref("users/" + username).child("pins").on("child_changed", function(snap){
 			if(snap.val() === false){
+				console.log("unpinned");
 				dispatch({
 					type: actionTypes.FETCH_USER_REMOVED_PINS,
 					payload: snap.ref.key
@@ -534,6 +535,10 @@ export function repinToBoard(username, boardID, pinID){
 	return dispatch =>{
 		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
 		firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
+		firebase.database().ref("pins").child(pinID).once("value", function(snap){
+			var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+			firebase.database().ref("pins").child(pinID).update({numRepins: numRepins+=1});
+		});
 	}
 }
 
@@ -549,18 +554,30 @@ export function unpinFromBoard(username, pinID){
 		});
 
 		firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+		firebase.database().ref("pins").child(pinID).once("value", function(snap){
+			var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+			firebase.database().ref("pins").child(pinID).update({numRepins: numRepins-=1});
+		});
 	}
 }
 
 export function followBoard(username, boardID){
 	return dispatch =>{
 		firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
+		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+			var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+			firebase.database().ref("boards").child(boardID).update({numFollowers: numFollowers+=1});
+		});
 	}
 }
 
 export function unfollowBoard(username, boardID){
 	return dispatch =>{
 		firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+			var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+			firebase.database().ref("boards").child(boardID).update({numFollowers: numFollowers-=1});
+		});
 	}
 }
 
