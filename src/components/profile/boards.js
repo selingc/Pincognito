@@ -34,28 +34,24 @@ class Boards extends Component {
         return (
             <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12">
-                    <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <Link className="create" to="/profile" onClick={this.openPopup.bind(this)}>
-                            <div className="panel panel-danger border">
-                                <div className="panel-body createPanel">
-                                    Create New Board
-                                </div>
+                    <Link className="create" to="/profile" onClick={this.openPopup.bind(this)}>
+                        <div className="panel panel-danger border">
+                            <div className="panel-body createPanel">
+                                Create New Board
                             </div>
-                        </Link>
-                    </div>
+                        </div>
+                    </Link>
                 </div>
 
                 {this.props.userBoards.map((board, index) => (
 
                     <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}> 
                         <Link to={"/board/" + board.boardID}>
-                            <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div className="panel panel-danger border">
-                                    <div className="panel-body">
-                                       <center><img src={board.imageURL} className="my-panel-content images"/></center>
-                                    </div>
-                                    <div className="panel-heading">{board.name}</div>
+                            <div className="panel panel-danger border">
+                                <div className="panel-body">
+                                   <center><img src={board.imageURL} className="my-panel-content images"/></center>
                                 </div>
+                                <div className="panel-heading">{board.name}</div>
                             </div>
                         </Link>
                     </div>
