@@ -3,8 +3,17 @@ import * as actions from '../../actions/index.js';
 import {connect} from 'react-redux';
 import Popup from '../popup/modal.js';
 
-// needs to be rewritten to avoid lifecycle methods.
-// main root page (before logging in) will go here.
+import { formValueSelector } from 'redux-form'
+
+const Home2 = ({asd}) => {
+    return (
+        <div>
+            <br /><br /><br /><br /><br /><br />
+            {asd}
+        </div>
+    )
+}
+
 
 class Home extends Component {
 	sayHello(e){
@@ -77,10 +86,15 @@ class Home extends Component {
     }
 }
 
+
+
+const selector = formValueSelector('searchform')
+
 function mapStateToProps(state){
+    const searchvalue = selector(state, 'search')
 	return{
-		hello: state.hello,
-        pins: state.pins
+        pins: state.pins,
+        asd: searchvalue
 	}
 }
 

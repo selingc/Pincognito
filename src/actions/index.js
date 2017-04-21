@@ -378,8 +378,18 @@ export function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData){
 			boardID: newBoardID
 		}
 
-		firebase.database().ref("pins").child(pinID).update(redoData);
-		dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+		if(newData.file){
+			firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function(snapshot){
+				redoData.imageURL = snapshot.downloadURL;
+				firebase.database().ref("pins").child(pinID).update(redoData);
+
+				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			});
+		}else{
+			firebase.database().ref("pins").child(pinID).update(redoData);
+
+			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+		}
 	}
 }
 
@@ -526,49 +536,6 @@ export function stopFetchingUserPins(username){
 		firebase.database().ref("users/" + username).child("pins").off();
 		dispatch({
 			type: actionTypes.STOP_FETCHING_USER_PINS
-		});
-	}
-}
-
-export function repinToBoard(username, boardID, pinID){
-	return dispatch =>{
-		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
-		firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
-	}
-}
-
-export function unpinFromBoard(username, pinID){
-	return dispatch =>{
-		firebase.database().ref("users/" + username + "/boards").orderByValue().equalTo(true).on("child_added", function(snap){
-			var boardID = snap.ref.key;
-			firebase.database().ref("boards/" + boardID + "/pins").child(pinID).once("value", function(snap){
-				if(snap.val()){
-					firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
-				}
-			});
-		});
-
-		firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
-	}
-}
-
-export function followBoard(username, boardID){
-	return dispatch =>{
-		firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
-	}
-}
-
-/*--------------------------------------------------------------
-				forgetpassword action 
---------------------------------------------------------------*/
-
-export function forgetPassword(data){
-	return dispatch =>{
-		console.log(data);
-		firebase.auth().sendPasswordResetEmail(data.email).then(function() {
-		  console.log("sent email");// Email sent.
-		}, function(error) {
-		  console.log("error when email sent");
 		});
 	}
 }
