@@ -13,14 +13,18 @@ class EditPin extends Component {
         e.preventDefault();
 
         if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
-            var data = {
-                name: this.refs.name.value,
-                description: this.refs.description.value,
-                tags: this.refs.tags.value
+            if(this.refs.name.value.trim().length <= 18){
+                var data = {
+                    name: this.refs.name.value.trim(),
+                    description: this.refs.description.value.trim(),
+                    tags: this.refs.tags.value
+                }
+                
+                this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
+                this.props.closePopup();
+            }else{
+                this.setState({error: "Name cannot be more than 18 characters."});
             }
-            
-            this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
-            this.props.closePopup();
         }else{
             this.setState({error: "No fields can be empty"});
         }
@@ -52,14 +56,18 @@ class EditPin extends Component {
                     null
                 )}
                 <form className="createForm" onSubmit={this.editPin.bind(this)} onReset={this.deletePin.bind(this)}>
+                    <label for="name">Pin Name:</label>
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" defaultValue={this.props.pin.name}/> <br />
-                    <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
+                    <label for="board">Board:</label>
+                    <select className="form-control dropdown" ref="board" defaultValue={this.props.pin.boardID}>
                         <option value="none" disabled>--Select a Board--</option>
                         {newArray.map((board, index) => (
                             <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />
+                    <label for="name">Description:</label>
                     <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.pin.description}/> <br />
+                    <label for="tags">Tag:</label>
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.pin.tags}/> <br />
                     <button type="reset" className="btn btn-danger">Delete</button>
                     <button type="submit" className="btn btn-default confirmChangeButton">Confirm Changes</button>

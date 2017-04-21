@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import * as actions from '../../actions/index';
 import Popup from '../popup/modal.js';
+import {browserHistory} from 'react-router'; 
 
 class Pin extends Component{
     constructor(props){
@@ -10,6 +11,7 @@ class Pin extends Component{
         this.state = {poppedUp: false};
         this.openPopup = this.openPopup.bind(this);
     }
+
 
     openPopup(type){
         this.setState({poppedUp: true});
@@ -59,21 +61,31 @@ class Pin extends Component{
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
 
                 <div className="overlay">
-                    {this.props.pin.createdBy === this.props.user.username ? (
-                        <div>
-                            <button className="btn btn-default buttonHover" onClick={this.openPopup.bind(null, "editPin")}><span className="glyphicon glyphicon-pencil"></span></button>
-                        </div>) 
-                    :   <div>
-                            {checkIfPinned() ? (
-                                <button className="btn btn-danger" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>)
-                            : 
-                                <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}>Pin</button>
-                            }
-                        </div>
-                    }
+                    {this.props.user.username ? (<div>
+
+                         {this.props.pin.createdBy === this.props.user.username ? (
+                            <div>
+                                <button className="btn btn-danger" onClick={this.openPopup.bind(null, "editPin")}><span className="glyphicon glyphicon-pencil"></span>   Edit Pin</button>
+                            </div>) 
+                        :   <div>
+                                {checkIfPinned() ? (
+                                    <button className="btn btn-danger" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>)
+                                : 
+                                    <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}><span className="glyphicon glyphicon-pushpin"></span>   Pin</button>
+                                }
+                            </div>
+
+                        }</div>)
+                    :null 
+
+                    } 
+                        
                 </div>
 
+                <p className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins}</p>
+
                 <hr className="stylehr"/>
+
                 <p className="pinDescription">{this.props.pin.description}</p>
                 {getPopup()}
             </div>

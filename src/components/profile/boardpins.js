@@ -80,24 +80,30 @@ class BoardPins extends Component {
         return (
             <div className="children">
                 <h1><Link to={"/profile"}><span className="glyphicon glyphicon-menu-left goBack"></span></Link>{this.props.boardPins.board ? this.props.boardPins.board.name : null}</h1>
-                {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
-                    <div>
-                        <button className="btn btn-default" onClick={this.openEditBoardPopup.bind(this)}>Edit</button>
-                        <button className="btn btn-danger" onClick={this.deleteBoard.bind(this)}>Delete</button>
-                    </div>) 
-                : 
-                     <div>
-                        {checkIfFollowed() ? (
-                            <button className="btn btn-danger" onClick={this.unfollowBoard.bind(this)}>Unfollow</button>)
-                        : 
-                            <button className="btn btn-danger"onClick={this.followBoard.bind(this)}>Follow</button>
-                        }
-                     </div>
+                 {this.props.user.username ? (<div>
+
+                    {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
+                        <div>
+                            <button className="btn btn-default" onClick={this.openEditBoardPopup.bind(this)}>Edit</button>
+                            <button className="btn btn-danger" onClick={this.deleteBoard.bind(this)}>Delete</button>
+                        </div>) 
+                    : 
+                         <div>
+                            {checkIfFollowed() ? (
+                                <button className="btn btn-danger" onClick={this.unfollowBoard.bind(this)}>Unfollow</button>)
+                            : 
+                                <button className="btn btn-danger"onClick={this.followBoard.bind(this)}>Follow</button>
+                            }
+                         </div>
 
 
 
-                   
-                }
+                       
+                    }</div>)
+                    :null 
+
+                    } 
+               
                 <div> {this.props.boardPins.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="panel panel-danger border" onClick={this.openPopup.bind(null, pin)}>

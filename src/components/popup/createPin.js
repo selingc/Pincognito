@@ -13,17 +13,21 @@ class CreatePin extends Component {
         e.preventDefault();
 
         if(this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value){
-            var data = {
-                file: this.refs.image.files[0],
-                name: this.refs.name.value,
-                description: this.refs.description.value,
-                tags: this.refs.tags.value
-            }
+            if(this.refs.name.value.trim().length <= 18){
+                var data = {
+                    file: this.refs.image.files[0],
+                    name: this.refs.name.value.trim(),
+                    description: this.refs.description.value.trim(),
+                    tags: this.refs.tags.value
+                }
 
-            this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-            this.props.closePopup();
+                this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
+                this.props.closePopup();
+            }else{
+                this.setState({error: "Name cannot be more than 18 characters."});
+            }
         }else{
-            this.setState({error: "No fields can be empty"});
+            this.setState({error: "No fields can be empty."});
         }
     }
 
@@ -46,7 +50,7 @@ class CreatePin extends Component {
                 )}
                 <form className="createForm" onSubmit={this.createPin.bind(this)}>
                     <input type="file" accept="image/*" className="form-control-file" id="image" ref="image"/> <br />
-                    <select className="form-control" ref="board" id="dropdown" defaultValue="none">
+                    <select className="form-control dropdown" ref="board" defaultValue="none">
                         <option value="none" disabled>--Select a Board--</option>
                         {newArray.map((board, index) => ( 
                             <option value={board.boardID} key={index}>{board.name}</option>
