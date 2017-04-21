@@ -36,6 +36,12 @@ class EditPin extends Component {
 
 
     render() {
+        var newArray = [];
+        for ( var i = 0; i < this.props.userBoards.length; i++) {
+            if (this.props.userBoards[i].createdBy === this.props.user.username) {
+                newArray = newArray.concat(this.props.userBoards[i]);
+            }
+        }
         return (
             <div>
                 <h1>Edit Pin</h1>
@@ -45,17 +51,17 @@ class EditPin extends Component {
                 ):(
                     null
                 )}
-                <form className="createForm" onSubmit={this.editPin.bind(this)}>
+                <form className="createForm" onSubmit={this.editPin.bind(this)} onReset={this.deletePin.bind(this)}>
                     <input type="text" className="form-control" ref="name" placeholder="Pin name" defaultValue={this.props.pin.name}/> <br />
                     <select className="form-control" ref="board" id="dropdown" defaultValue={this.props.pin.boardID}>
                         <option value="none" disabled>--Select a Board--</option>
-                        {this.props.userBoards.map((board, index) => (
+                        {newArray.map((board, index) => (
                             <option value={board.boardID} key={index}>{board.name}</option>
                         ))}
                     </select><br />
                     <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.pin.description}/> <br />
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.pin.tags}/> <br />
-                    <button className="btn btn-danger" onClick={this.deletePin.bind(this)}>Delete</button>
+                    <button type="reset" className="btn btn-danger">Delete</button>
                     <button type="submit" className="btn btn-default confirmChangeButton">Confirm Changes</button>
                 </form>
             </div>

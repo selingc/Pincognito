@@ -190,8 +190,8 @@ export function createUserBoard(username, data){
 
 		var tagsArray = data.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<tagsArray.length; i++){
-			firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i]).set(true);
-			firebase.database().ref("tags/boards/" + tagsArray[i]).child(key).set(true);
+			firebase.database().ref("boards/" + key + "/tags").child(tagsArray[i].trim()).set(true);
+			firebase.database().ref("tags/boards/" + tagsArray[i].trim()).child(key).set(true);
 		}
 
 		dispatch({
@@ -235,14 +235,14 @@ export function editUserBoard(username, boardID, oldData, newData){
 
 		var oldTagsArray = oldData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<oldTagsArray.length; i++){
-			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i]).set(false);
-			firebase.database().ref("tags/boards/" + oldTagsArray[i]).child(boardID).set(false);
+			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i].trim()).set(false);
+			firebase.database().ref("tags/boards/" + oldTagsArray[i].trim()).child(boardID).set(false);
 		}
 
 		var newTagsArray = newData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<newTagsArray.length; i++){
-			firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i]).set(true);
-			firebase.database().ref("tags/boards/" + newTagsArray[i]).child(boardID).set(true);
+			firebase.database().ref("boards/" + boardID + "/tags").child(newTagsArray[i].trim()).set(true);
+			firebase.database().ref("tags/boards/" + newTagsArray[i].trim()).child(boardID).set(true);
 		}
 
 		dispatch({
@@ -335,8 +335,8 @@ export function createBoardPin(username, boardID, data){
 
 			var tagsArray = data.tags.replace(/\s/g," ").split(",");
 			for(var i=0; i<tagsArray.length; i++){
-				firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i]).set(true);
-				firebase.database().ref("tags/pins/" + tagsArray[i]).child(key).set(true);
+				firebase.database().ref("pins/" + key + "/tags").child(tagsArray[i].trim()).set(true);
+				firebase.database().ref("tags/pins/" + tagsArray[i].trim()).child(key).set(true);
 			}
 
 			dispatch({
@@ -403,15 +403,15 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g," ").split(",") : "";
 		if(oldTagsArray){
 			for(var i=0; i<oldTagsArray.length; i++){
-				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i]).set(false);
-				firebase.database().ref("tags/pins/" + oldTagsArray[i]).child(pinID).set(false);
+				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i].trim()).set(false);
+				firebase.database().ref("tags/pins/" + oldTagsArray[i].trim()).child(pinID).set(false);
 			}
 		}
 
 		var newTagsArray = newData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<newTagsArray.length; i++){
-			firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i]).set(true);
-			firebase.database().ref("tags/pins/" + newTagsArray[i]).child(pinID).set(true);
+			firebase.database().ref("pins/" + pinID + "/tags").child(newTagsArray[i].trim()).set(true);
+			firebase.database().ref("tags/pins/" + newTagsArray[i].trim()).child(pinID).set(true);
 		}
 
 		dispatch({
@@ -497,7 +497,7 @@ export function stopFetchingPins(){
 export function fetchUserPins(username){
 	return dispatch=>{
 		firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("pins").child(snap.ref.key).on("value", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 				var pinData = snap.val();
 				if(pinData.tags){
 					var tagKeys = Object.keys(pinData.tags);
@@ -522,6 +522,7 @@ export function fetchUserPins(username){
 
 		firebase.database().ref("users/" + username).child("pins").on("child_changed", function(snap){
 			if(snap.val() === false){
+				console.log("unpinned");
 				dispatch({
 					type: actionTypes.FETCH_USER_REMOVED_PINS,
 					payload: snap.ref.key
@@ -536,6 +537,71 @@ export function stopFetchingUserPins(username){
 		firebase.database().ref("users/" + username).child("pins").off();
 		dispatch({
 			type: actionTypes.STOP_FETCHING_USER_PINS
+		});
+	}
+}
+
+export function repinToBoard(username, boardID, pinID){
+	return dispatch =>{
+		firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(true);
+		firebase.database().ref("users/" + username + "/pins").child(pinID).set(true);
+		firebase.database().ref("pins").child(pinID).once("value", function(snap){
+			var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+			firebase.database().ref("pins").child(pinID).update({numRepins: numRepins+=1});
+		});
+	}
+}
+
+export function unpinFromBoard(username, pinID){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").orderByValue().equalTo(true).on("child_added", function(snap){
+			var boardID = snap.ref.key;
+			firebase.database().ref("boards").child(boardID).once("value", function(snap){
+				if(snap.val().createdBy === username){
+					firebase.database().ref("boards/" + boardID + "/pins").child(pinID).set(false);
+				}
+			});
+		});
+
+		firebase.database().ref("users/" + username + "/pins").child(pinID).set(false);
+		firebase.database().ref("pins").child(pinID).once("value", function(snap){
+			var numRepins = snap.val().numRepins ? snap.val().numRepins : 0;
+			firebase.database().ref("pins").child(pinID).update({numRepins: numRepins-=1});
+		});
+	}
+}
+
+export function followBoard(username, boardID){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").child(boardID).set(true);
+		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+			var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+			firebase.database().ref("boards").child(boardID).update({numFollowers: numFollowers+=1});
+		});
+	}
+}
+
+export function unfollowBoard(username, boardID){
+	return dispatch =>{
+		firebase.database().ref("users/" + username + "/boards").child(boardID).set(false);
+		firebase.database().ref("boards").child(boardID).once("value", function(snap){
+			var numFollowers = snap.val().numFollowers ? snap.val().numFollowers : 0;
+			firebase.database().ref("boards").child(boardID).update({numFollowers: numFollowers-=1});
+		});
+	}
+}
+
+/*--------------------------------------------------------------
+				forgetpassword action 
+--------------------------------------------------------------*/
+
+export function forgetPassword(data){
+	return dispatch =>{
+		console.log(data);
+		firebase.auth().sendPasswordResetEmail(data.email).then(function() {
+		  console.log("sent email");// Email sent.
+		}, function(error) {
+		  console.log("error when email sent");
 		});
 	}
 }
