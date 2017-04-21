@@ -17,10 +17,10 @@ const Signup = ({user, actions}) => {
 
     const handleSubmit = (values) => {
         var data = {
-            firstName: values.firstName,
-            lastName: values.lastName,
-            username: values.username,
-            email: values.email,
+            firstName: values.firstName.trim(),
+            lastName: values.lastName.trim(),
+            username: values.username.trim(),
+            email: values.email.trim(),
             password: values.password,
             birthdate: values.birthdate
         }

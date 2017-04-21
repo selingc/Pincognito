@@ -97,7 +97,10 @@ class Pin extends Component{
                     }
                 </div>
 
+                <p className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins}</p>
+
                 <hr className="stylehr"/>
+
                 <p className="pinDescription">{this.props.pin.description}</p>
                 {getPopup()}
             </div>
