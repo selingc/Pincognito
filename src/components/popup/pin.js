@@ -61,13 +61,13 @@ class Pin extends Component{
                 <div className="overlay">
                     {this.props.pin.createdBy === this.props.user.username ? (
                         <div>
-                            <button className="btn btn-default buttonHover" onClick={this.openPopup.bind(null, "editPin")}><span className="glyphicon glyphicon-pencil"></span></button>
+                            <button className="btn btn-danger" onClick={this.openPopup.bind(null, "editPin")}><span className="glyphicon glyphicon-pencil"></span>   Edit Pin</button>
                         </div>) 
                     :   <div>
                             {checkIfPinned() ? (
                                 <button className="btn btn-danger" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>)
                             : 
-                                <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}>Pin</button>
+                                <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}><span className="glyphicon glyphicon-pushpin"></span>   Pin</button>
                             }
                         </div>
                     }
