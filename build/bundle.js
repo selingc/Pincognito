@@ -42148,17 +42148,21 @@
 	            e.preventDefault();
 
 	            if (this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
-	                var data = {
-	                    file: this.refs.image.files[0],
-	                    name: this.refs.name.value,
-	                    description: this.refs.description.value,
-	                    tags: this.refs.tags.value
-	                };
+	                if (this.refs.name.value.trim().length <= 18) {
+	                    var data = {
+	                        file: this.refs.image.files[0],
+	                        name: this.refs.name.value.trim(),
+	                        description: this.refs.description.value.trim(),
+	                        tags: this.refs.tags.value
+	                    };
 
-	                this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-	                this.props.closePopup();
+	                    this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
+	                    this.props.closePopup();
+	                } else {
+	                    this.setState({ error: "Name cannot be more than 18 characters." });
+	                }
 	            } else {
-	                this.setState({ error: "No fields can be empty" });
+	                this.setState({ error: "No fields can be empty." });
 	            }
 	        }
 	    }, {
@@ -42298,14 +42302,18 @@
 	            e.preventDefault();
 
 	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
-	                var data = {
-	                    name: this.refs.name.value,
-	                    description: this.refs.description.value,
-	                    tags: this.refs.tags.value
-	                };
+	                if (this.refs.name.value.trim().length <= 18) {
+	                    var data = {
+	                        name: this.refs.name.value.trim(),
+	                        description: this.refs.description.value.trim(),
+	                        tags: this.refs.tags.value
+	                    };
 
-	                this.props.createUserBoard(this.props.user.username, data);
-	                this.props.closePopup();
+	                    this.props.createUserBoard(this.props.user.username, data);
+	                    this.props.closePopup();
+	                } else {
+	                    this.setState({ error: "Name cannot be more than 18 characters." });
+	                }
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
 	            }
@@ -42421,14 +42429,18 @@
 	            e.preventDefault();
 
 	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
-	                var data = {
-	                    name: this.refs.name.value,
-	                    description: this.refs.description.value,
-	                    tags: this.refs.tags.value
-	                };
+	                if (this.refs.name.value.trim().length <= 18) {
+	                    var data = {
+	                        name: this.refs.name.value,
+	                        description: this.refs.description.value,
+	                        tags: this.refs.tags.value
+	                    };
 
-	                this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
-	                this.props.closePopup();
+	                    this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
+	                    this.props.closePopup();
+	                } else {
+	                    this.setState({ error: "Name cannot be more than 18 characters." });
+	                }
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
 	            }
@@ -42576,14 +42588,18 @@
 	            e.preventDefault();
 
 	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
-	                var data = {
-	                    name: this.refs.name.value,
-	                    description: this.refs.description.value,
-	                    tags: this.refs.tags.value
-	                };
+	                if (this.refs.name.value.trim().length <= 18) {
+	                    var data = {
+	                        name: this.refs.name.value.trim(),
+	                        description: this.refs.description.value.trim(),
+	                        tags: this.refs.tags.value
+	                    };
 
-	                this.props.editUserBoard(this.props.user.username, this.props.board.boardID, this.props.board, data);
-	                this.props.closePopup();
+	                    this.props.editUserBoard(this.props.user.username, this.props.board.boardID, this.props.board, data);
+	                    this.props.closePopup();
+	                } else {
+	                    this.setState({ error: "Name cannot be more than 18 characters." });
+	                }
 	            } else {
 	                this.setState({ error: "No fields can be empty" });
 	            }

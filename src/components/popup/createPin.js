@@ -13,17 +13,21 @@ class CreatePin extends Component {
         e.preventDefault();
 
         if(this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value){
-            var data = {
-                file: this.refs.image.files[0],
-                name: this.refs.name.value,
-                description: this.refs.description.value,
-                tags: this.refs.tags.value
-            }
+            if(this.refs.name.value.trim().length <= 18){
+                var data = {
+                    file: this.refs.image.files[0],
+                    name: this.refs.name.value.trim(),
+                    description: this.refs.description.value.trim(),
+                    tags: this.refs.tags.value
+                }
 
-            this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
-            this.props.closePopup();
+                this.props.createBoardPin(this.props.user.username, this.refs.board.value, data);
+                this.props.closePopup();
+            }else{
+                this.setState({error: "Name cannot be more than 18 characters."});
+            }
         }else{
-            this.setState({error: "No fields can be empty"});
+            this.setState({error: "No fields can be empty."});
         }
     }
 

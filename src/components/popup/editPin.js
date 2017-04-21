@@ -13,14 +13,18 @@ class EditPin extends Component {
         e.preventDefault();
 
         if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
-            var data = {
-                name: this.refs.name.value,
-                description: this.refs.description.value,
-                tags: this.refs.tags.value
+            if(this.refs.name.value.trim().length <= 18){
+                var data = {
+                    name: this.refs.name.value,
+                    description: this.refs.description.value,
+                    tags: this.refs.tags.value
+                }
+                
+                this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
+                this.props.closePopup();
+            }else{
+                this.setState({error: "Name cannot be more than 18 characters."});
             }
-            
-            this.props.editBoardPin(this.props.pin.boardID, this.refs.board.value, this.props.pin.pinID, this.props.pin, data);
-            this.props.closePopup();
         }else{
             this.setState({error: "No fields can be empty"});
         }

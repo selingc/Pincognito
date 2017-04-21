@@ -22,7 +22,13 @@ admin.initializeApp({
 // 	}
 // });
 
-//admin.database().ref("tags/pins").remove();
+// admin.database().ref("tags/boards").child(" small plane").once("value", function(snap){
+// 	admin.database().ref("tags/boards").child("small plane").set(snap.val());
+// });
+
+admin.database().ref("tags/pins").on("child_added", function(snap){
+	console.log(snap.ref.key);
+});
 
 // admin.database().ref("pins").on("child_added", function(snap){
 // 	var pinData = snap.val();
