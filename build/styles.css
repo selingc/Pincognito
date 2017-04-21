@@ -83,15 +83,11 @@ body{
 	margin-top: 45px;
 }
 
-/*PIN PAGE ---------------------------------------------------------------------------------------*/
-#dropdown {
-	width: 30%;
-}
-
 /*PIN POPUP ---------------------------------------------------------------------------------------*/
 .pinDescription {
 	padding-left: 15%;
 	padding-right: 15%;
+	font-size: 20px;
 }
 
 .pinImage {
@@ -99,12 +95,23 @@ body{
 	max-height: 400px;
 }
 
+.num_repin {
+	padding-left: 15%;
+	font-size: 18px;
+}
+
+
+
 /*EDIT PIN POPUP -------------------------------------------------------------------------------------*/
 .confirmChangeButton {
 	float: right;
 }
 
-/*EDIT BUTTON ON HOVER ---------------------------------------------------------------------------*/
+#dropdown {
+	width: 100%;
+}
+
+/*BUTTONS FOR PIN ---------------------------------------------------------------------------*/
 .hoverContainer {
 	position: relative;
 	width: 100%;
@@ -138,7 +145,7 @@ body{
 
 .my-panel-content{
 	height: 175px;
-	width: 175px;
+	width: 100%;
 	object-fit: cover;
 }
 
