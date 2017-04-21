@@ -10,7 +10,7 @@ const Login = ({user, actions}) => {
 
     const handleSubmit = (values) => {
         var data = {
-            email: values.email,
+            email: values.email.trim(),
             password: values.password
         }
 
