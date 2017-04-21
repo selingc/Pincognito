@@ -40,8 +40,11 @@ class CreateBoard extends Component {
                     null
                 )}
                 <form className="createForm" onSubmit={this.editBoard.bind(this)}>
+                    <label for="name">Board Name:</label>
                     <input type="text" className="form-control" ref="name" placeholder="Board name" defaultValue={this.props.board.name}/> <br />
+                    <label for="description">Description:</label>
                     <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.board.description}/> <br />
+                    <label for="tags">Tag:</label>
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.board.tags}/> <br />
                     <center><button type="submit" className="btn btn-danger">Create Board</button></center>
                 </form>
