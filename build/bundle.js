@@ -41967,6 +41967,8 @@
 
 	var _modal2 = _interopRequireDefault(_modal);
 
+	var _reactRouter = __webpack_require__(183);
+
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -41991,6 +41993,15 @@
 	    }
 
 	    _createClass(Pin, [{
+	        key: 'logincheck',
+	        value: function logincheck() {
+	            if (this.props.user.username) {
+	                this.openPopup.bind(null, "repin");
+	            } else {
+	                _reactRouter.browserHistory.push("/login");
+	            }
+	        }
+	    }, {
 	        key: 'openPopup',
 	        value: function openPopup(type) {
 	            this.setState({ poppedUp: true });
@@ -42055,8 +42066,9 @@
 	                            null,
 	                            _react2.default.createElement(
 	                                'button',
-	                                { className: 'btn btn-default buttonHover', onClick: this.openPopup.bind(null, "editPin") },
-	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' })
+	                                { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "editPin") },
+	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' }),
+	                                '   Edit Pin'
 	                            )
 	                        ) : _react2.default.createElement(
 	                            'div',
@@ -42067,10 +42079,18 @@
 	                                'Unpin'
 	                            ) : _react2.default.createElement(
 	                                'button',
-	                                { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "repin") },
-	                                'Pin'
+	                                { className: 'btn btn-danger', onClick: this.logincheck.bind(this) },
+	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pushpin' }),
+	                                '   Pin'
 	                            )
 	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'p',
+	                        { className: 'num_repin' },
+	                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-pushpin' }),
+	                        '   ',
+	                        this.props.pin.numRepins
 	                    ),
 	                    _react2.default.createElement('hr', { className: 'stylehr' }),
 	                    _react2.default.createElement(
@@ -42202,7 +42222,7 @@
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
 	                        'select',
-	                        { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: 'none' },
+	                        { className: 'form-control dropdown', ref: 'board', defaultValue: 'none' },
 	                        _react2.default.createElement(
 	                            'option',
 	                            { value: 'none', disabled: true },
@@ -42431,8 +42451,8 @@
 	            if (this.refs.name.value && this.refs.description.value && this.refs.tags.value) {
 	                if (this.refs.name.value.trim().length <= 18) {
 	                    var data = {
-	                        name: this.refs.name.value,
-	                        description: this.refs.description.value,
+	                        name: this.refs.name.value.trim(),
+	                        description: this.refs.description.value.trim(),
 	                        tags: this.refs.tags.value
 	                    };
 
@@ -42485,12 +42505,22 @@
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'createForm', onSubmit: this.editPin.bind(this), onReset: this.deletePin.bind(this) },
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'name' },
+	                        'Pin Name:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Pin name', defaultValue: this.props.pin.name }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
 	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'board' },
+	                        'Board:'
+	                    ),
+	                    _react2.default.createElement(
 	                        'select',
-	                        { className: 'form-control', ref: 'board', id: 'dropdown', defaultValue: this.props.pin.boardID },
+	                        { className: 'form-control dropdown', ref: 'board', defaultValue: this.props.pin.boardID },
 	                        _react2.default.createElement(
 	                            'option',
 	                            { value: 'none', disabled: true },
@@ -42505,9 +42535,19 @@
 	                        })
 	                    ),
 	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'name' },
+	                        'Description:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description', defaultValue: this.props.pin.description }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'tags' },
+	                        'Tag:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)', defaultValue: this.props.pin.tags }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -42629,12 +42669,27 @@
 	                _react2.default.createElement(
 	                    'form',
 	                    { className: 'createForm', onSubmit: this.editBoard.bind(this) },
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'name' },
+	                        'Board Name:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'name', placeholder: 'Board name', defaultValue: this.props.board.name }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'description' },
+	                        'Description:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'description', placeholder: 'Description', defaultValue: this.props.board.description }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
+	                    _react2.default.createElement(
+	                        'label',
+	                        { 'for': 'tags' },
+	                        'Tag:'
+	                    ),
 	                    _react2.default.createElement('input', { type: 'text', className: 'form-control', ref: 'tags', placeholder: 'Tags separated by commas (ex. dog, cat, ...)', defaultValue: this.props.board.tags }),
 	                    ' ',
 	                    _react2.default.createElement('br', null),
@@ -43054,7 +43109,7 @@
 
 	    var handleSubmit = function handleSubmit(values) {
 	        var data = {
-	            email: values.email,
+	            email: values.email.trim(),
 	            password: values.password
 	        };
 
@@ -43231,10 +43286,10 @@
 
 	    var handleSubmit = function handleSubmit(values) {
 	        var data = {
-	            firstName: values.firstName,
-	            lastName: values.lastName,
-	            username: values.username,
-	            email: values.email,
+	            firstName: values.firstName.trim(),
+	            lastName: values.lastName.trim(),
+	            username: values.username.trim(),
+	            email: values.email.trim(),
 	            password: values.password,
 	            birthdate: values.birthdate
 	        };
@@ -44007,7 +44062,7 @@
 
 	    var handleSubmit = function handleSubmit(values) {
 	        var data = {
-	            email: values.email
+	            email: values.email.trim()
 
 	        };
 

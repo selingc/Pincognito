@@ -13,27 +13,12 @@ class Pin extends Component{
     }
 
     logincheck(){
-        if(this.props.user.username) 
-        {
-
+        if(this.props.user.username){
             this.openPopup.bind(null, "repin");
-
-
-        }
-
-        else{
-
+        }else{
             browserHistory.push("/login");
-
         }
-
-
-
     }
-
-
-
-
 
     openPopup(type){
         this.setState({poppedUp: true});
