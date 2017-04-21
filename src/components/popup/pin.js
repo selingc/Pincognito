@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import * as actions from '../../actions/index';
 import Popup from '../popup/modal.js';
+import {browserHistory} from 'react-router'; 
 
 class Pin extends Component{
     constructor(props){
@@ -10,6 +11,29 @@ class Pin extends Component{
         this.state = {poppedUp: false};
         this.openPopup = this.openPopup.bind(this);
     }
+
+    logincheck(){
+        if(this.props.user.username) 
+        {
+
+            this.openPopup.bind(null, "repin");
+
+
+        }
+
+        else{
+
+            browserHistory.push("/login");
+
+        }
+
+
+
+    }
+
+
+
+
 
     openPopup(type){
         this.setState({poppedUp: true});
@@ -67,7 +91,7 @@ class Pin extends Component{
                             {checkIfPinned() ? (
                                 <button className="btn btn-danger" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>)
                             : 
-                                <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}><span className="glyphicon glyphicon-pushpin"></span>   Pin</button>
+                                <button className="btn btn-danger"onClick={this.logincheck.bind(this)}><span className="glyphicon glyphicon-pushpin"></span>   Pin</button>
                             }
                         </div>
                     }
