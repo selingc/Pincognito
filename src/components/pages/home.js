@@ -60,15 +60,15 @@ class Home extends Component {
             <div className="children">
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
                 <div className="input-group filter">
-                  <div className="input-group-btn">
+                    <div className="input-group-btn">
                          <h3><span className="label label-danger">Filter By</span></h3>
-             
-                  </div>
-                        <select className="form-control filter-select" ref="filter" onChange={this.changeFilter.bind(this)}>
+                    </div>
+                        <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
                             <option value="timestamp">Date Added</option>
                             <option value="numRepins">Most Pinned</option>
                         </select>
-                </div></div>
+                </div>
+                </div>
 
              
                 {/*
