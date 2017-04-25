@@ -21,7 +21,7 @@ class Home extends Component {
     }
 
     componentWillMount(){
-        this.props.fetchPins();
+        this.props.fetchPins("timestamp");
     }
 
     componentWillUnmount(){
@@ -38,6 +38,12 @@ class Home extends Component {
         this.setState({poppedUp: false});
     }
 
+    changeFilter(e){
+       
+       this.props.stopFetchingPins();
+       this.props.fetchPins(e.target.value);
+    }
+
     render() {
         var that = this;
         function getPopup(){
@@ -52,12 +58,23 @@ class Home extends Component {
 
         return (
             <div className="children">
-                <h1>Pinfeed</h1>
+                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
+                <div className="input-group filter">
+                  <div className="input-group-btn">
+                         <h3><span className="label label-danger">Filter By</span></h3>
+             
+                  </div>
+                        <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
+                            <option value="timestamp">Date Added</option>
+                            <option value="numRepins">Most Pinned</option>
+                        </select>
+                </div></div>
+
+             
                 {/*
                 <button type="submit" onClick={this.sayHello.bind(this)}>Say Hello</button>
                 <div>{this.props.hello}</div>
                 */}
-
                 <div>{this.props.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="panel panel-danger border" onClick={this.openPopup.bind(null, pin)}>

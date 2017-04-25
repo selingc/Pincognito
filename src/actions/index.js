@@ -414,9 +414,9 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 	pin actions
 --------------------------------------------------------------*/
 
-export function fetchPins(){
+export function fetchPins(filter){
 	return dispatch =>{
-		firebase.database().ref("pins").on("child_added", function(snap){
+		firebase.database().ref("pins").orderByChild(filter).on("child_added", function(snap){
 			var pinData = snap.val();
 			pinData.pinID = snap.ref.key;
 			if(pinData.tags){

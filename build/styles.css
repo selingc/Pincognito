@@ -201,7 +201,7 @@ body{
 .modal {
     display: block; /* Hidden by default */
     position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    z-index: 2; /* Sit on top */
     left: 0;
     top: 0;
     width: 100%; /* Full width */
@@ -223,3 +223,19 @@ body{
 	padding-top: 15px;
 	padding-left: 50px;
 }
+
+h3{
+	margin: 0;
+	padding: 0;
+}
+
+.filter{
+	margin:0;
+	padding:0;
+}
+
+.input-group-btn{
+	margin:0;
+	padding-bottom:5px;
+}
+

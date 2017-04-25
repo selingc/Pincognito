@@ -82,7 +82,7 @@ class Pin extends Component{
                         
                 </div>
 
-                <p className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins}</p>
+                <p className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins ? this.props.pin.numRepins : 0}</p>
 
                 <hr className="stylehr"/>
 

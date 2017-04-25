@@ -10,7 +10,8 @@ export default function(state=[], action){
 					return newState;
 				}
 			}
-			return state.concat(action.payload);
+			newState.unshift(action.payload);
+			return newState;
 		case actionTypes.FETCH_REMOVED_PINS:
 			var newState = state.slice();
 			var index = -1;
