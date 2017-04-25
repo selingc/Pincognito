@@ -40212,7 +40212,8 @@
 						return newState;
 					}
 				}
-				return state.concat(action.payload);
+				newState.unshift(action.payload);
+				return newState;
 			case _types2.default.FETCH_REMOVED_PINS:
 				var newState = state.slice();
 				var index = -1;
@@ -40359,7 +40360,7 @@
 	    _createClass(Home, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            this.props.fetchPins();
+	            this.props.fetchPins("timestamp");
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -40376,6 +40377,13 @@
 	        key: 'closePopup',
 	        value: function closePopup() {
 	            this.setState({ poppedUp: false });
+	        }
+	    }, {
+	        key: 'changeFilter',
+	        value: function changeFilter(e) {
+
+	            this.props.stopFetchingPins();
+	            this.props.fetchPins(e.target.value);
 	        }
 	    }, {
 	        key: 'render',
@@ -40395,9 +40403,39 @@
 	                'div',
 	                { className: 'children' },
 	                _react2.default.createElement(
-	                    'h1',
-	                    null,
-	                    'Pinfeed'
+	                    'div',
+	                    { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                    _react2.default.createElement(
+	                        'div',
+	                        { className: 'input-group filter' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'input-group-btn' },
+	                            _react2.default.createElement(
+	                                'h3',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'span',
+	                                    { className: 'label label-danger' },
+	                                    'Filter By'
+	                                )
+	                            )
+	                        ),
+	                        _react2.default.createElement(
+	                            'select',
+	                            { className: 'form-control filter-select', ref: 'filter', onChange: this.changeFilter.bind(this) },
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'timestamp' },
+	                                'Date Added'
+	                            ),
+	                            _react2.default.createElement(
+	                                'option',
+	                                { value: 'numRepins' },
+	                                'Most Pinned'
+	                            )
+	                        )
+	                    )
 	                ),
 	                _react2.default.createElement(
 	                    'div',
@@ -40908,9 +40946,9 @@
 		pin actions
 	--------------------------------------------------------------*/
 
-	function fetchPins() {
+	function fetchPins(filter) {
 		return function (dispatch) {
-			firebase.database().ref("pins").on("child_added", function (snap) {
+			firebase.database().ref("pins").orderByChild(filter).on("child_added", function (snap) {
 				var pinData = snap.val();
 				pinData.pinID = snap.ref.key;
 				if (pinData.tags) {
@@ -41993,15 +42031,6 @@
 	    }
 
 	    _createClass(Pin, [{
-	        key: 'logincheck',
-	        value: function logincheck() {
-	            if (this.props.user.username) {
-	                this.openPopup.bind(null, "repin");
-	            } else {
-	                _reactRouter.browserHistory.push("/login");
-	            }
-	        }
-	    }, {
 	        key: 'openPopup',
 	        value: function openPopup(type) {
 	            this.setState({ poppedUp: true });
@@ -42061,36 +42090,40 @@
 	                    _react2.default.createElement(
 	                        'div',
 	                        { className: 'overlay' },
-	                        this.props.pin.createdBy === this.props.user.username ? _react2.default.createElement(
+	                        this.props.user.username ? _react2.default.createElement(
 	                            'div',
 	                            null,
-	                            _react2.default.createElement(
-	                                'button',
-	                                { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "editPin") },
-	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' }),
-	                                '   Edit Pin'
-	                            )
-	                        ) : _react2.default.createElement(
-	                            'div',
-	                            null,
-	                            checkIfPinned() ? _react2.default.createElement(
-	                                'button',
-	                                { className: 'btn btn-danger', onClick: this.unpinFromBoard.bind(this) },
-	                                'Unpin'
+	                            this.props.pin.createdBy === this.props.user.username ? _react2.default.createElement(
+	                                'div',
+	                                null,
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "editPin") },
+	                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' }),
+	                                    '   Edit Pin'
+	                                )
 	                            ) : _react2.default.createElement(
-	                                'button',
-	                                { className: 'btn btn-danger', onClick: this.logincheck.bind(this) },
-	                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-pushpin' }),
-	                                '   Pin'
+	                                'div',
+	                                null,
+	                                checkIfPinned() ? _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-danger', onClick: this.unpinFromBoard.bind(this) },
+	                                    'Unpin'
+	                                ) : _react2.default.createElement(
+	                                    'button',
+	                                    { className: 'btn btn-danger', onClick: this.openPopup.bind(null, "repin") },
+	                                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-pushpin' }),
+	                                    '   Pin'
+	                                )
 	                            )
-	                        )
+	                        ) : null
 	                    ),
 	                    _react2.default.createElement(
 	                        'p',
 	                        { className: 'num_repin' },
 	                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-pushpin' }),
 	                        '   ',
-	                        this.props.pin.numRepins
+	                        this.props.pin.numRepins ? this.props.pin.numRepins : 0
 	                    ),
 	                    _react2.default.createElement('hr', { className: 'stylehr' }),
 	                    _react2.default.createElement(
@@ -43954,32 +43987,36 @@
 	                    ),
 	                    this.props.boardPins.board ? this.props.boardPins.board.name : null
 	                ),
-	                (this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? _react2.default.createElement(
+	                this.props.user.username ? _react2.default.createElement(
 	                    'div',
 	                    null,
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-default', onClick: this.openEditBoardPopup.bind(this) },
-	                        'Edit'
-	                    ),
-	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-danger', onClick: this.deleteBoard.bind(this) },
-	                        'Delete'
-	                    )
-	                ) : _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    checkIfFollowed() ? _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-danger', onClick: this.unfollowBoard.bind(this) },
-	                        'Unfollow'
+	                    (this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-default', onClick: this.openEditBoardPopup.bind(this) },
+	                            'Edit'
+	                        ),
+	                        _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-danger', onClick: this.deleteBoard.bind(this) },
+	                            'Delete'
+	                        )
 	                    ) : _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-danger', onClick: this.followBoard.bind(this) },
-	                        'Follow'
+	                        'div',
+	                        null,
+	                        checkIfFollowed() ? _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-danger', onClick: this.unfollowBoard.bind(this) },
+	                            'Unfollow'
+	                        ) : _react2.default.createElement(
+	                            'button',
+	                            { className: 'btn btn-danger', onClick: this.followBoard.bind(this) },
+	                            'Follow'
+	                        )
 	                    )
-	                ),
+	                ) : null,
 	                _react2.default.createElement(
 	                    'div',
 	                    null,

@@ -64,7 +64,7 @@ class Home extends Component {
                          <h3><span className="label label-danger">Filter By</span></h3>
              
                   </div>
-                        <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
+                        <select className="form-control filter-select" ref="filter" onChange={this.changeFilter.bind(this)}>
                             <option value="timestamp">Date Added</option>
                             <option value="numRepins">Most Pinned</option>
                         </select>
