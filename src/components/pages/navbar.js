@@ -25,13 +25,13 @@ const NavBar = ({user, actions}) => {
 					:
 					(<ul id="menu">
 						
-						<li><Link to="/profile" activeClassName="active" className="activeNav">Profile</Link></li>
-						<li><Link to="/" onClick={actions.logOff} id="logout">Logout</Link></li>
+						<li><Link to="/profile" activeClassName="active" className="activeNav "><span className="glyphicon glyphicon-user menu_profile_icon"></span><span className="menu_profile_text">Profile</span></Link></li>
+						<li><Link to="/" onClick={actions.logOff} id="logout"><span className="glyphicon glyphicon-off menu_logout_icon"></span><span className="menu_logout_text">Logout</span></Link></li>
 					</ul>)
 				}
 			</nav>
 			<nav>
-				<div className="input-group">
+				<div className="input-group search_group">
 				    <input type="text" className="form-control search" placeholder="Search"/>
 				    <span className="input-group-btn">
 				    	<button className="btn btn-default" type="button"><span className="glyphicon glyphicon-search"></span></button>

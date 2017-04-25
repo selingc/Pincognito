@@ -214,12 +214,12 @@ body{
 
 /*SEARCH -------------------------------------------------------------------------------------*/
 .search {
-	width: 30%;
+	width: 100%;
 	margin-left: auto;
     margin-right: auto;
 }
 
-.input-group {
+.search_group {
 	padding-top: 15px;
 	padding-left: 50px;
 }
@@ -240,19 +240,73 @@ h3{
 	padding-bottom:5px;
 }
 
-@media only screen and (max-width: 768px) {
+/* MOBILE ----------------------------------------------------------------------------- */
+
+@media screen and (max-width: 768px) {
     .modal-content {
     	width: 100%;
     }
 
     .nav_logo {
+    	height: 35px;
     	content: url("https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_short_w.png?alt=media&token=045a2510-6b9a-4267-8405-db391ff87090");
     }
+
+    header li {
+    	padding: 0px;
+    }
+
+    .nav-right {
+    	padding-top: 0px;
+    }
+
+    .activeNav:hover,
+	.activeNav:focus,
+	.active {
+		text-decoration: none;
+		border-bottom: 0px;
+	}
+
+	#logout:hover {
+		text-decoration: none;
+		border-bottom: 0px;
+	}
+
+	.search_group {
+		padding: 0px 0px 0px 35px;
+	}
+
+	span.menu_profile_icon {
+		display: inline-block;
+		font-size: 30px;
+		padding-right: 15px;
+	}
+
+	span.menu_profile_text {
+		display: none;
+	}
+
+	span.menu_logout_icon {
+		display: inline-block;
+		font-size: 30px;
+	}
+
+	span.menu_logout_text {
+		display: none;
+	}
 }
 
-@media only screen and (min-width: 769px) {
+@media screen and (min-width: 769px) {
     .nav_logo {
     	content: url("https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_w.png?alt=media&token=9a73dc91-e40d-47c3-953b-c7c569c19918");
+    }
+
+    span.menu_profile_icon {
+    	display: none;
+    }
+
+    span.menu_logout_icon {
+    	display: none;
     }
 }
 
