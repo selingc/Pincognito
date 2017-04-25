@@ -14,7 +14,7 @@ const NavBar = ({user, actions}) => {
 	return(
 		<div className="container">
 		<div className="nav-left">
-			<Link to="/"><img height="55px" src="https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_w.png?alt=media&token=9a73dc91-e40d-47c3-953b-c7c569c19918"/></Link>
+			<Link to="/"><img height="55px" className="nav_logo" src=""/></Link>
 		</div>
 			<nav className="nav-right">
 				{user.username == null ? 

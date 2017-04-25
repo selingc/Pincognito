@@ -240,3 +240,20 @@ h3{
 	padding-bottom:5px;
 }
 
+@media only screen and (max-width: 768px) {
+    .modal-content {
+    	width: 100%;
+    }
+
+    .nav_logo {
+    	content: url("https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_short_w.png?alt=media&token=045a2510-6b9a-4267-8405-db391ff87090");
+    }
+}
+
+@media only screen and (min-width: 769px) {
+    .nav_logo {
+    	content: url("https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_w.png?alt=media&token=9a73dc91-e40d-47c3-953b-c7c569c19918");
+    }
+}
+
+
