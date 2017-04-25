@@ -280,7 +280,7 @@ export function fetchBoardPins(boardID){
 		});
 
 		firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function(snap){
-			firebase.database().ref("pins").child(snap.ref.key).on("value", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
 				var pinData = snap.val();
                 var tagKeys = Object.keys(pinData.tags);
                 var tags = "";
