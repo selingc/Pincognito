@@ -424,24 +424,37 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 	pin actions
 --------------------------------------------------------------*/
 
-export function fetchPins(){
+//go from here
+
+
+export function fetchPins(filter){
+
 	return dispatch =>{
-		firebase.database().ref("pins").on("child_added", function(snap){
+
+		firebase.database().ref("pins").orderByChild('numRepins').on("child_added", function(snap){
+		//firebase.database().ref("pins").on("child_added", function(snap){
 			var pinData = snap.val();
-			pinData.pinID = snap.ref.key;
-			if(pinData.tags){
-				var tagKeys = Object.keys(pinData.tags);
-                var tags = "";
-                for(var i=0; i<tagKeys.length; i++){
-                	if(pinData.tags[tagKeys[i]]){
-	                    tags += tagKeys[i];
-	                    if(i < tagKeys.length - 1){
-	                        tags += ", ";
-	                    }
+
+
+console.log(filter);
+			//if(pinData.hasOwnProperty(filter)){
+
+				pinData.pinID = snap.ref.key;
+				pinData.tagOb = Object.assign({}, pinData.tags);
+				if(pinData.tags){
+					var tagKeys = Object.keys(pinData.tags);
+	                var tags = "";
+	                for(var i=0; i<tagKeys.length; i++){
+	                	if(pinData.tags[tagKeys[i]]){
+		                    tags += tagKeys[i];
+		                    if(i < tagKeys.length - 1){
+		                        tags += ", ";
+		                    }
+		                }
 	                }
-                }
-                pinData.tags = tags;
-			}
+	                pinData.tags = tags;
+				}
+			//}
 
 			dispatch({
 				type: actionTypes.FETCH_PINS,
@@ -451,20 +464,24 @@ export function fetchPins(){
 
 		firebase.database().ref("pins").on("child_changed", function(snap){
 			var pinData = snap.val();
-			pinData.pinID = snap.ref.key;
-			if(pinData.tags){
-				var tagKeys = Object.keys(pinData.tags);
-                var tags = "";
-                for(var i=0; i<tagKeys.length; i++){
-                	if(pinData.tags[tagKeys[i]]){
-	                    tags += tagKeys[i];
-	                    if(i < tagKeys.length - 1){
-	                        tags += ", ";
-	                    }
+
+			//if(pinData.hasOwnProperty(asd)){
+
+				pinData.pinID = snap.ref.key;
+				if(pinData.tags){
+					var tagKeys = Object.keys(pinData.tags);
+	                var tags = "";
+	                for(var i=0; i<tagKeys.length; i++){
+	                	if(pinData.tags[tagKeys[i]]){
+		                    tags += tagKeys[i];
+		                    if(i < tagKeys.length - 1){
+		                        tags += ", ";
+		                    }
+		                }
 	                }
-                }
-                pinData.tags = tags;
-			}
+	                pinData.tags = tags;
+				}
+			//}
 
 			dispatch({
 				type: actionTypes.FETCH_PINS,

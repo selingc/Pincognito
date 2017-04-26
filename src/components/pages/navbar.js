@@ -1,8 +1,17 @@
+// CODE CLEANUP: this should be a container only
+// Redux logic should go here for the following components (navlogo, navsearch, navbuttons)
+
 import {Link} from 'react-router'
 import {connect} from 'react-redux'
 import { logOff, fetchUser } from '../../actions/index'
 import { bindActionCreators } from 'redux'
 import React from 'react'
+import NavSearch from './navsearch'
+
+import { formValueSelector } from 'redux-form'
+import {search} from './testactions'
+
+import {fetchPins} from '../../actions/index.js'
 
 /*
  *	Navbar is bound to user state from the store, and dispatched actions.
@@ -10,7 +19,16 @@ import React from 'react'
  *	which buttons to show in the header. (signup/login or logoff)
  */
 
-const NavBar = ({user, actions}) => {
+const NavBar = ({user, actions, asd}) => {
+
+    const handleSubmit = (values) => {
+    	console.log("value from form: " + values.search);
+    	console.log("value from store: " + asd);
+    	//dispatch action to store here with value asd
+    	//make new reducer... :(
+    	
+//    	actions.search(values.search);
+    }
 	return(
 		<div className="container">
 		<div className="nav-left">
@@ -30,29 +48,33 @@ const NavBar = ({user, actions}) => {
 					</ul>)
 				}
 			</nav>
-			<nav>
+			<nav>{asd}
 				<div className="input-group">
-				    <input type="text" className="form-control search" placeholder="Search"/>
-				    <span className="input-group-btn">
-				    	<button className="btn btn-default" type="button"><span className="glyphicon glyphicon-search"></span></button>
-				    </span>
-			    </div>
+					<span className="input-group-btn">
+						<NavSearch onSubmit={handleSubmit}/>
+					</span>
+				</div>
 			</nav>
 		</div>
 	)
 }
 
 
+
+const selector = formValueSelector('searchform')
+
 function mapStateToProps(state){
+	const searchvalue = selector(state, 'search')
     return {
     	user: {
     		username: state.user.username
-        }
+        },
+        asd: searchvalue
     }
 }
 
 function mapDispatchToProps(dispatch) {
-  	return {actions: bindActionCreators({logOff, fetchUser}, dispatch) }
+  	return {actions: bindActionCreators({search, logOff, fetchUser, search, fetchPins}, dispatch) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavBar);

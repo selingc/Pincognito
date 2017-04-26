@@ -12,7 +12,7 @@ import userPinsReducer from './userPinsReducer.js'
 const combinedReducers = combineReducers({
 	user: userReducer,
 	form: formReducer,
-	hello: testReducer,
+	test: testReducer,
 	userBoards: userBoardsReducer,
 	boardPins: boardPinsReducer,
 	pins: pinsReducer,

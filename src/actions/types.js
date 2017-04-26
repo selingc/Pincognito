@@ -37,6 +37,9 @@ const types = {
 
 	SAY_HELLO: 'SAY_HELLO',
 	RESET_STATE: 'RESET_STATE',
+
+	FILTER_PINS: 'FILTER_PINS',
+	FILTER_BOARDS: 'FILTER_BOARDS'
 };
 
 export default types;

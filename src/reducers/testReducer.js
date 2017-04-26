@@ -1,13 +1,41 @@
-import actionTypes from '../actions/types.js';
+const pin = (state = {}, action) => {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return {
+        id: action.id,
+        text: action.text,
+        completed: false
+      }
+    case 'TOGGLE_TODO':
+      if (state.id !== action.id) {
+        return state
+      }
 
-//	here we will contain only board reducers
-//	We will have to rewrite these later include an immutable state
+      return Object.assign({}, state, {
+        completed: !state.completed
+      })
 
-
-export default function(state="", action){
-	switch(action.type){
-		case actionTypes.SAY_HELLO:
-			return action.payload;
-	}
-	return state;
+    default:
+      return state
+  }
 }
+
+const pins = (state = [], action) => {
+  switch (action.type) {
+  	case'SEARCH':
+  		return state
+    case 'ADD_TODO':
+      return [
+        ...state,
+        todo(undefined, action)
+      ]
+    case 'TOGGLE_TODO':
+      return state.map(t =>
+        todo(t, action)
+      )
+    default:
+      return state
+  }
+}
+
+export default pins

@@ -30,7 +30,8 @@ class Home extends Component {
     }
 
     componentWillMount(){
-        this.props.fetchPins();
+        //console.log("from state: " + this.props.asd);
+        this.props.fetchPins("none");
     }
 
     componentWillUnmount(){
