@@ -378,8 +378,18 @@ export function editBoardPin(oldBoardID, newBoardID, pinID, oldData, newData){
 			boardID: newBoardID
 		}
 
-		firebase.database().ref("pins").child(pinID).update(redoData);
-		dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+		if(newData.file){
+			firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function(snapshot){
+				redoData.imageURL = snapshot.downloadURL;
+				firebase.database().ref("pins").child(pinID).update(redoData);
+
+				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			});
+		}else{
+			firebase.database().ref("pins").child(pinID).update(redoData);
+
+			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+		}
 	}
 }
 
@@ -418,20 +428,22 @@ export function fetchPins(filter){
 	return dispatch =>{
 		firebase.database().ref("pins").orderByChild(filter).on("child_added", function(snap){
 			var pinData = snap.val();
-			pinData.pinID = snap.ref.key;
-			if(pinData.tags){
-				var tagKeys = Object.keys(pinData.tags);
-                var tags = "";
-                for(var i=0; i<tagKeys.length; i++){
-                	if(pinData.tags[tagKeys[i]]){
-	                    tags += tagKeys[i];
-	                    if(i < tagKeys.length - 1){
-	                        tags += ", ";
-	                    }
+				pinData.pinID = snap.ref.key;
+				pinData.tagOb = Object.assign({}, pinData.tags);
+				if(pinData.tags){
+					var tagKeys = Object.keys(pinData.tags);
+	                var tags = "";
+	                for(var i=0; i<tagKeys.length; i++){
+	                	if(pinData.tags[tagKeys[i]]){
+		                    tags += tagKeys[i];
+		                    if(i < tagKeys.length - 1){
+		                        tags += ", ";
+		                    }
+		                }
 	                }
-                }
-                pinData.tags = tags;
-			}
+	                pinData.tags = tags;
+				}
+			//}
 
 			dispatch({
 				type: actionTypes.FETCH_PINS,
@@ -441,20 +453,24 @@ export function fetchPins(filter){
 
 		firebase.database().ref("pins").on("child_changed", function(snap){
 			var pinData = snap.val();
-			pinData.pinID = snap.ref.key;
-			if(pinData.tags){
-				var tagKeys = Object.keys(pinData.tags);
-                var tags = "";
-                for(var i=0; i<tagKeys.length; i++){
-                	if(pinData.tags[tagKeys[i]]){
-	                    tags += tagKeys[i];
-	                    if(i < tagKeys.length - 1){
-	                        tags += ", ";
-	                    }
+
+			//if(pinData.hasOwnProperty(asd)){
+
+				pinData.pinID = snap.ref.key;
+				if(pinData.tags){
+					var tagKeys = Object.keys(pinData.tags);
+	                var tags = "";
+	                for(var i=0; i<tagKeys.length; i++){
+	                	if(pinData.tags[tagKeys[i]]){
+		                    tags += tagKeys[i];
+		                    if(i < tagKeys.length - 1){
+		                        tags += ", ";
+		                    }
+		                }
 	                }
-                }
-                pinData.tags = tags;
-			}
+	                pinData.tags = tags;
+				}
+			//}
 
 			dispatch({
 				type: actionTypes.FETCH_PINS,
@@ -589,9 +605,95 @@ export function forgetPassword(data){
 	return dispatch =>{
 		console.log(data);
 		firebase.auth().sendPasswordResetEmail(data.email).then(function() {
-		  console.log("sent email");// Email sent.
+		  	console.log("sent email");// Email sent.
 		}, function(error) {
-		  console.log("error when email sent");
+		  	console.log("error when email sent");
+		});
+	}
+}
+
+
+export function search(tag){
+	return dispatch =>{
+		firebase.database().ref("tags/boards").child(tag).on("child_added", function(snap){
+			firebase.database().ref("boards").child(snap.ref.key).once("value", function(snap){
+				if(snap.val()){
+					var data = snap.val();
+					data.boardID = snap.ref.key;
+					data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+
+					if(data.tags){
+						var tagKeys = Object.keys(data.tags);
+		                var tags = "";
+		                for(var i=0; i<tagKeys.length; i++){
+		                    if(data.tags[tagKeys[i]]){
+		                    	if(i !== 0){
+			                        tags += ", ";
+			                    }
+		                    	tags += tagKeys[i];
+		                    }
+		                }
+		                data.tags = tags;
+					}
+
+					dispatch({
+						type: actionTypes.FETCH_SEARCHED_BOARDS,
+						payload: data
+					});
+
+					if(snap.val().pins){
+						console.log(snap.val().pins);
+						firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function(snap){
+							console.log(snap.val());
+							firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+								console.log(snap.val().imageURL);
+								if(snap.val().imageURL){
+									data.imageURL = snap.val().imageURL;
+									dispatch({
+										type: actionTypes.FETCH_SEARCH_BOARD_IMAGE,
+										payload: data
+									});
+								}					
+							});
+						});
+					}
+				}
+			});
+		});
+
+		firebase.database().ref("tags/pins").child(tag).on("child_added", function(snap){
+			firebase.database().ref("pins").child(snap.ref.key).once("value", function(snap){
+				if(snap.val()){
+					var pinData = snap.val();
+					pinData.pinID = snap.ref.key;
+					pinData.tagOb = Object.assign({}, pinData.tags);
+					if(pinData.tags){
+						var tagKeys = Object.keys(pinData.tags);
+		                var tags = "";
+		                for(var i=0; i<tagKeys.length; i++){
+		                	if(pinData.tags[tagKeys[i]]){
+			                    tags += tagKeys[i];
+			                    if(i < tagKeys.length - 1){
+			                        tags += ", ";
+			                    }
+			                }
+		                }
+		                pinData.tags = tags;
+					}
+					dispatch({
+						type: actionTypes.FETCH_SEARCHED_PINS,
+						payload: pinData
+					});
+				}
+			});
+		});
+	}
+}
+
+export function resetSearch(){
+	return dispatch =>{
+		dispatch({
+			type: actionTypes.RESET_SEARCH
 		});
 	}
 }

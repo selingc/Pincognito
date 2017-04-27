@@ -1,5 +1,7 @@
 import actionTypes from '../actions/types.js';
 
+//try putting the filter in the payload from navsearchbar after enter
+
 export default function(state=[], action){
 	switch(action.type){
 		case actionTypes.FETCH_PINS:
@@ -31,6 +33,11 @@ export default function(state=[], action){
 			return [];
 		case actionTypes.RESET_STATE:
 			return [];
+		case actionTypes.FILTER_PINS:
+			for (var i=0; i<state.length; i++){
+				
+			}
+				return [];
 	}
 	return state;
 }

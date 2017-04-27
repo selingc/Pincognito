@@ -62,33 +62,37 @@
 
 	var _index2 = _interopRequireDefault(_index);
 
-	var _home = __webpack_require__(507);
+	var _home = __webpack_require__(508);
 
 	var _home2 = _interopRequireDefault(_home);
 
-	var _layout = __webpack_require__(523);
+	var _layout = __webpack_require__(524);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _login = __webpack_require__(525);
+	var _login = __webpack_require__(527);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _signup = __webpack_require__(527);
+	var _signup = __webpack_require__(529);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
-	var _profile = __webpack_require__(529);
+	var _profile = __webpack_require__(531);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _boardpins = __webpack_require__(532);
+	var _boardpins = __webpack_require__(534);
 
 	var _boardpins2 = _interopRequireDefault(_boardpins);
 
-	var _forgetpassword = __webpack_require__(533);
+	var _forgetpassword = __webpack_require__(535);
 
 	var _forgetpassword2 = _interopRequireDefault(_forgetpassword);
+
+	var _search = __webpack_require__(537);
+
+	var _search2 = _interopRequireDefault(_search);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -115,7 +119,8 @@
 	            _react2.default.createElement(_reactRouter.Route, { path: '/signup', component: _signup2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/profile', component: _profile2.default }),
 	            _react2.default.createElement(_reactRouter.Route, { path: '/board/:boardid', component: _boardpins2.default }),
-	            _react2.default.createElement(_reactRouter.Route, { path: '/forgetpassword', component: _forgetpassword2.default })
+	            _react2.default.createElement(_reactRouter.Route, { path: '/forgetpassword', component: _forgetpassword2.default }),
+	            _react2.default.createElement(_reactRouter.Route, { path: '/search', component: _search2.default })
 	        )
 	    )
 	), document.getElementById('root'));
@@ -29596,6 +29601,10 @@
 
 	var _userPinsReducer2 = _interopRequireDefault(_userPinsReducer);
 
+	var _searchReducer = __webpack_require__(507);
+
+	var _searchReducer2 = _interopRequireDefault(_searchReducer);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	//reducers are combined into one for easy access to the store
@@ -29603,11 +29612,12 @@
 	var combinedReducers = (0, _redux.combineReducers)({
 		user: _userReducer2.default,
 		form: _reduxForm.reducer,
-		hello: _testReducer2.default,
+		test: _testReducer2.default,
 		userBoards: _userBoardsReducer2.default,
 		boardPins: _boardPinsReducer2.default,
 		pins: _pinsReducer2.default,
-		userPins: _userPinsReducer2.default
+		userPins: _userPinsReducer2.default,
+		searchResults: _searchReducer2.default
 	});
 
 	exports.default = combinedReducers;
@@ -29732,7 +29742,15 @@
 		REPIN_TO_BOARD: 'REPIN_TO_BOARD',
 
 		SAY_HELLO: 'SAY_HELLO',
-		RESET_STATE: 'RESET_STATE'
+		RESET_STATE: 'RESET_STATE',
+
+		FILTER_PINS: 'FILTER_PINS',
+		FILTER_BOARDS: 'FILTER_BOARDS',
+
+		FETCH_SEARCHED_PINS: 'FETCH_SEARCHED_PINS',
+		FETCH_SEARCHED_BOARDS: 'FETCH_SEARCHED_BOARDS',
+		RESET_SEARCH: 'RESET_SEARCH',
+		FETCH_SEARCH_BOARD_IMAGE: 'FETCH_SEARCH_BOARD_IMAGE'
 	};
 
 	exports.default = types;
@@ -29792,30 +29810,60 @@
 
 /***/ },
 /* 293 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
-	exports.default = function () {
-		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
-		var action = arguments[1];
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-		switch (action.type) {
-			case _types2.default.SAY_HELLO:
-				return action.payload;
-		}
-		return state;
+	var pin = function pin() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case 'ADD_TODO':
+	      return {
+	        id: action.id,
+	        text: action.text,
+	        completed: false
+	      };
+	    case 'TOGGLE_TODO':
+	      if (state.id !== action.id) {
+	        return state;
+	      }
+
+	      return Object.assign({}, state, {
+	        completed: !state.completed
+	      });
+
+	    default:
+	      return state;
+	  }
 	};
 
-	var _types = __webpack_require__(291);
+	var pins = function pins() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	  var action = arguments[1];
 
-	var _types2 = _interopRequireDefault(_types);
+	  switch (action.type) {
+	    case 'SEARCH':
+	      return state;
+	    case 'ADD_TODO':
+	      return [].concat(_toConsumableArray(state), [todo(undefined, action)]);
+	    case 'TOGGLE_TODO':
+	      return state.map(function (t) {
+	        return todo(t, action);
+	      });
+	    default:
+	      return state;
+	  }
+	};
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	exports.default = pins;
 
 /***/ },
 /* 294 */
@@ -40233,6 +40281,9 @@
 				return [];
 			case _types2.default.RESET_STATE:
 				return [];
+			case _types2.default.FILTER_PINS:
+				for (var i = 0; i < state.length; i++) {}
+				return [];
 		}
 		return state;
 	};
@@ -40303,6 +40354,51 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	exports.default = function () {
+		var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : initialState;
+		var action = arguments[1];
+
+		switch (action.type) {
+			case _types2.default.FETCH_SEARCHED_PINS:
+				return Object.assign({}, state, { pins: state.pins.concat(action.payload) });
+			case _types2.default.FETCH_SEARCHED_BOARDS:
+				return Object.assign({}, state, { boards: state.boards.concat(action.payload) });
+			case _types2.default.FETCH_SEARCH_BOARD_IMAGE:
+				var newBoardsState = state.boards.slice();
+				for (var i = 0; i < state.boards.length; i++) {
+					if (state.boards[i].boardID === action.payload.boardID) {
+						newBoardsState[i] = action.payload;
+						return Object.assign({}, state, { boards: newBoardsState });
+					}
+				}
+				return state;
+			case _types2.default.RESET_SEARCH:
+				return initialState;
+		}
+		return state;
+	};
+
+	var _types = __webpack_require__(291);
+
+	var _types2 = _interopRequireDefault(_types);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var initialState = {
+		boards: [],
+		pins: []
+	};
+
+/***/ },
+/* 508 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
@@ -40312,15 +40408,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _modal = __webpack_require__(516);
+	var _modal = __webpack_require__(517);
 
 	var _modal2 = _interopRequireDefault(_modal);
+
+	var _reduxForm = __webpack_require__(295);
 
 	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -40332,8 +40430,21 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	// needs to be rewritten to avoid lifecycle methods.
-	// main root page (before logging in) will go here.
+	var Home2 = function Home2(_ref) {
+	    var asd = _ref.asd;
+
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        _react2.default.createElement('br', null),
+	        asd
+	    );
+	};
 
 	var Home = function (_Component) {
 	    _inherits(Home, _Component);
@@ -40361,6 +40472,8 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            this.props.fetchPins("timestamp");
+	            //console.log("from state: " + this.props.asd);
+	            this.props.fetchPins("none");
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -40423,7 +40536,7 @@
 	                        ),
 	                        _react2.default.createElement(
 	                            'select',
-	                            { className: 'form-control filter-select', ref: 'filter', onChange: this.changeFilter.bind(this) },
+	                            { className: 'form-control', ref: 'filter', onChange: this.changeFilter.bind(this) },
 	                            _react2.default.createElement(
 	                                'option',
 	                                { value: 'timestamp' },
@@ -40473,17 +40586,20 @@
 	    return Home;
 	}(_react.Component);
 
+	var selector = (0, _reduxForm.formValueSelector)('searchform');
+
 	function mapStateToProps(state) {
+	    var searchvalue = selector(state, 'search');
 	    return {
-	        hello: state.hello,
-	        pins: state.pins
+	        pins: state.pins,
+	        asd: searchvalue
 	    };
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Home);
 
 /***/ },
-/* 508 */
+/* 509 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40516,8 +40632,10 @@
 	exports.followBoard = followBoard;
 	exports.unfollowBoard = unfollowBoard;
 	exports.forgetPassword = forgetPassword;
+	exports.search = search;
+	exports.resetSearch = resetSearch;
 
-	var _firebase = __webpack_require__(509);
+	var _firebase = __webpack_require__(510);
 
 	var firebase = _interopRequireWildcard(_firebase);
 
@@ -40525,7 +40643,7 @@
 
 	var _types2 = _interopRequireDefault(_types);
 
-	var _firebase_config = __webpack_require__(515);
+	var _firebase_config = __webpack_require__(516);
 
 	var _firebase_config2 = _interopRequireDefault(_firebase_config);
 
@@ -40812,7 +40930,7 @@
 			});
 
 			firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("pins").child(snap.ref.key).on("value", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
 					var pinData = snap.val();
 					var tagKeys = Object.keys(pinData.tags);
 					var tags = "";
@@ -40910,8 +41028,18 @@
 				boardID: newBoardID
 			};
 
-			firebase.database().ref("pins").child(pinID).update(redoData);
-			dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			if (newData.file) {
+				firebase.storage().ref().child('images/pins/' + pinID + '.jpg').put(newData.file).then(function (snapshot) {
+					redoData.imageURL = snapshot.downloadURL;
+					firebase.database().ref("pins").child(pinID).update(redoData);
+
+					dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+				});
+			} else {
+				firebase.database().ref("pins").child(pinID).update(redoData);
+
+				dispatch(editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData));
+			}
 		};
 	}
 
@@ -40951,6 +41079,7 @@
 			firebase.database().ref("pins").orderByChild(filter).on("child_added", function (snap) {
 				var pinData = snap.val();
 				pinData.pinID = snap.ref.key;
+				pinData.tagOb = Object.assign({}, pinData.tags);
 				if (pinData.tags) {
 					var tagKeys = Object.keys(pinData.tags);
 					var tags = "";
@@ -40964,6 +41093,7 @@
 					}
 					pinData.tags = tags;
 				}
+				//}
 
 				dispatch({
 					type: _types2.default.FETCH_PINS,
@@ -40973,6 +41103,9 @@
 
 			firebase.database().ref("pins").on("child_changed", function (snap) {
 				var pinData = snap.val();
+
+				//if(pinData.hasOwnProperty(asd)){
+
 				pinData.pinID = snap.ref.key;
 				if (pinData.tags) {
 					var tagKeys = Object.keys(pinData.tags);
@@ -40987,6 +41120,7 @@
 					}
 					pinData.tags = tags;
 				}
+				//}
 
 				dispatch({
 					type: _types2.default.FETCH_PINS,
@@ -41128,8 +41262,93 @@
 		};
 	}
 
+	function search(tag) {
+		return function (dispatch) {
+			firebase.database().ref("tags/boards").child(tag).on("child_added", function (snap) {
+				firebase.database().ref("boards").child(snap.ref.key).once("value", function (snap) {
+					if (snap.val()) {
+						var data = snap.val();
+						data.boardID = snap.ref.key;
+						data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+
+						if (data.tags) {
+							var tagKeys = Object.keys(data.tags);
+							var tags = "";
+							for (var i = 0; i < tagKeys.length; i++) {
+								if (data.tags[tagKeys[i]]) {
+									if (i !== 0) {
+										tags += ", ";
+									}
+									tags += tagKeys[i];
+								}
+							}
+							data.tags = tags;
+						}
+
+						dispatch({
+							type: _types2.default.FETCH_SEARCHED_BOARDS,
+							payload: data
+						});
+
+						if (snap.val().pins) {
+							console.log(snap.val().pins);
+							firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
+								console.log(snap.val());
+								firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+									console.log(snap.val().imageURL);
+									if (snap.val().imageURL) {
+										data.imageURL = snap.val().imageURL;
+										dispatch({
+											type: _types2.default.FETCH_SEARCH_BOARD_IMAGE,
+											payload: data
+										});
+									}
+								});
+							});
+						}
+					}
+				});
+			});
+
+			firebase.database().ref("tags/pins").child(tag).on("child_added", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+					if (snap.val()) {
+						var pinData = snap.val();
+						pinData.pinID = snap.ref.key;
+						pinData.tagOb = Object.assign({}, pinData.tags);
+						if (pinData.tags) {
+							var tagKeys = Object.keys(pinData.tags);
+							var tags = "";
+							for (var i = 0; i < tagKeys.length; i++) {
+								if (pinData.tags[tagKeys[i]]) {
+									tags += tagKeys[i];
+									if (i < tagKeys.length - 1) {
+										tags += ", ";
+									}
+								}
+							}
+							pinData.tags = tags;
+						}
+						dispatch({
+							type: _types2.default.FETCH_SEARCHED_PINS,
+							payload: pinData
+						});
+					}
+				});
+			});
+		};
+	}
+
+	function resetSearch() {
+		return function (dispatch) {
+			dispatch({
+				type: _types2.default.RESET_SEARCH
+			});
+		};
+	}
+
 /***/ },
-/* 509 */
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -41139,16 +41358,16 @@
 	 *
 	 *   firebase = require('firebase');
 	 */
-	var firebase = __webpack_require__(510);
-	__webpack_require__(511);
+	var firebase = __webpack_require__(511);
 	__webpack_require__(512);
 	__webpack_require__(513);
 	__webpack_require__(514);
+	__webpack_require__(515);
 	module.exports = firebase;
 
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var firebase = (function(){
@@ -41187,10 +41406,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(511);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41435,10 +41654,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 512 */
+/* 513 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(511);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41706,10 +41925,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 513 */
+/* 514 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(511);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41767,10 +41986,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 514 */
+/* 515 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(510);
+	/* WEBPACK VAR INJECTION */(function(global) {var firebase = __webpack_require__(511);
 	(function(){
 	/*! @license Firebase v3.6.9
 	    Build: 3.6.9-rc.1
@@ -41813,7 +42032,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 515 */
+/* 516 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -41845,7 +42064,7 @@
 	exports.default = config;
 
 /***/ },
-/* 516 */
+/* 517 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41860,27 +42079,27 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _pin = __webpack_require__(517);
+	var _pin = __webpack_require__(518);
 
 	var _pin2 = _interopRequireDefault(_pin);
 
-	var _createPin = __webpack_require__(518);
+	var _createPin = __webpack_require__(519);
 
 	var _createPin2 = _interopRequireDefault(_createPin);
 
-	var _createBoard = __webpack_require__(519);
+	var _createBoard = __webpack_require__(520);
 
 	var _createBoard2 = _interopRequireDefault(_createBoard);
 
-	var _editPin = __webpack_require__(520);
+	var _editPin = __webpack_require__(521);
 
 	var _editPin2 = _interopRequireDefault(_editPin);
 
-	var _editBoard = __webpack_require__(521);
+	var _editBoard = __webpack_require__(522);
 
 	var _editBoard2 = _interopRequireDefault(_editBoard);
 
-	var _repinForm = __webpack_require__(522);
+	var _repinForm = __webpack_require__(523);
 
 	var _repinForm2 = _interopRequireDefault(_repinForm);
 
@@ -41980,7 +42199,7 @@
 	exports.default = Modal;
 
 /***/ },
-/* 517 */
+/* 518 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41997,11 +42216,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _modal = __webpack_require__(516);
+	var _modal = __webpack_require__(517);
 
 	var _modal2 = _interopRequireDefault(_modal);
 
@@ -42150,7 +42369,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pin);
 
 /***/ },
-/* 518 */
+/* 519 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42167,7 +42386,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42306,7 +42525,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(CreatePin);
 
 /***/ },
-/* 519 */
+/* 520 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42323,7 +42542,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42431,7 +42650,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(CreateBoard);
 
 /***/ },
-/* 520 */
+/* 521 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42448,7 +42667,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42612,7 +42831,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(EditPin);
 
 /***/ },
-/* 521 */
+/* 522 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42629,7 +42848,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42752,7 +42971,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(CreateBoard);
 
 /***/ },
-/* 522 */
+/* 523 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42769,7 +42988,7 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
@@ -42882,7 +43101,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Repin);
 
 /***/ },
-/* 523 */
+/* 524 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42899,11 +43118,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _navbar = __webpack_require__(524);
+	var _navbar = __webpack_require__(525);
 
 	var _navbar2 = _interopRequireDefault(_navbar);
 
@@ -42980,7 +43199,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Layout);
 
 /***/ },
-/* 524 */
+/* 525 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42993,13 +43212,17 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var _redux = __webpack_require__(250);
 
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
+
+	var _navsearch = __webpack_require__(526);
+
+	var _navsearch2 = _interopRequireDefault(_navsearch);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43009,10 +43232,17 @@
 	 *	which buttons to show in the header. (signup/login or logoff)
 	 */
 
+	// CODE CLEANUP: this should be a container only
+	// Redux logic should go here for the following components (navlogo, navsearch, navbuttons)
+
 	var NavBar = function NavBar(_ref) {
 		var user = _ref.user,
-		    actions = _ref.actions;
+		    actions = _ref.actions,
+		    search = _ref.search;
 
+		var handleSubmit = function handleSubmit(values) {
+			_reactRouter.browserHistory.push("/search?q=" + values.search);
+		};
 		return _react2.default.createElement(
 			'div',
 			{ className: 'container' },
@@ -43022,7 +43252,7 @@
 				_react2.default.createElement(
 					_reactRouter.Link,
 					{ to: '/' },
-					_react2.default.createElement('img', { height: '55px', src: 'https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/pincognito_w.png?alt=media&token=9a73dc91-e40d-47c3-953b-c7c569c19918' })
+					_react2.default.createElement('img', { height: '55px', className: 'nav_logo', src: '' })
 				)
 			),
 			_react2.default.createElement(
@@ -43057,8 +43287,13 @@
 						null,
 						_react2.default.createElement(
 							_reactRouter.Link,
-							{ to: '/profile', activeClassName: 'active', className: 'activeNav' },
-							'Profile'
+							{ to: '/profile', activeClassName: 'active', className: 'activeNav ' },
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-user menu_profile_icon' }),
+							_react2.default.createElement(
+								'span',
+								{ className: 'menu_profile_text' },
+								'Profile'
+							)
 						)
 					),
 					_react2.default.createElement(
@@ -43067,7 +43302,12 @@
 						_react2.default.createElement(
 							_reactRouter.Link,
 							{ to: '/', onClick: actions.logOff, id: 'logout' },
-							'Logout'
+							_react2.default.createElement('span', { className: 'glyphicon glyphicon-off menu_logout_icon' }),
+							_react2.default.createElement(
+								'span',
+								{ className: 'menu_logout_text' },
+								'Logout'
+							)
 						)
 					)
 				)
@@ -43075,20 +43315,7 @@
 			_react2.default.createElement(
 				'nav',
 				null,
-				_react2.default.createElement(
-					'div',
-					{ className: 'input-group' },
-					_react2.default.createElement('input', { type: 'text', className: 'form-control search', placeholder: 'Search' }),
-					_react2.default.createElement(
-						'span',
-						{ className: 'input-group-btn' },
-						_react2.default.createElement(
-							'button',
-							{ className: 'btn btn-default', type: 'button' },
-							_react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
-						)
-					)
-				)
+				_react2.default.createElement(_navsearch2.default, { onSubmit: handleSubmit })
 			)
 		);
 	};
@@ -43097,18 +43324,68 @@
 		return {
 			user: {
 				username: state.user.username
-			}
+			},
+			searchResults: state.searchResults
 		};
 	}
 
 	function mapDispatchToProps(dispatch) {
-		return { actions: (0, _redux.bindActionCreators)({ logOff: _index.logOff, fetchUser: _index.fetchUser }, dispatch) };
+		return { actions: (0, _redux.bindActionCreators)({ logOff: _index.logOff, search: _index.search, resetSearch: _index.resetSearch }, dispatch) };
 	}
 
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(NavBar);
 
 /***/ },
-/* 525 */
+/* 526 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reduxForm = __webpack_require__(295);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// CODE CLEANUP: this is a component get rid of any redux logic, only use presentation
+
+	var NavSearch = function NavSearch(props) {
+	    var handleSubmit = props.handleSubmit,
+	        pristine = props.pristine,
+	        reset = props.reset,
+	        submitting = props.submitting;
+
+
+	    return _react2.default.createElement(
+	        'form',
+	        { onSubmit: handleSubmit },
+	        _react2.default.createElement(
+	            'div',
+	            { className: 'input-group search_group' },
+	            _react2.default.createElement(_reduxForm.Field, { name: 'search', component: 'input', type: 'text', placeholder: 'Search for a tag...', className: 'form-control search' }),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'input-group-btn' },
+	                _react2.default.createElement(
+	                    'button',
+	                    { className: 'btn btn-default', type: 'submit' },
+	                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-search' })
+	                )
+	            )
+	        )
+	    );
+	};
+
+	exports.default = (0, _reduxForm.reduxForm)({ form: 'searchform' })(NavSearch);
+
+/***/ },
+/* 527 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43125,9 +43402,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
-	var _login = __webpack_require__(526);
+	var _login = __webpack_require__(528);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -43181,7 +43458,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Login);
 
 /***/ },
-/* 526 */
+/* 528 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43278,7 +43555,7 @@
 	})(LoginForm);
 
 /***/ },
-/* 527 */
+/* 529 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43295,9 +43572,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
-	var _signup = __webpack_require__(528);
+	var _signup = __webpack_require__(530);
 
 	var _signup2 = _interopRequireDefault(_signup);
 
@@ -43361,7 +43638,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(Signup);
 
 /***/ },
-/* 528 */
+/* 530 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43490,7 +43767,7 @@
 	})(SignupForm);
 
 /***/ },
-/* 529 */
+/* 531 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43507,11 +43784,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _boards = __webpack_require__(530);
+	var _boards = __webpack_require__(532);
 
 	var _boards2 = _interopRequireDefault(_boards);
 
-	var _pins = __webpack_require__(531);
+	var _pins = __webpack_require__(533);
 
 	var _pins2 = _interopRequireDefault(_pins);
 
@@ -43574,7 +43851,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, null)(Profile);
 
 /***/ },
-/* 530 */
+/* 532 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43591,13 +43868,13 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
 	var _reactRouter = __webpack_require__(183);
 
-	var _modal = __webpack_require__(516);
+	var _modal = __webpack_require__(517);
 
 	var _modal2 = _interopRequireDefault(_modal);
 
@@ -43711,7 +43988,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Boards);
 
 /***/ },
-/* 531 */
+/* 533 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43728,13 +44005,13 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
 	var _reactRouter = __webpack_require__(183);
 
-	var _modal = __webpack_require__(516);
+	var _modal = __webpack_require__(517);
 
 	var _modal2 = _interopRequireDefault(_modal);
 
@@ -43852,7 +44129,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Pins);
 
 /***/ },
-/* 532 */
+/* 534 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43869,11 +44146,11 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
 	var actions = _interopRequireWildcard(_index);
 
-	var _modal = __webpack_require__(516);
+	var _modal = __webpack_require__(517);
 
 	var _modal2 = _interopRequireDefault(_modal);
 
@@ -44065,7 +44342,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(BoardPins);
 
 /***/ },
-/* 533 */
+/* 535 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44082,9 +44359,9 @@
 
 	var _reactRedux = __webpack_require__(239);
 
-	var _index = __webpack_require__(508);
+	var _index = __webpack_require__(509);
 
-	var _forgetpassword = __webpack_require__(534);
+	var _forgetpassword = __webpack_require__(536);
 
 	var _forgetpassword2 = _interopRequireDefault(_forgetpassword);
 
@@ -44129,7 +44406,7 @@
 	exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(ForgetPassword);
 
 /***/ },
-/* 534 */
+/* 536 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -44215,6 +44492,205 @@
 	exports.default = (0, _reduxForm.reduxForm)({
 	    form: 'ForgetPasswordForm' // a unique identifier for this form
 	})(ForgetPasswordForm);
+
+/***/ },
+/* 537 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _index = __webpack_require__(509);
+
+	var actions = _interopRequireWildcard(_index);
+
+	var _reactRedux = __webpack_require__(239);
+
+	var _modal = __webpack_require__(517);
+
+	var _modal2 = _interopRequireDefault(_modal);
+
+	var _reactRouter = __webpack_require__(183);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Search = function (_Component) {
+	    _inherits(Search, _Component);
+
+	    function Search(props) {
+	        _classCallCheck(this, Search);
+
+	        var _this = _possibleConstructorReturn(this, (Search.__proto__ || Object.getPrototypeOf(Search)).call(this, props));
+
+	        _this.state = { poppedUp: false };
+	        _this.openPopup = _this.openPopup.bind(_this);
+	        _this.goToBoard = _this.goToBoard.bind(_this);
+	        return _this;
+	    }
+
+	    _createClass(Search, [{
+	        key: 'openPopup',
+	        value: function openPopup(pin) {
+	            this.setState({ poppedUp: true });
+	            this.setState({ pin: pin });
+	        }
+	    }, {
+	        key: 'closePopup',
+	        value: function closePopup() {
+	            this.setState({ poppedUp: false });
+	        }
+	    }, {
+	        key: 'goToBoard',
+	        value: function goToBoard(boardID) {
+	            _reactRouter.browserHistory.push("/board/" + boardID);
+	        }
+	    }, {
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            this.setState({ query: this.props.location.query.q });
+	            this.props.resetSearch();
+	            this.props.search(this.props.location.query.q);
+	        }
+	    }, {
+	        key: 'componentWillReceiveProps',
+	        value: function componentWillReceiveProps(nextProps) {
+	            if (nextProps.location.query.q !== this.state.query) {
+	                this.setState({ query: nextProps.location.query.q });
+	                this.props.resetSearch();
+	                this.props.search(nextProps.location.query.q);
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var _this2 = this;
+
+	            var that = this;
+	            function getPopup() {
+	                if (that.state.poppedUp) {
+	                    return _react2.default.createElement(_modal2.default, { type: 'pin', pin: that.state.pin, closePopup: that.closePopup.bind(that) });
+	                } else {
+	                    return null;
+	                }
+	            }
+
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'children' },
+	                _react2.default.createElement(
+	                    'h6',
+	                    null,
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        this.props.searchResults.pins.length
+	                    ),
+	                    ' pin',
+	                    this.props.searchResults.pins.length === 1 ? "" : "s",
+	                    ' found containing tags: ',
+	                    this.props.location.query.q
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                    this.props.searchResults.pins ? this.props.searchResults.pins.map(function (pin, index) {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel panel-danger border', onClick: _this2.openPopup.bind(null, pin) },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-body' },
+	                                    _react2.default.createElement(
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: pin.imageURL, className: 'my-panel-content images' })
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    pin.name
+	                                )
+	                            )
+	                        );
+	                    }) : null
+	                ),
+	                _react2.default.createElement(
+	                    'h6',
+	                    null,
+	                    _react2.default.createElement(
+	                        'strong',
+	                        null,
+	                        this.props.searchResults.boards.length
+	                    ),
+	                    ' board',
+	                    this.props.searchResults.boards.length === 1 ? "" : "s",
+	                    ' found containing tags: ',
+	                    this.props.location.query.q
+	                ),
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'col-lg-12 col-md-12 col-sm-12 col-xs-12' },
+	                    this.props.searchResults.boards ? this.props.searchResults.boards.map(function (board, index) {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-lg-3 col-md-4 col-sm-6 col-xs-12', key: index },
+	                            _react2.default.createElement(
+	                                'div',
+	                                { className: 'panel panel-danger border', onClick: _this2.goToBoard.bind(null, board.boardID) },
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-body' },
+	                                    _react2.default.createElement(
+	                                        'center',
+	                                        null,
+	                                        _react2.default.createElement('img', { src: board.imageURL, className: 'my-panel-content images' })
+	                                    )
+	                                ),
+	                                _react2.default.createElement(
+	                                    'div',
+	                                    { className: 'panel-heading' },
+	                                    board.name
+	                                )
+	                            )
+	                        );
+	                    }) : null
+	                ),
+	                getPopup()
+	            );
+	        }
+	    }]);
+
+	    return Search;
+	}(_react.Component);
+
+	function mapStateToProps(state) {
+	    return {
+	        searchResults: state.searchResults
+	    };
+	}
+
+	exports.default = (0, _reactRedux.connect)(mapStateToProps, actions)(Search);
 
 /***/ }
 /******/ ]);
