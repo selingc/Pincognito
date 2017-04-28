@@ -6,6 +6,10 @@ h1, h6{
 	margin-top: 90px;
 }
 
+body{
+	overflow-y:scroll;
+}
+
 header{
 	width: 100%;
 	background: linear-gradient(to right, #cc0000, #b20000);
