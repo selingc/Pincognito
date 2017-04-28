@@ -19,8 +19,8 @@ class Profile extends Component {
                 <h1>@{this.props.user.username}</h1>
                 <div className="container">
                 <ul className="nav nav-tabs">
-                    <li className={this.state.boardsorpins==="boards"?"active":""}><a href="#boards" onClick={this.changeTab.bind(null, "boards")} data-toggle="tab">Your Boards</a></li>
-                    <li className={this.state.boardsorpins==="pins"?"active":""}><a href="#pins" onClick={this.changeTab.bind(null, "pins")} data-toggle="tab">Your Pins</a></li>
+                    <li className={this.state.boardsorpins==="boards"?"active":""}><a onClick={this.changeTab.bind(null, "boards")}>Your Boards</a></li>
+                    <li className={this.state.boardsorpins==="pins"?"active":""}><a onClick={this.changeTab.bind(null, "pins")}>Your Pins</a></li>
                 </ul>
                 </div>
                 <br />
