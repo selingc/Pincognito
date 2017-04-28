@@ -697,3 +697,12 @@ export function resetSearch(){
 		});
 	}
 }
+
+export function savePreviousPath(path){
+	return dispatch =>{
+		dispatch({
+			type: actionTypes.SAVE_PREVIOUS_PATH,
+			payload: path
+		});
+	}
+}

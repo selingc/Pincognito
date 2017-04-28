@@ -79,7 +79,7 @@ class BoardPins extends Component {
 
         return (
             <div className="children">
-                <h1><Link to={"/profile"}><span className="glyphicon glyphicon-menu-left goBack"></span></Link>{this.props.boardPins.board ? this.props.boardPins.board.name : null}</h1>
+                <h1><Link to={this.props.history}><span className="glyphicon glyphicon-menu-left goBack"></span></Link>{this.props.boardPins.board ? this.props.boardPins.board.name : null}</h1>
                  {this.props.user.username ? (<div>
 
                     {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
@@ -125,7 +125,8 @@ function mapStateToProps(state){
     return{
         boardPins: state.boardPins,
         user: state.user, 
-        userBoards: state.userBoards
+        userBoards: state.userBoards,
+        history: state.history
     }
 }
 

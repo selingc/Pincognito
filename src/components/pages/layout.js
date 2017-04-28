@@ -15,6 +15,10 @@ class Layout extends Component{
             this.props.fetchUserBoards(nextProps.user.username);
             this.props.fetchUserPins(nextProps.user.username);
         }
+
+	    if (nextProps.location !== this.props.location) {
+	      	this.props.savePreviousPath(this.props.location);
+	    }
 	}
 
 	componentWillUnmount(){
