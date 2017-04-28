@@ -8,9 +8,10 @@ class Search extends Component {
 	constructor(props){
         super(props);
 
-        this.state = {poppedUp: false};
+        this.state = {poppedUp: false, boardsorpins:"pins"};
         this.openPopup = this.openPopup.bind(this);
         this.goToBoard = this.goToBoard.bind(this);
+        this.changeTab = this.changeTab.bind(this);
     }
 
     openPopup(pin){
@@ -40,6 +41,9 @@ class Search extends Component {
             this.props.search(nextProps.location.query.q);
         }
     }
+    changeTab(boardsorpins){
+        this.setState({boardsorpins: boardsorpins});
+    }
 
     render() {
         var that = this;
@@ -55,7 +59,18 @@ class Search extends Component {
 
         return (
             <div className="children">
-                <h6><strong>{this.props.searchResults.pins.length}</strong> pin{this.props.searchResults.pins.length === 1 ? "" : "s"} found containing tags: {this.props.location.query.q}</h6>
+                <h3>Search Results for "{this.props.location.query.q}"</h3>
+                <br />
+
+                <div className="container">
+                <ul className="nav nav-tabs">
+                    <li className={this.state.boardsorpins==="pins"?"active":""}><a href="#pins" onClick={this.changeTab.bind(null, "pins")} data-toggle="tab">Pins <span className="label label-danger"> {this.props.searchResults.pins.length} </span></a></li>
+                    <li className={this.state.boardsorpins==="boards"?"active":""}><a href="#boards" onClick={this.changeTab.bind(null, "boards")} data-toggle="tab">Boards <span className="label label-danger">{this.props.searchResults.boards.length}</span></a></li>
+                </ul>
+                </div>
+                <br />
+                <div className="tab-content">
+                <div id="pins" className={this.state.boardsorpins==="pins"?"active tab-pane":"tab-pane"}>
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">{this.props.searchResults.pins ? this.props.searchResults.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="panel panel-danger border" onClick={this.openPopup.bind(null, pin)}>
@@ -67,8 +82,9 @@ class Search extends Component {
                             </div>
                         )) : null}
                 </div>
+                </div>
 
-                <h6><strong>{this.props.searchResults.boards.length}</strong> board{this.props.searchResults.boards.length === 1 ? "" : "s"} found containing tags: {this.props.location.query.q}</h6>
+                <div id="boards" className={this.state.boardsorpins==="boards"?"active tab-pane":"tab-pane"}>
                 <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12">{this.props.searchResults.boards ? this.props.searchResults.boards.map((board, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
                                 <div className="panel panel-danger border" onClick={this.goToBoard.bind(null, board.boardID)}>
@@ -79,6 +95,8 @@ class Search extends Component {
                                 </div>
                             </div>
                         )) : null}
+                </div>
+                </div>
                 </div>
                 {getPopup()}
             </div>
