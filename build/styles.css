@@ -33,6 +33,12 @@ header a{
     padding-bottom: 18px;
 }
 
+.nav > .active{
+	border-bottom: 0px;
+	padding-bottom: 0px;
+	color: red;
+}
+
 #logout:hover {
 	color: white;
 	text-decoration: none;
