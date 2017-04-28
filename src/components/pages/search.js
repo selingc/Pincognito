@@ -64,8 +64,8 @@ class Search extends Component {
 
                 <div className="container">
                 <ul className="nav nav-tabs">
-                    <li className={this.state.boardsorpins==="pins"?"active":""}><a href="#pins" onClick={this.changeTab.bind(null, "pins")} data-toggle="tab">Pins <span className="label label-danger"> {this.props.searchResults.pins.length} </span></a></li>
-                    <li className={this.state.boardsorpins==="boards"?"active":""}><a href="#boards" onClick={this.changeTab.bind(null, "boards")} data-toggle="tab">Boards <span className="label label-danger">{this.props.searchResults.boards.length}</span></a></li>
+                    <li className={this.state.boardsorpins==="pins"?"active":""}><a onClick={this.changeTab.bind(null, "pins")} data-toggle="tab">Pins <span className="label label-danger"> {this.props.searchResults.pins.length} </span></a></li>
+                    <li className={this.state.boardsorpins==="boards"?"active":""}><a onClick={this.changeTab.bind(null, "boards")} data-toggle="tab">Boards <span className="label label-danger">{this.props.searchResults.boards.length}</span></a></li>
                 </ul>
                 </div>
                 <br />
