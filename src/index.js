@@ -10,6 +10,7 @@ import Signup from './components/registration/signup.js';
 import Profile from './components/profile/profile.js';
 import BoardPins from './components/profile/boardpins.js';
 import Forgetpassword from './components/registration/forgetpassword.js';
+import Search from './components/pages/search.js';
 /*
  *  index.js is the launchpad of our app, it looks for 'root' in the .html file and injects
  *  itself into the browser through javascript.
@@ -29,6 +30,7 @@ ReactDOM.render(
                 <Route path="/profile" component={Profile}/>
                 <Route path="/board/:boardid" component={BoardPins}/>
                 <Route path="/forgetpassword" component={Forgetpassword}/>
+                <Route path="/search" component={Search}/>
             </Route>
         </Router>
     </Provider>,
