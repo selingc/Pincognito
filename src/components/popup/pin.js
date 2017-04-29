@@ -57,7 +57,7 @@ class Pin extends Component{
         return (
             <div>
             <div className="hoverContainer">
-                <h2><span align="center">{this.props.pin.name}</span>
+                <h2><span className="pinTitle">{this.props.pin.name}</span>
                 <span className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span></h2>
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
 
