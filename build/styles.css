@@ -1,4 +1,4 @@
-h1, h6{
+h1, h2, h3, h4, h5, h6{
 	text-align: center;
 }
 
@@ -28,9 +28,9 @@ header a{
 	font-size: 16px;
 }
 
-.activeNav:hover,
-.activeNav:focus,
-.active {
+nav .activeNav:hover,
+nav .activeNav:focus,
+nav .active {
 	color: white;
 	text-decoration: none;
     border-bottom: 3px solid white;
