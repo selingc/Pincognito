@@ -151,6 +151,10 @@ body{
 	margin-bottom: 25px;
 }
 
+a, a:hover {
+	text-decoration: none;
+}
+
 .panel-heading {
 	text-align: center;
 }
