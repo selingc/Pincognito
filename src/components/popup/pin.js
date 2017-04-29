@@ -57,10 +57,13 @@ class Pin extends Component{
         return (
             <div>
             <div className="hoverContainer">
-                <h1>{this.props.pin.name}</h1>
+                <h2><span align="center">{this.props.pin.name}</span>
+                <span className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span></h2>
                 <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
 
-                <div className="overlay">
+
+                <div className="pinDescription">{this.props.pin.description}</div>
+                 <div className="overlay">
                     {this.props.user.username ? (<div>
 
                          {this.props.pin.createdBy === this.props.user.username ? (
@@ -81,12 +84,6 @@ class Pin extends Component{
                     } 
                         
                 </div>
-
-                <p className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins ? this.props.pin.numRepins : 0}</p>
-
-                <hr className="stylehr"/>
-
-                <p className="pinDescription">{this.props.pin.description}</p>
                 {getPopup()}
             </div>
             </div>

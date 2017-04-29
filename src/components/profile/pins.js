@@ -41,7 +41,7 @@ class Pins extends Component {
                     <Link className="create" to="/profile" onClick={this.openPopup.bind(null, null)}>
                         <div className="panel panel-default border">
                             <div className="panel-body createPanel">
-                                Create New Pin
+                                Create New Pin 
                             </div>
                         </div>
                     </Link>
