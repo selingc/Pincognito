@@ -69,19 +69,23 @@ class Home extends Component {
 
         return (
             <div className="children">
-                <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12" >
-                <div className="input-group filter">
-                    <div className="input-group-btn">
-                         <h3><span className="label label-danger">Filter By</span></h3>
+                <div className="row">
+                    <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" >
+                        <div className="input-group filter">
+                            <div className="input-group-btn">
+                                 <h3><span className="label label-danger">Filter By</span></h3>
+                            </div>
+                                <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
+                                    <option value="timestamp">Date Added</option>
+                                    <option value="numRepins">Most Pinned</option>
+                                </select>
+                        </div>
                     </div>
-                        <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
-                            <option value="timestamp">Date Added</option>
-                            <option value="numRepins">Most Pinned</option>
-                        </select>
-                </div>
+                    <div className="col-lg-9 col-md-8 col-sm-6"></div>
                 </div>
 
-             
+                <hr className="stylehr"/>
+
                 {/*
                 <button type="submit" onClick={this.sayHello.bind(this)}>Say Hello</button>
                 <div>{this.props.hello}</div>

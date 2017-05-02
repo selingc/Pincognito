@@ -54,36 +54,42 @@ class Pin extends Component{
             return false; 
         }
 
+        var tags = this.props.pin.tags.split(",");
+
         return (
             <div>
             <div className="hoverContainer">
-                <h2><span className="pinTitle">{this.props.pin.name}</span>
-                <span className="num_repin"><span className="glyphicon glyphicon-pushpin"></span>   {this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span></h2>
-                <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
+                <h2>
+                    <span className="pinTitle">{this.props.pin.name}</span>
+                    <span className="num_repin">
+                        {this.props.user.username ? (<span>
 
-
-                <div className="pinDescription">{this.props.pin.description}</div>
-                 <div className="overlay">
-                    {this.props.user.username ? (<div>
-
-                         {this.props.pin.createdBy === this.props.user.username ? (
-                            <div>
-                                <button className="btn btn-danger" onClick={this.openPopup.bind(null, "editPin")}><span className="glyphicon glyphicon-pencil"></span>   Edit Pin</button>
-                            </div>) 
-                        :   <div>
-                                {checkIfPinned() ? (
-                                    <button className="btn btn-danger" onClick={this.unpinFromBoard.bind(this)}>Unpin</button>)
+                        {this.props.pin.createdBy === this.props.user.username ? (
+                            <span>
+                                <span className="glyphicon glyphicon-pencil edit" onClick={this.openPopup.bind(null, "editPin")}></span>
+                            </span>) 
+                        :   <span>
+                                {checkIfPinned() ? 
+                                    <span className="glyphicon glyphicon-pushpin pinned" onClick={this.unpinFromBoard.bind(this)}>{this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span>
                                 : 
-                                    <button className="btn btn-danger"onClick={this.openPopup.bind(null, "repin")}><span className="glyphicon glyphicon-pushpin"></span>   Pin</button>
+                                    <span className="glyphicon glyphicon-pushpin notpinned" onClick={this.openPopup.bind(null, "repin")}>{this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span>
                                 }
-                            </div>
+                                
+                            </span>
 
-                        }</div>)
+                        }</span>)
                     :null 
 
                     } 
-                        
-                </div>
+                    </span>
+                </h2>
+                <center><img src={this.props.pin.imageURL} className="images pinImage"/></center>
+
+                <div className="pinDescription">{this.props.pin.description}</div>
+
+                <h5>{tags.map((tag, index) =>(
+                    <span key={index} className="label label-danger">{tag.trim()}</span>
+                ))}</h5>
                 {getPopup()}
             </div>
             </div>

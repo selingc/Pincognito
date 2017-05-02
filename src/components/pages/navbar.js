@@ -19,20 +19,20 @@ const NavBar = ({user, actions, search}) => {
     	browserHistory.push("/search?q="+values.search);
     }
 	return(
-		<div className="container">
+		<div className="container mobile">
 			<div className="nav-left">
 				<Link to="/"><img height="55px" className="nav_logo" src=""/></Link>
 			</div>
 			<nav className="nav-right">
 				{user.username == null ? 
 					(<ul id="menu">
-						<li><Link to="/signup" activeClassName="active" className="activeNav">Signup</Link></li>
-						<li><Link to="/login" activeClassName="active" className="activeNav">Login</Link></li>
+						<li><Link to="/signup" activeClassName="active" className="activeNav"><span className="menu_profile_text">Signup</span></Link></li>
+						<li><Link to="/login" activeClassName="active" className="activeNav"><span className="glyphicon glyphicon-log-in menu_logout_icon"></span><span className="menu_logout_text">Login</span></Link></li>
 					</ul>)
 					:
 					(<ul id="menu">	
 						<li><Link to="/profile" activeClassName="active" className="activeNav "><span className="glyphicon glyphicon-user menu_profile_icon"></span><span className="menu_profile_text">Profile</span></Link></li>
-						<li><Link to="/" onClick={actions.logOff} id="logout"><span className="glyphicon glyphicon-off menu_logout_icon"></span><span className="menu_logout_text">Logout</span></Link></li>
+						<li><Link to="/" onClick={actions.logOff} id="logout"><span className="glyphicon glyphicon-log-out menu_logout_icon"></span><span className="menu_logout_text">Logout</span></Link></li>
 					</ul>)
 				}
 			</nav>

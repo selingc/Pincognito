@@ -46,7 +46,7 @@ class CreateBoard extends Component {
                     <input type="text" className="form-control" ref="description" placeholder="Description" defaultValue={this.props.board.description}/> <br />
                     <label for="tags">Tag:</label>
                     <input type="text" className="form-control" ref="tags" placeholder="Tags separated by commas (ex. dog, cat, ...)" defaultValue={this.props.board.tags}/> <br />
-                    <center><button type="submit" className="btn btn-danger">Create Board</button></center>
+                    <center><button type="submit" className="btn btn-danger">Confirm Changes</button></center>
                 </form>
             </div>
         );

@@ -79,30 +79,41 @@ class BoardPins extends Component {
 
         return (
             <div className="children">
-                <h1><Link to={this.props.history}><span className="glyphicon glyphicon-menu-left goBack"></span></Link>{this.props.boardPins.board ? this.props.boardPins.board.name : null}</h1>
-                 {this.props.user.username ? (<div>
-
-                    {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
-                        <div>
-                            <button className="btn btn-default" onClick={this.openEditBoardPopup.bind(this)}>Edit</button>
-                            <button className="btn btn-danger" onClick={this.deleteBoard.bind(this)}>Delete</button>
-                        </div>) 
-                    : 
-                         <div>
-                            {checkIfFollowed() ? (
-                                <button className="btn btn-danger" onClick={this.unfollowBoard.bind(this)}>Unfollow</button>)
+                <h1>
+                    <Link to={this.props.history}><span className="glyphicon glyphicon-menu-left goBack"></span></Link>
+                    {this.props.boardPins.board ? this.props.boardPins.board.name : null}
+                    <span>
+                        {this.props.user.username ? (<span className="board-font-size">
+                            {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
+                                <span>
+                                    <span className="glyphicon glyphicon-pencil edit" onClick={this.openEditBoardPopup.bind(this)}></span>
+                                </span>) 
                             : 
-                                <button className="btn btn-danger"onClick={this.followBoard.bind(this)}>Follow</button>
+                                 <span>
+                                    {checkIfFollowed() ? (
+                                        <span className="glyphicon glyphicon-eye-open pinned" onClick={this.unfollowBoard.bind(this)}></span>)
+                                    : 
+                                        <span className="glyphicon glyphicon-eye-open notpinned" onClick={this.followBoard.bind(this)}></span>
+                                    }
+                                 </span>
+                            }</span>)
+                            :null 
+                        }
+                    </span>
+
+
+                    {this.props.user.username ? (
+                        <span>
+                            {(this.props.boardPins.board ? this.props.boardPins.board.createdBy === this.props.user.username : false) ? (
+                                <button className="btn btn-danger delete-board" onClick={this.deleteBoard.bind(this)}>Delete</button>) 
+                            : 
+                                null
                             }
-                         </div>
-
-
-
-                       
-                    }</div>)
-                    :null 
-
-                    } 
+                        </span>)
+                        :null
+                    }
+                </h1>
+                
                
                 <div> {this.props.boardPins.pins.map((pin, index) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" key={index}>
@@ -116,6 +127,8 @@ class BoardPins extends Component {
                         ))}
                 </div>
                 {getPopup()}
+
+
             </div>
         );
     }

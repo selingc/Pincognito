@@ -2,6 +2,10 @@ h1, h2, h3, h4, h5, h6{
 	text-align: center;
 }
 
+h5{
+	margin: 5px 0 5px 0;
+}
+
 .children{
 	margin-top: 90px;
 }
@@ -105,8 +109,8 @@ body{
 
 /*PIN POPUP ---------------------------------------------------------------------------------------*/
 .pinDescription {
-	padding-left: 15%;
-	padding-right: 15%;
+	padding-top: 5px;
+	text-align: center;
 	font-size: 16px;
 }
 
@@ -125,7 +129,44 @@ body{
 	color: gray;
 }
 
+.pinned:hover{
+	color: gray;
+}
 
+.pinned{
+	color: #cc0000;
+}
+
+.notpinned{
+	color: gray;
+}
+
+.notpinned:hover{
+	color: #cc0000;
+}
+
+.board-font-size{
+	padding-left: 10px;
+	font-size: 25px;
+}
+
+.row{
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.edit:hover{
+	color: #cc0000;
+}
+
+.edit{
+	color: gray;
+}
+
+.delete-board{
+	float: right;
+	margin-right: 15px;
+}
 
 /*EDIT PIN POPUP -------------------------------------------------------------------------------------*/
 .confirmChangeButton {
@@ -144,16 +185,12 @@ body{
 
 .overlay {
   position: inherit;
-  top: 95%;
-  left: 77%;
-  width: 100%;
-  height: 100%;
+  text-align: center;
 }
 
 /*BOARD & PIN PAGES ---------------------------------------------------------------------------------------*/
 .panel {
-	margin-top: 25px;
-	margin-bottom: 25px;
+	margin-bottom: 50px;
 }
 
 a, a:hover {
@@ -218,13 +255,22 @@ a, a:hover {
 .modal-content {
     background-color: #fefefe ;
     padding: 10px;
+    padding-bottom: 31px;
     border: 1px solid #888;
     width: 60%;
     overflow: auto;
     /*Center of page*/
     top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.label-danger{
+	background-color: #cc0000;
+}
+
+.label{
+	margin: 0 2px 0 2px;
 }
 
 .modal {
@@ -289,9 +335,9 @@ h3{
     	padding-top: 0px;
     }
 
-    .activeNav:hover,
-	.activeNav:focus,
-	.active {
+    nav .activeNav:hover,
+	nav .activeNav:focus,
+	nav .active {
 		text-decoration: none;
 		border-bottom: 0px;
 	}
@@ -303,6 +349,10 @@ h3{
 
 	.search_group {
 		padding: 0px 0px 0px 35px;
+	}
+
+	.mobile{
+		padding-top: 10px;
 	}
 
 	span.menu_profile_icon {
