@@ -26,8 +26,11 @@ admin.initializeApp({
 // 	admin.database().ref("tags/boards").child("small plane").set(snap.val());
 // });
 
-admin.database().ref("tags/pins").on("child_added", function(snap){
-	console.log(snap.ref.key);
+admin.database().ref("boards").on("child_added", function(snap){
+	var pinID = snap.ref.key;
+	admin.database().ref("boards/" + pinID).child("tags").orderByValue().equalTo(false).on("child_added", function(snap){
+		console.log(pinID);
+	});
 });
 
 // admin.database().ref("pins").on("child_added", function(snap){
