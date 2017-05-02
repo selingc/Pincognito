@@ -235,8 +235,8 @@ export function editUserBoard(username, boardID, oldData, newData){
 
 		var oldTagsArray = oldData.tags.replace(/\s/g," ").split(",");
 		for(var i=0; i<oldTagsArray.length; i++){
-			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i].trim()).set(false);
-			firebase.database().ref("tags/boards/" + oldTagsArray[i].trim()).child(boardID).set(false);
+			firebase.database().ref("boards/" + boardID + "/tags").child(oldTagsArray[i].trim()).remove();
+			firebase.database().ref("tags/boards/" + oldTagsArray[i].trim()).child(boardID).remove();
 		}
 
 		var newTagsArray = newData.tags.replace(/\s/g," ").split(",");
@@ -403,8 +403,8 @@ export function editBoardPinData(oldBoardID, newBoardID, pinID, oldData, newData
 		var oldTagsArray = oldData.tags ? oldData.tags.replace(/\s/g," ").split(",") : "";
 		if(oldTagsArray){
 			for(var i=0; i<oldTagsArray.length; i++){
-				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i].trim()).set(false);
-				firebase.database().ref("tags/pins/" + oldTagsArray[i].trim()).child(pinID).set(false);
+				firebase.database().ref("pins/" + pinID + "/tags").child(oldTagsArray[i].trim()).remove();
+				firebase.database().ref("tags/pins/" + oldTagsArray[i].trim()).child(pinID).remove();
 			}
 		}
 
