@@ -66,6 +66,7 @@ class Pin extends Component{
 
                         {this.props.pin.createdBy === this.props.user.username ? (
                             <span>
+                                <span className="glyphicon glyphicon-pushpin push" onClick={this.unpinFromBoard.bind(this)}>{this.props.pin.numRepins ? this.props.pin.numRepins : 0}</span>
                                 <span className="glyphicon glyphicon-pencil edit" onClick={this.openPopup.bind(null, "editPin")}></span>
                             </span>) 
                         :   <span>

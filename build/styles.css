@@ -137,6 +137,11 @@ body{
 	color: #cc0000;
 }
 
+.push{
+	color: gray;
+	padding-right: 10px;
+
+}
 .notpinned{
 	color: gray;
 }
