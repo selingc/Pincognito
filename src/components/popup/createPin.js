@@ -12,7 +12,7 @@ class CreatePin extends Component {
     createPin(e){
         e.preventDefault();
 
-        if(this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value){
+        if(this.refs.image.files[0] && this.refs.name.value && this.refs.description.value && this.refs.tags.value && this.refs.board.value !== "none"){
             if(this.refs.name.value.trim().length <= 18){
                 var data = {
                     file: this.refs.image.files[0],
