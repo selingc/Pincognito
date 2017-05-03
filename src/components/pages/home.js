@@ -70,18 +70,18 @@ class Home extends Component {
         return (
             <div className="children">
                 <div className="row">
-                    <div className="col-lg-3 col-md-4 col-sm-6 col-xs-12" >
+                    <div className="col-lg-3 col-md-4" >
                         <div className="input-group filter">
                             <div className="input-group-btn">
-                                 <h3><span className="label label-danger">Filter By</span></h3>
+                                 <h4><span className="text">Filter By: </span></h4>
                             </div>
-                                <select className="form-control" ref="filter" onChange={this.changeFilter.bind(this)}>
+                                <select className="form-control filter panel panel-danger" ref="filter" onChange={this.changeFilter.bind(this)}>
                                     <option value="timestamp">Date Added</option>
                                     <option value="numRepins">Most Pinned</option>
                                 </select>
                         </div>
                     </div>
-                    <div className="col-lg-9 col-md-8 col-sm-6"></div>
+                    <div className="col-lg-9 col-md-8"></div>
                 </div>
 
                 <hr className="stylehr"/>

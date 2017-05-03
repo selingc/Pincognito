@@ -271,7 +271,7 @@ a, a:hover {
 }
 
 .label-danger{
-	background-color: #cc0000;
+	background-color: #cc0000 !important;
 }
 
 .label{
@@ -320,6 +320,14 @@ h3{
 	padding-bottom:5px;
 }
 
+.filter{
+	margin-left: 5px;
+	margin-top: 10px;
+	height:23px;
+	width:190px;
+	font-color: #A74544; 
+}
+
 /* MOBILE ----------------------------------------------------------------------------- */
 
 @media screen and (max-width: 768px) {
@@ -354,6 +362,13 @@ h3{
 
 	.search_group {
 		padding: 0px 0px 0px 35px;
+	}
+
+	.filter{
+		float:center !important;
+		padding: 0px;
+		width:200;
+		margin-left:15%;
 	}
 
 	.mobile{
