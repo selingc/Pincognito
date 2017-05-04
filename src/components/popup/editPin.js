@@ -12,7 +12,7 @@ class EditPin extends Component {
     editPin(e){
         e.preventDefault();
 
-        if(this.refs.name.value && this.refs.description.value && this.refs.tags.value){
+        if(this.refs.name.value && this.refs.description.value && this.refs.tags.value && this.refs.board.value !== "none"){
             if(this.refs.name.value.trim().length <= 18){
                 var data = {
                     name: this.refs.name.value.trim(),

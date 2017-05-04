@@ -81,7 +81,15 @@ class Modal extends Component {
             <div className="modal" onMouseDown={that.onModalDown} onMouseUp={that.onModalUp}>
                 <div className="modal-content" onMouseDown={that.onContentDown} onMouseUp={that.onContentUp}>
                     <span className="glyphicon glyphicon-remove close" onClick={that.props.closePopup}></span>
-                    {getContent()}
+                    <table width="100%" height="90%">
+                        <tbody>
+                            <tr>
+                                <td className="popup-table" width="100%">
+                                    {getContent()}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         );
@@ -89,4 +97,3 @@ class Modal extends Component {
 }
 
 export default Modal;
-
