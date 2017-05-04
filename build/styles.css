@@ -374,11 +374,14 @@ h3{
 		padding: 0px 0px 0px 35px;
 	}
 
+	.input-group-btn {
+	padding-bottom:0px;
+	}
+
 	.filter{
-		float:center !important;
-		padding: 0px;
-		width:200;
-		margin-left:15%;
+		height: 35px;
+		width:inherit;
+		margin-left:5%;
 	}
 
 	.mobile{

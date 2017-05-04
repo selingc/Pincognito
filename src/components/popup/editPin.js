@@ -47,7 +47,7 @@ class EditPin extends Component {
             }
         }
         return (
-            <div>
+            <div className="editPop">
                 <h1>Edit Pin</h1>
                 <hr className="stylehr"/>
                 {this.state.error ? (
