@@ -10,8 +10,12 @@ class Pin extends Component{
 
         this.state = {poppedUp: false};
         this.openPopup = this.openPopup.bind(this);
+        this.search = this.search.bind(this);
     }
 
+    search(tag){
+        browserHistory.push('/search?q=' + tag);
+    }
 
     openPopup(type){
         this.setState({poppedUp: true});
@@ -89,7 +93,7 @@ class Pin extends Component{
                 <div className="pinDescription">{this.props.pin.description}</div>
 
                 <h5>{tags.map((tag, index) =>(
-                    <span key={index} className="label label-danger">{tag.trim()}</span>
+                    <span key={index} onClick={this.search.bind(null, tag.trim())} className="label label-danger">{tag.trim()}</span>
                 ))}</h5>
                 {getPopup()}
             </div>

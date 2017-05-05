@@ -10,7 +10,7 @@ const LoginForm = (props) => {
     var background = {
         backgroundImage: "url('https://firebasestorage.googleapis.com/v0/b/ideaboard-f10ef.appspot.com/o/login.jpg?alt=media&token=7de78808-bbc6-4f8b-b738-5ff0dcc61bcb')",
         width: '100%',
-        height: '550px',
+        height: '550px', 
         backgroundSize: 'cover'
     };
 
