@@ -41405,6 +41405,7 @@
 			console.log(data);
 			firebase.auth().sendPasswordResetEmail(data.email).then(function () {
 				console.log("sent email"); // Email sent.
+				_reactRouter.browserHistory.push("/login");
 			}, function (error) {
 				console.log("error when email sent");
 			});
@@ -42672,10 +42673,17 @@
 
 	        _this.state = { poppedUp: false };
 	        _this.openPopup = _this.openPopup.bind(_this);
+	        _this.search = _this.search.bind(_this);
 	        return _this;
 	    }
 
 	    _createClass(Pin, [{
+	        key: 'search',
+	        value: function search(tag) {
+	            _reactRouter.browserHistory.push('/search?q=' + tag);
+	            this.closePopup();
+	        }
+	    }, {
 	        key: 'openPopup',
 	        value: function openPopup(type) {
 	            this.setState({ poppedUp: true });
@@ -42696,6 +42704,8 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+
 	            var that = this;
 	            function getPopup() {
 	                if (that.state.poppedUp) {
@@ -42779,7 +42789,7 @@
 	                        tags.map(function (tag, index) {
 	                            return _react2.default.createElement(
 	                                'span',
-	                                { key: index, className: 'label label-danger' },
+	                                { key: index, onClick: _this2.search.bind(null, tag.trim()), className: 'label label-danger' },
 	                                tag.trim()
 	                            );
 	                        })

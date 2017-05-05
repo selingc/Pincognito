@@ -606,6 +606,7 @@ export function forgetPassword(data){
 		console.log(data);
 		firebase.auth().sendPasswordResetEmail(data.email).then(function() {
 		  	console.log("sent email");// Email sent.
+		  	browserHistory.push("/login");
 		}, function(error) {
 		  	console.log("error when email sent");
 		});
