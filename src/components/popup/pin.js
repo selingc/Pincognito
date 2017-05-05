@@ -59,7 +59,7 @@ class Pin extends Component{
         return (
             <div>
             <div className="hoverContainer">
-                <h2>
+                <h2 className="no-padding-header">
                     <span className="pinTitle">{this.props.pin.name}</span>
                     <span className="num_repin">
                         {this.props.user.username ? (<span>
