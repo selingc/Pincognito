@@ -15,6 +15,7 @@ class Pin extends Component{
 
     search(tag){
         browserHistory.push('/search?q=' + tag);
+        this.closePopup();
     }
 
     openPopup(type){
