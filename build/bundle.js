@@ -30273,6 +30273,13 @@
 
 		switch (action.type) {
 			case _types2.default.FETCH_USER_BOARDS:
+				var newState = state.slice();
+				for (var i = 0; i < state.length; i++) {
+					if (state[i].boardID === action.payload.boardID) {
+						newState[i] = action.payload;
+						return newState;
+					}
+				}
 				return state.concat(action.payload);
 			case _types2.default.CREATE_USER_BOARD:
 				return state;
@@ -40614,8 +40621,6 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            this.props.fetchPins("timestamp");
-	            //console.log("from state: " + this.props.asd);
-	            this.props.fetchPins("none");
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
@@ -40932,33 +40937,35 @@
 	function fetchUserBoards(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("boards").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("boards").child(snap.ref.key).once("value", function (snap) {
+				firebase.database().ref("boards").child(snap.ref.key).on("value", function (snap) {
 					var data = snap.val();
-					data.boardID = snap.ref.key;
-					data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
-					dispatch({
-						type: _types2.default.FETCH_USER_BOARDS,
-						payload: data
-					});
-
-					if (snap.val().pins) {
-						firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
-							firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
-								if (snap.val().imageURL) {
-									data.imageURL = snap.val().imageURL;
-									dispatch({
-										type: _types2.default.FETCH_USER_BOARD_IMAGE,
-										payload: data
-									});
-								} else {
-									data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
-									dispatch({
-										type: _types2.default.FETCH_USER_BOARD_IMAGE,
-										payload: data
-									});
-								}
-							});
+					if (data) {
+						data.boardID = snap.ref.key;
+						data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+						dispatch({
+							type: _types2.default.FETCH_USER_BOARDS,
+							payload: data
 						});
+
+						if (snap.val().pins) {
+							firebase.database().ref("boards/" + snap.ref.key).child("pins").orderByValue().equalTo(true).once("child_added", function (snap) {
+								firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+									if (snap.val().imageURL) {
+										data.imageURL = snap.val().imageURL;
+										dispatch({
+											type: _types2.default.FETCH_USER_BOARD_IMAGE,
+											payload: data
+										});
+									} else {
+										data.imageURL = "https://uos.edu.pk/assets/backend/images/staff/imagenotfound.svg";
+										dispatch({
+											type: _types2.default.FETCH_USER_BOARD_IMAGE,
+											payload: data
+										});
+									}
+								});
+							});
+						}
 					}
 				});
 			});
@@ -40969,6 +40976,8 @@
 						type: _types2.default.FETCH_USER_REMOVED_BOARDS,
 						payload: snap.ref.key
 					});
+				} else {
+					console.log("child changed");
 				}
 			});
 		};
@@ -41058,24 +41067,26 @@
 		return function (dispatch) {
 			firebase.database().ref("boards").child(boardID).on("value", function (snap) {
 				var data = snap.val();
-				data.boardID = snap.ref.key;
-				if (data.tags) {
-					var tagKeys = Object.keys(data.tags);
-					var tags = "";
-					for (var i = 0; i < tagKeys.length; i++) {
-						if (data.tags[tagKeys[i]]) {
-							if (i !== 0) {
-								tags += ", ";
+				if (data) {
+					data.boardID = snap.ref.key;
+					if (data.tags) {
+						var tagKeys = Object.keys(data.tags);
+						var tags = "";
+						for (var i = 0; i < tagKeys.length; i++) {
+							if (data.tags[tagKeys[i]]) {
+								if (i !== 0) {
+									tags += ", ";
+								}
+								tags += tagKeys[i];
 							}
-							tags += tagKeys[i];
 						}
+						data.tags = tags;
 					}
-					data.tags = tags;
+					dispatch({
+						type: _types2.default.FETCH_BOARD_INFO,
+						payload: data
+					});
 				}
-				dispatch({
-					type: _types2.default.FETCH_BOARD_INFO,
-					payload: data
-				});
 			});
 
 			firebase.database().ref("boards/" + boardID).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
@@ -41225,28 +41236,29 @@
 
 	function fetchPins(filter) {
 		return function (dispatch) {
-			firebase.database().ref("pins").orderByChild(filter).on("child_added", function (snap) {
-				var pinData = snap.val();
-				pinData.pinID = snap.ref.key;
-				pinData.tagOb = Object.assign({}, pinData.tags);
-				if (pinData.tags) {
-					var tagKeys = Object.keys(pinData.tags);
-					var tags = "";
-					for (var i = 0; i < tagKeys.length; i++) {
-						if (pinData.tags[tagKeys[i]]) {
-							tags += tagKeys[i];
-							if (i < tagKeys.length - 1) {
-								tags += ", ";
+			firebase.database().ref("pins").orderByChild(filter).on("value", function (snap) {
+				snap.forEach(function (child) {
+					var pinData = child.val();
+					pinData.pinID = child.ref.key;
+					pinData.tagOb = Object.assign({}, pinData.tags);
+					if (pinData.tags) {
+						var tagKeys = Object.keys(pinData.tags);
+						var tags = "";
+						for (var i = 0; i < tagKeys.length; i++) {
+							if (pinData.tags[tagKeys[i]]) {
+								tags += tagKeys[i];
+								if (i < tagKeys.length - 1) {
+									tags += ", ";
+								}
 							}
 						}
+						pinData.tags = tags;
 					}
-					pinData.tags = tags;
-				}
-				//}
-
-				dispatch({
-					type: _types2.default.FETCH_PINS,
-					payload: pinData
+					//}
+					dispatch({
+						type: _types2.default.FETCH_PINS,
+						payload: pinData
+					});
 				});
 			});
 
@@ -41302,7 +41314,7 @@
 	function fetchUserPins(username) {
 		return function (dispatch) {
 			firebase.database().ref("users/" + username).child("pins").orderByValue().equalTo(true).on("child_added", function (snap) {
-				firebase.database().ref("pins").child(snap.ref.key).once("value", function (snap) {
+				firebase.database().ref("pins").child(snap.ref.key).on("value", function (snap) {
 					var pinData = snap.val();
 					if (pinData.tags) {
 						var tagKeys = Object.keys(pinData.tags);
