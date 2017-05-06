@@ -30280,6 +30280,12 @@
 						return newState;
 					}
 				}
+
+				if (recentlyUnfollowed === action.payload.boardID) {
+					recentlyUnfollowed = null;
+					return state;
+				}
+
 				return state.concat(action.payload);
 			case _types2.default.CREATE_USER_BOARD:
 				return state;
@@ -30305,6 +30311,7 @@
 
 				if (index >= 0) {
 					newState.splice(index, 1);
+					recentlyUnfollowed = action.payload;
 					return newState;
 				}
 
@@ -30323,6 +30330,8 @@
 	var _types2 = _interopRequireDefault(_types);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var recentlyUnfollowed = null;
 
 /***/ }),
 /* 285 */
@@ -40439,6 +40448,10 @@
 						return newState;
 					}
 				}
+				if (recentlyUnfollowed === action.payload.pinID) {
+					recentlyUnfollowed = null;
+					return state;
+				}
 				return state.concat(action.payload);
 			case _types2.default.STOP_FETCHING_USER_PINS:
 				return [];
@@ -40453,6 +40466,7 @@
 
 				if (index >= 0) {
 					newState.splice(index, 1);
+					recentlyUnfollowed = action.payload;
 					return newState;
 				}
 
@@ -40468,6 +40482,8 @@
 	var _types2 = _interopRequireDefault(_types);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var recentlyUnfollowed = null;
 
 /***/ }),
 /* 487 */

@@ -1,5 +1,7 @@
 import actionTypes from '../actions/types.js';
 
+var recentlyUnfollowed = null;
+
 export default function(state=[], action){
 	switch(action.type){
 		case actionTypes.FETCH_USER_PINS:
@@ -9,6 +11,10 @@ export default function(state=[], action){
 					newState[i] = action.payload;
 					return newState;
 				}
+			}
+			if(recentlyUnfollowed === action.payload.pinID){
+				recentlyUnfollowed = null;
+				return state;
 			}
 			return state.concat(action.payload);
 		case actionTypes.STOP_FETCHING_USER_PINS:
@@ -24,6 +30,7 @@ export default function(state=[], action){
 
 			if(index >= 0){
 				newState.splice(index, 1);
+				recentlyUnfollowed = action.payload;
 				return newState;
 			}
 

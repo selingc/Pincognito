@@ -1,5 +1,7 @@
 import actionTypes from '../actions/types.js';
 
+var recentlyUnfollowed = null;
+
 export default function(state=[], action){
 	switch(action.type){
 		case actionTypes.FETCH_USER_BOARDS:
@@ -10,6 +12,12 @@ export default function(state=[], action){
 					return newState;
 				}
 			}
+
+			if(recentlyUnfollowed === action.payload.boardID){
+				recentlyUnfollowed = null;
+				return state;
+			}
+
 			return state.concat(action.payload);
 		case actionTypes.CREATE_USER_BOARD:
 			return state;
@@ -35,6 +43,7 @@ export default function(state=[], action){
 
 			if(index >= 0){
 				newState.splice(index, 1);
+				recentlyUnfollowed = action.payload;
 				return newState;
 			}
 
